@@ -1,3 +1,12 @@
+body{
+  font-family: sans-serif;
+  color: white;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 #About{
   background: linear-gradient(135deg, #2563EB, #1E40AF);
   color: white;
@@ -25,7 +34,7 @@
   margin-top: 40px;
 }
 
-#contact:hover {
+#Contact:hover {
   background: linear-gradient(135deg, #1E40AF, #2563EB);
   transform: translateY(-2px);
   box-shadow: 0 8px 18px rgba(37, 99, 235, 0.4);
@@ -40,7 +49,7 @@
 
 #Login{
 
-      background: linear-gradient(135deg, #2563EB, #1E40AF);
+  background: linear-gradient(135deg, #2563EB, #1E40AF);
   color: white;
   padding: 12px 26px;
   font-size: 16px;
@@ -74,10 +83,20 @@
   box-shadow: 0 8px 18px rgba(37, 99, 235, 0.4);
 }
 
+.hero-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 .hero{
-    margin-top: 20px;
-    margin-left: 20px;
+    margin-top: 50px;
+    margin-left: 50px;
     font-size: 40px;
+}
+
+.hero-figure{
+  position: relative;
+  margin-right: 50px;
 }
 
 /* 1. Create the animation (fade in and slide up slightly) */
@@ -96,6 +115,8 @@
 .hero h1 {
     opacity: 0; /* Important: Hide them by default so they don't show before animation */
     animation: fadeInUp 0.8s ease-out forwards; /* 'forwards' keeps them visible after animation ends */
+    margin-bottom: 40px;
+
 }
 
 /* 3. Add the specific delays */
@@ -111,11 +132,26 @@
     animation-delay: 2s;   /* Waits 2 seconds */
 }
 
-body{
-    background-image: url('Figures/BG1.png');
-    background-size: 100% 100%;
-    margin: 0;
-    font-family: sans-serif;
-    color: white;
-    
+#Illustration_HomePage{
+    position: relative;
+    right: 0;
+    top: 100px;
+    width: 600px;
+    height: auto;
+}
+
+section {
+    height: 100vh;               
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.bg1 {
+    background-image: url("Figures/BG1.png");
+}
+
+.white-section {
+    background-color: white;
+    color: black;
 }
