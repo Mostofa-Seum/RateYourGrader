@@ -1,5 +1,6 @@
 body{
-  font-family: sans-serif;
+
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: white;
 }
 * {
@@ -8,6 +9,7 @@ body{
     box-sizing: border-box;
 }
 #About{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #2563EB, #1E40AF);
   color: white;
   padding: 12px 26px;
@@ -24,6 +26,7 @@ body{
 }
 
 #Contact{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #2563EB, #1E40AF);
   color: white;
   padding: 12px 26px;
@@ -48,7 +51,7 @@ body{
 }
 
 #Login{
-
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #2563EB, #1E40AF);
   color: white;
   padding: 12px 26px;
@@ -65,23 +68,6 @@ body{
   box-shadow: 0 8px 18px rgba(37, 99, 235, 0.4);
 }
 
-#SignUp{
-
-      background: linear-gradient(135deg, #2563EB, #1E40AF);
-  color: white;
-  padding: 12px 26px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 10px;
-  margin-left: 60px;
-  margin-top: 40px;
-}
-
-#SignUp:hover {
-  background: linear-gradient(135deg, #1E40AF, #2563EB);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.4);
-}
 
 .hero-container{
     display: flex;
@@ -89,6 +75,7 @@ body{
     justify-content: space-between;
 }
 .hero{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin-top: 50px;
     margin-left: 50px;
     font-size: 40px;
