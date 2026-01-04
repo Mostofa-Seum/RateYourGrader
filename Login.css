@@ -32,7 +32,7 @@
             overflow: hidden;
         }
  
-        /* --- MODIFIED SLIDER CSS --- */
+
         .slider {
             position: absolute;
             top: 0;
@@ -43,39 +43,27 @@
             background: #174886;
             transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 10;
-           
-            /* State 1 (Overlay on Left):
-               Top-Right point is at 55%, Bottom-Right point is at 35%.
-               This creates the diagonal slant /
-            */
             clip-path: polygon(0 0, 55% 0, 35% 100%, 0 100%);
         }
  
         .slider.active {
-            /* State 2 (Overlay moves to Right):
-               We animate the points so the "window" slides to the right.
-               Top-Left starts at 65%, Bottom-Left starts at 45%.
-            */
             clip-path: polygon(65% 0, 100% 0, 100% 100%, 45% 100%);
         }
  
         .slider-content {
             position: absolute;
             top: 50%;
-            /* Start centered in the LEFT half of the screen (25% of total width) */
             left: 25%;
             transform: translate(-50%, -50%);
             text-align: center;
             color: white;
-            width: 40%; /* adjusted width relative to full container */
+            width: 40%; 
             transition: left 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
  
-        /* When active, move content to center of RIGHT half (75% of total width) */
         .slider.active .slider-content {
             left: 75%;
         }
-        /* --- END MODIFIED SLIDER CSS --- */
  
         .slider h2 {
             font-size: 2.5rem;
@@ -122,19 +110,19 @@
  
         .login-form {
             right: 0;
-            z-index: 1; /* Ensure forms are below the slider hit-area if needed, though clip-path handles this */
+            z-index: 1; 
         }
  
         .signup-form {
             left: 0;
             opacity: 0;
-            transform: translateX(-20%); /* Changed from -100% for smoother feel behind diagonal */
+            transform: translateX(-20%); 
             z-index: 1;
         }
  
         .auth-container.signup-mode .login-form {
             opacity: 0;
-            transform: translateX(20%); /* Changed from 100% */
+            transform: translateX(20%); 
         }
  
         .auth-container.signup-mode .signup-form {
@@ -212,41 +200,3 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
- 
-        @media (max-width: 768px) {
-            .auth-container {
-                width: 95vw;
-                height: 95vh;
-            }
- 
-            .slider {
-                /* On mobile we might want a simpler vertical slide or just hide it,
-                   but keeping diagonal logic here: */
-                clip-path: polygon(0 0, 100% 0, 100% 30%, 0 40%);
-                height: 100%;
-            }
- 
-            .slider.active {
-                clip-path: polygon(0 60%, 100% 70%, 100% 100%, 0 100%);
-            }
-           
-            .slider-content {
-                width: 80%;
-                left: 50%;
-                top: 20%;
-            }
-           
-            .slider.active .slider-content {
-                left: 50%;
-                top: 80%;
-            }
- 
-            .form-container {
-                width: 100%;
-                height: 100%;
-            }
-           
-            .login-form { top: 30%; }
-            .signup-form { top: -30%; }
-        }
-        

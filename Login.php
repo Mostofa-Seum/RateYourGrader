@@ -4,22 +4,21 @@ $name = "";
 $email = "";
 $signup_error = "";
 $signup_success = "";
-$login_error = "";        // NEW: Variable for login errors
-$login_success_name = ""; // NEW: Variable to store username upon login
+$login_error = "";        
+$login_success_name = ""; 
 $show_signup_form = false; 
 
 include "loginconfig.php";
 
-// 1. HANDLE SUCCESS MESSAGE FROM REDIRECT
+
 if (isset($_GET['signup']) && $_GET['signup'] === 'success') {
     $signup_success = "Account created successfully! Please login.";
     $show_signup_form = false; // Show login form
 }
 
-// 2. HANDLE FORM SUBMISSION
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // --- SIGN UP LOGIC (Existing) ---
     if (isset($_POST['action']) && $_POST['action'] == 'signup') {
         
         $name = htmlspecialchars(trim($_POST['name']));
@@ -27,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password = $_POST['password'];
         $confirmPassword = $_POST['confirmPassword'];
 
-        // Validation
+        
         if (empty($name) || empty($email) || empty($password) || empty($confirmPassword)) {
             $signup_error = "All fields are required!";
             $show_signup_form = true; 
@@ -41,9 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $signup_error = "Password must be at least 6 characters long!";
             $show_signup_form = true;
         }
-            //elseif(!preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.edu$/", $email)) {
-            //$signup_error = "Only .edu email is allowed";
-            //$show_signup_form = true;
+
          else {
             
             $sql = "INSERT INTO users (username, password, email)
@@ -59,18 +56,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // --- LOGIN LOGIC (New) ---
 if (isset($_POST['action']) && $_POST['action'] == 'login') {
         
         $login_email = $conn->real_escape_string($_POST['login_email']);
         $login_pass  = $_POST['login_password'];
 
-        // --- 1. SPECIAL ADMIN CHECK ---
-        // We check this BEFORE looking at the database
+
         if ($login_email === 'admin' && $login_pass === 'admin') {
             $login_success_name = "admin";
         }
-        // --- 2. NORMAL DATABASE CHECK ---
+
         else {
             $sql = "SELECT * FROM users WHERE email = '$login_email'";
             $result = $conn->query($sql);
