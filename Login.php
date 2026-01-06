@@ -74,8 +74,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
             if ($result->num_rows > 0) {
                 $row = $result->fetch_assoc();
                 
-                if ($login_pass === $row['password']) {
-                    $login_success_name = $row['username'];
+                if ($login_pass === $row['Password']) {
+                    $login_success_name = $row['Username'];
                 } else {
                     $login_error = "Incorrect Password";
                 }
