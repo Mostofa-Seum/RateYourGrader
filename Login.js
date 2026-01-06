@@ -4,7 +4,6 @@ const sliderBtn = document.getElementById('sliderBtn');
 const sliderTitle = document.getElementById('sliderTitle');
 const sliderText = document.getElementById('sliderText');
 
-// Check initial state from HTML class
 let isSignupMode = authContainer.classList.contains('signup-mode');
 
 sliderBtn.addEventListener('click', () => {

@@ -33,11 +33,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } elseif ($password !== $confirmPassword) {
             $signup_error = "Passwords do not match!";
             $show_signup_form = true; 
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $signup_error = "Invalid email format!";
-            $show_signup_form = true;
-        } elseif (strlen($password) < 6) {
+        }elseif (strlen($password) < 6) {
             $signup_error = "Password must be at least 6 characters long!";
+            $show_signup_form = true;
+        }
+         elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $signup_error = "Invalid email format!";
             $show_signup_form = true;
         }
 
