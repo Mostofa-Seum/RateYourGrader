@@ -257,6 +257,11 @@ body {
     max-width: 450px;
 }
 
+.hero-slider {
+    display: flex;
+    justify-content: center;
+}
+
 .hero-testimonials {
     position: relative;
 }
@@ -312,6 +317,118 @@ body {
     font-size: 0.85rem;
     color: #cbd5f5;
 }
+
+.slider-box {
+            /* 1. Define the Box Size */
+            width: 550px;
+            max-width: 95%; /* Responsive for small screens */
+            height: 420px;
+            
+            /* 2. Visuals for the Box */
+            background-color: transparent;
+            border: 1px solid transparent;
+            border-radius: 24px;
+           
+            backdrop-filter: blur(18px);
+            
+            /* 3. CRITICAL: Hide anything moving outside this box */
+            overflow: hidden;
+            position: relative;
+
+            /* 4. Fade Effect on Box Edges 
+            mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);*/
+            
+            /* Center the track vertically inside the box */
+            display: flex;
+            align-items: center;
+        }
+        
+        .slider-track {
+            display: flex;
+            width: max-content;
+            gap: 20px; /* Space between cards */
+            animation: scroll-left 35s linear infinite;
+            padding-left: 20px; /* Offset for start */
+        }
+        
+        .slider-track:hover {
+            animation-play-state: paused;
+        }
+        
+        /* Card Styling */
+        .review-card {
+            width: 320px; /* Card Width */
+            height: 340px; /* Card Height */
+            flex-shrink: 0;
+            
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(2, 6, 23, 0.08);
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Typography & Inner Card Layout */
+        .quote-icon {
+            font-size: 2.5rem;
+            color: #667eea;
+            line-height: 1;
+            margin-bottom: 5px;
+            font-family: serif;
+        }
+        
+        .review-text {
+            font-size: 0.95rem;
+            color: #444;
+            line-height: 1.5;
+            font-style: italic;
+            flex-grow: 1; /* Pushes content apart */
+        }
+        
+        .rating {
+            color: #FFD700;
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 12px;
+        }
+        
+        .student-details h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .student-details p {
+            font-size: 0.75rem;
+            color: #777;
+        }
+
+        /* Animation */
+        @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } /* -50% because we duplicated the list */
+        }
+
+
 
 @keyframes marquee-left {
     from { transform: translateX(0); }
@@ -515,7 +632,9 @@ body {
 .features-list {
     display: flex;
     flex-direction: column;
+    justify-items: center;
     gap: 2rem;
+    align-items:center;
 }
 
 .glass-light {
@@ -530,8 +649,10 @@ body {
 .feature-card {
     display: flex;
     align-items: flex-start;
+    justify-items: center;
     gap: 1rem;
 }
+
 
 .feature-icon {
     width: 3rem;
@@ -772,6 +893,7 @@ footer {
     .hero-container { grid-template-columns: 1fr 1fr; }
     .hero-content { padding-right: 3rem; }
     .hero-content h1 { font-size: 5rem; }
+    .hero-slider { justify-content: flex-end; }
     .features-grid { grid-template-columns: 1fr 1fr; }
     .footer-grid { grid-template-columns: repeat(4, 1fr); }
 }
