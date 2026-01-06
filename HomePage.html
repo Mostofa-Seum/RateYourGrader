@@ -1,28 +1,197 @@
-<DOCTYPE html!>
-    <html>
-    <head>
-        <title>Home Page</title>
-        <link rel="stylesheet" href="HomePage.css">
-    </head>
-    <body>
-        <div class="topnav">
-        <button id = "About">About Us</button>
-        <button id = "Contact">Contact Us</button>
-        <img src="Figures/Logo.png" alt="Logo" id="Logo">
-        <button id = "Login">Login</button>
-        <button id = "SignUp">Sign  Up</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate My Grader - Honest Reviews for Fair Grading</title>
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="homepage.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <img src="/Project/Figures/scolar_cap.png" alt="Logo" class="logo-img">
+
+                </div>
+                <span class="logo-text">Rate My Grader</span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="#how-it-works">How it works</a>
+                <a href="#features">Features</a>
+                <a href="#search">Search Graders</a>
+                <button class="btn btn-primary">Sign Up Free</button>
+            </div>
+            
+            <button class="mobile-menu-btn">
+                <img src="/Project/Figures/menu.png" alt="Menu" class="mobile-menu-icon">
+            </button>
         </div>
-        
-            <div class = "hero">
-                <h1>Trusted Reviews</h1>
-                <h1>Verified Students</h1>
-                <h1>Better Decisions</h1>
+    </nav>
+
+    <section class="hero-section">
+        <div class="float-shape shape-1"></div>
+        <div class="float-shape shape-2 floating"></div>
+
+        <div class="container hero-container">
+            <div class="hero-content fade-in">
+                <h1>
+                    Rate Your
+                    <span class="gradient-text-yellow">Graders</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Honest reviews. Fair grading. Real transparency. 
+                    <span class="highlight">Join 500K+ students already rating.</span>
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-white">
+                        <img src="/Project/Figures/search_blue.png" alt="Logo"> Search Graders
+                    </button>
+                    <button class="btn btn-outline">
+                        How It Works
+                    </button>
+                </div>
             </div>
 
-        <footer>
-            <p>&copy; 2024 My Website</p>
-            <h2>this is my website</h2>
-            <p>This is the second line</p>
-        </footer>
-    </body>
-    </html>
+            
+        </div>
+    </section>
+
+    <section id="search" class="section-search">
+        <div class="container fade-in text-center">
+            <h2>Ready to discover fair graders?</h2>
+            <p class="cta-subtitle">Search 50K+ graders across 1,200+ campuses. Find the truth before you enroll.</p>
+            
+            <div class="search-bar-wrapper">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search by name, course, or department...">
+                    <button class="btn-search">
+                        <img src="/Project/Figures/search_black.png" alt="Logo"> Search Now
+                    </button>
+                </div>
+            </div>
+            
+            <div class="trust-indicators">
+                <div><img src="/Project/Figures/verify.png" alt="Logo"> Verified Students</div>
+                <div><img src="/Project/Figures/verify.png" alt="Logo"> Anonymous Reviews</div>
+                <div><img src="/Project/Figures/verify.png" alt="Logo"> Real-Time Updates</div>
+                <div><img src="/Project/Figures/verify.png" alt="Logo"> Mobile Friendly</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="section-white">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="gradient-text-navy">How It Works</h2>
+                <p>Three simple steps to rate and find the best graders on campus</p>
+            </div>
+            
+            <div class="steps-grid">
+                <div class="step-card fade-in hover-scale group search">
+                    <div class="icon-box">
+                        <img src="/Project/Figures/search_32.png" alt="Logo">
+                    </div>
+                    <h3>1. Search</h3>
+                    <p>Find your grader by name, course, or department. See real student ratings and reviews.</p>
+                </div>
+                
+                <div class="step-card fade-in hover-scale group rate">
+                    <div class="icon-box">
+                        <img src="/Project/Figures/rate.png" alt="Logo" class="logo-img">
+                    </div>
+                    <h3>2. Rate</h3>
+                    <p>Share your honest experience. Rate fairness, speed, and accuracy. Help others make smart choices.</p>
+                </div>
+                
+                <div class="step-card fade-in hover-scale group explore">
+                    <div class="icon-box">
+                        <img src="/Project/Figures/explore.png" alt="Logo">
+                    </div>
+                    <h3>3. Discover</h3>
+                    <p>Use ratings to choose classes with fair graders. Make informed decisions for your academic success.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="features" class="section-features">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="gradient-text-navy">Everything You Need</h2>
+                <p>Built for students, by students</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="features-list fade-in">
+                    <div class="feature-card glass-light hover-scale">
+                        <div class="feature-icon blue-bg">
+                            <img src="/Project/Figures/shield.png" alt="Logo">
+                        </div>
+                        <div class="feature-text">
+                            <h4>Anonymous & Safe</h4>
+                            <p>Your identity is protected. Rate honestly without fear of retaliation.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card glass-light hover-scale">
+                        <div class="feature-icon green-bg">
+                            <img src="/Project/Figures/details.png" alt="Logo">
+                        </div>
+                        <div class="feature-text">
+                            <h4>Detailed Ratings</h4>
+                            <p>Rate on fairness, grading speed, accuracy, and helpfulness. Get the full picture.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card glass-light hover-scale">
+                        <div class="feature-icon purple-bg">
+                            <img src="/Project/Figures/mobile.png" alt="Logo">
+                        </div>
+                        <div class="feature-text">
+                            <h4>Campus Verified</h4>
+                            <p>Only verified students can rate. Real reviews from real students on your campus.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                
+            </div>
+        </div>
+    </section>
+
+    
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo-wrapper mb-2">
+                        <div class="logo-icon small">
+                            <img src="/Project/Figures/scolar_cap.png" alt="Logo" class="logo-img">
+                        </div>
+                        <span class="footer-logo-text">Rate My Grader</span>
+                    </div>
+                    <p>Empowering students with transparent grading information since 2024.</p>
+                </div>
+                
+    
+                
+                
+                
+                
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Rate My Grader. All rights reserved. Made with ❤️ for students everywhere.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="homepage.js"></script>
+</body>
+</html>
