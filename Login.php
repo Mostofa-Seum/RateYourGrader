@@ -7,10 +7,7 @@ $signup_success = "";
 $login_error = "";        
 $login_success_name = ""; 
 $show_signup_form = false; 
-
-include "loginconfig.php";
-
-
+include "Config.php";
 if (isset($_GET['signup']) && $_GET['signup'] === 'success') {
     $signup_success = "Account created successfully! Please login.";
     $show_signup_form = false; // Show login form

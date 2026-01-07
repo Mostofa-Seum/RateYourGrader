@@ -1,5 +1,5 @@
 <?php
-include 'SearchOutputConfig.php';
+include 'Config.php';
 
 // 1. DEFINE IMAGES (Using your PNG files)
 $iconUser  = '<img src="Images/iconUser.png" alt="User" style="width: 4rem; height: 4rem; object-fit: contain;">';
@@ -144,11 +144,12 @@ if (isset($_GET['q'])) {
                             </div>
                         </div>
                         
-                        <div class="card-footer">
-                            <button class="view-profile-btn">
-                                View Full Profile <?= $iconArrow ?>
-                            </button>
-                        </div>
+                      <div class="card-footer">
+                                <a href="ProfessorReview.php?P_id=<?= $row['P_id'] ?>&name=<?= urlencode($row['Name']) ?>&dept=<?= urlencode($row['Department']) ?>&uni=<?= urlencode($row['University']) ?>" 
+                               class="view-profile-btn" style="text-decoration: none;">
+                             View Full Profile <?= $iconArrow ?>
+                             </a>
+                               </div>
                     </div>
                 </div>
                 <?php 
