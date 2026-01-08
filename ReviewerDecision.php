@@ -1,5 +1,6 @@
 <?php
 include 'Config.php';
+
 $message = "";
 $messageType = "";
 
@@ -7,10 +8,12 @@ $messageType = "";
 
 // 1. APPROVE LOGIC
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'approve') {
-    $r_id = intval($_POST['review_id']);
+    // FIX: Use the unique ID (r_id)
+    $target_id = intval($_POST['review_id']);
     
-    // First, fetch the review text to store in A_Review (based on your table schema)
-    $fetch_sql = "SELECT Review FROM review WHERE Rv_id = $r_id";
+    // Fetch review text
+    // FIX: WHERE r_id = ...
+    $fetch_sql = "SELECT Review FROM review WHERE r_id = $target_id";
     $fetch_result = $conn->query($fetch_sql);
     
     if ($fetch_result && $fetch_result->num_rows > 0) {
@@ -18,11 +21,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $review_text = $conn->real_escape_string($row['Review']);
         
         // Insert into A_Review
-        // Assuming Report defaults to 0 (False)
-        $sql = "INSERT INTO A_Review (R_id, Review, Report) VALUES ('$r_id', '$review_text', 0)";
+        // Note: We store the unique review ID ($target_id) in R_id column of A_Review
+        $sql_insert = "INSERT INTO A_Review (R_id, Review, Report) VALUES ('$target_id', '$review_text', 0)";
         
-        if ($conn->query($sql) === TRUE) {
-            $message = "Review #$r_id Approved Successfully!";
+        if ($conn->query($sql_insert) === TRUE) {
+            
+            // FIX: UPDATE WHERE r_id (Unique ID)
+            $sql_update = "UPDATE review SET Reviewed = 1 WHERE r_id = $target_id";
+            $conn->query($sql_update);
+
+            $message = "Review #$target_id Approved Successfully!";
             $messageType = "success";
         } else {
             $message = "Error: " . $conn->error;
@@ -33,15 +41,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 
 // 2. REJECT LOGIC
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'reject') {
-    $r_id = intval($_POST['review_id']);
+    $target_id = intval($_POST['review_id']);
     $cause = $conn->real_escape_string($_POST['rejection_reason']);
     
     // Insert into R_Review
-    $sql = "INSERT INTO R_Review (R_id, Cause) VALUES ('$r_id', '$cause')";
+    $sql_insert = "INSERT INTO R_Review (R_id, Cause) VALUES ('$target_id', '$cause')";
     
-    if ($conn->query($sql) === TRUE) {
-        $message = "Review #$r_id Rejected.";
-        $messageType = "success"; // Using success style for confirmation
+    if ($conn->query($sql_insert) === TRUE) {
+
+        // FIX: UPDATE WHERE r_id (Unique ID)
+        $sql_update = "UPDATE review SET Reviewed = 1 WHERE r_id = $target_id";
+        $conn->query($sql_update);
+
+        $message = "Review #$target_id Rejected.";
+        $messageType = "success"; 
     } else {
         $message = "Error: " . $conn->error;
         $messageType = "error";
@@ -49,14 +62,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 }
 
 // --- FETCH PENDING REVIEWS ---
-// We only want reviews that are NOT in A_Review AND NOT in R_Review
+// FIX: Ensure we select r_id (Unique) 
 $sql_pending = "SELECT r.*, p.Name as ProfName, c.`Course Name`
                 FROM review r
                 LEFT JOIN professors p ON r.P_id = p.P_id
                 LEFT JOIN courses c ON r.C_id = c.c_id
-                WHERE r.Rv_id NOT IN (SELECT R_id FROM A_Review)
-                AND r.Rv_id NOT IN (SELECT R_id FROM R_Review)
-                ORDER BY r.Rv_id ASC";
+                WHERE r.Reviewed = 0
+                ORDER BY r.r_id ASC";
 
 $result = $conn->query($sql_pending);
 ?>
@@ -79,11 +91,17 @@ $result = $conn->query($sql_pending);
                 </div>
                 <span class="logo-text">Rate Your Grader</span>
             </div>
+            
             <div class="nav-links">
-                <a href="SearchOutput.php">Home</a>
-                <a href="#">Dashboard</a>
+                <a href="#how-it-works">How it works</a>
+                <a href="#features">Features</a>
+                <a href="SearchOutput.php">Search Graders</a>
                 <button class="btn btn-primary">Logout</button>
             </div>
+            
+            <button class="mobile-menu-btn">
+                <img src="Figures/menu.png" alt="Menu" class="mobile-menu-icon">
+            </button>
         </div>
     </nav>
 
@@ -98,12 +116,12 @@ $result = $conn->query($sql_pending);
             </div>
         <?php endif; ?>
 
-        <?php if ($result->num_rows > 0): ?>
+        <?php if ($result && $result->num_rows > 0): ?>
             <div class="review-grid">
                 <?php while($row = $result->fetch_assoc()): ?>
                     <div class="admin-card">
                         <div class="card-header">
-                            <span class="review-id">ID: #<?= $row['Rv_id'] ?></span>
+                            <span class="review-id">ID: #<?= $row['r_id'] ?></span>
                             <span class="date-badge">Prof: <?= htmlspecialchars($row['ProfName']) ?></span>
                         </div>
                         
@@ -118,13 +136,13 @@ $result = $conn->query($sql_pending);
                         <div class="card-actions">
                             <form method="POST" action="">
                                 <input type="hidden" name="action" value="approve">
-                                <input type="hidden" name="review_id" value="<?= $row['Rv_id'] ?>">
+                                <input type="hidden" name="review_id" value="<?= $row['r_id'] ?>">
                                 <button type="submit" class="btn-action btn-approve">
                                     Approve
                                 </button>
                             </form>
 
-                            <button class="btn-action btn-reject" onclick="openRejectModal(<?= $row['Rv_id'] ?>)">
+                            <button class="btn-action btn-reject" onclick="openRejectModal(<?= $row['r_id'] ?>)">
                                 Reject
                             </button>
                         </div>
@@ -170,13 +188,35 @@ $result = $conn->query($sql_pending);
                         <div class="logo-icon small">
                             <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
                         </div>
-                        <span class="footer-logo-text">Rate Your Grader</span>
+                        <span class="footer-logo-text">Rate My Grader</span>
                     </div>
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
-                <div class="footer-bottom">
-                    <p>&copy; 2024 Rate My Grader. Admin Dashboard.</p>
+                <div class="footer-actions">
+                    <h5>Apply</h5>
+                    <div class="footer-buttons">
+                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
+                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
+                    </div>
                 </div>
+
+                <div class="footer-socials">
+                    <h5>Our Socials</h5>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Facebook">
+                            <img src="Figures/facebook.png" alt="Facebook" class="social-icon">
+                        </a>
+                        <a href="#" aria-label="Instagram">
+                            <img src="Figures/instagram.png" alt="Instagram" class="social-icon">
+                        </a>
+                        <a href="#" aria-label="Twitter">
+                            <img src="Figures/twitter.png" alt="Twitter" class="social-icon">
+                        </a>
+                    </div>
+                </div>
+            </div>
+             <div class="footer-bottom">
+                <p>&copy; 2024 Rate My Grader. All rights reserved. Made with ❤️ for students everywhere.</p>
             </div>
         </div>
     </footer>
