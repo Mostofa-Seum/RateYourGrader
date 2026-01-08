@@ -144,16 +144,18 @@ if (isset($_GET['q'])) {
                             </div>
                         </div>
                         
-                      <div class="card-footer">
-                                <a href="ProfessorReview.php?P_id=<?= $row['P_id'] ?>&name=<?= urlencode($row['Name']) ?>&dept=<?= urlencode($row['Department']) ?>&uni=<?= urlencode($row['University']) ?>" 
-                               class="view-profile-btn" style="text-decoration: none;">
-                             Rate Now   <?= $iconArrow ?>
-                             </a>
-                               </div>
-                    </div>
-                </div>
+                  <div class="card-footer">
+                    <a href="ProfessorProfile.php?P_id=<?= $row['P_id'] ?>" class="view-profile-link" style="text-decoration: none;">
+                 View Profile &nbsp; <?= $iconArrow ?>
+           </a>
+
+              <a href="ProfessorReview.php?P_id=<?= $row['P_id'] ?>&name=<?= urlencode($row['Name']) ?>&dept=<?= urlencode($row['Department']) ?>&uni=<?= urlencode($row['University']) ?>" 
+                                    class="rate-profile-btn" style="text-decoration: none;">
+                        Rate Now &nbsp; <?= $iconArrow ?>
+                 </a>
+                          </div>
                 <?php 
-                    } // End While
+                    } 
                 } else {
                     echo "<p>No results found for '" . htmlspecialchars($search_term) . "'</p>";
                 }
@@ -206,7 +208,5 @@ if (isset($_GET['q'])) {
             </div>
         </div>
     </footer>
-
-    <script src="SearchOutput.js"></script>
 </body>
 </html>

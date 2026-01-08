@@ -355,11 +355,18 @@ body {
 /* Card Footer */
 .card-footer {
     border-top: 1px solid #e5e7eb;
-    padding-top: 1rem;
     margin-top: 1rem;
+    padding: 1rem;
+    
+    /* ADDED: Flexbox to align items side-by-side */
+    display: flex;
+    justify-content: space-between; /* Pushes one left, one right */
+    align-items: center;
 }
 
-.view-profile-btn {
+
+.rate-profile-btn, 
+.view-profile-link {
     background: none;
     border: none;
     color: var(--blue-600);
@@ -369,12 +376,13 @@ body {
     display: flex;
     align-items: center;
     padding: 0;
+    transition: color 0.2s ease;
 }
 
-.view-profile-btn:hover {
+.rate-profile-btn:hover, 
+.view-profile-link:hover {
     color: var(--blue-800);
 }
-
 /* --- Component: Buttons --- */
 .btn-primary {
     background-color: var(--primary-navy);
@@ -523,3 +531,4 @@ footer {
 @media (min-width: 1024px) {
     .footer-grid { grid-template-columns: repeat(3, 1fr); }
 }
+
