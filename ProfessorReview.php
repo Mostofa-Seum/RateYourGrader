@@ -116,11 +116,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <a href="#features">Features</a>
                 <a href="#search">Search Graders</a>
                 <button class="btn btn-primary-nav">Logout</button>
-            </div>
-            <button class="mobile-menu-btn">
-                <img src="Figures/menu.png" alt="Menu" class="mobile-menu-icon">
-            </button>
-        </div>
     </nav>
 
     <div style="margin-top: 100px;"></div>

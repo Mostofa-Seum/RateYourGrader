@@ -1,14 +1,14 @@
 <?php
 include 'Config.php';
 
-$p_id = isset($_GET['P_id']) ? ($_GET['P_id']) : 0;
+$p_id = isset($_GET['P_id']) ? intval($_GET['P_id']) : 0;
 
 if ($p_id == 0) {
     echo "Invalid Professor ID.";
     exit;
 }
 
-
+// 1. FETCH PROFESSOR DETAILS
 $sql_prof = "SELECT * FROM professors WHERE P_id = $p_id";
 $result_prof = $conn->query($sql_prof);
 
@@ -19,15 +19,17 @@ if ($result_prof->num_rows > 0) {
     exit;
 }
 
-
+// 2. FETCH STATS (Modified to count ONLY approved reviews)
+// We join with A_Review so the average/counts reflect only what the public sees
 $sql_stats = "SELECT 
-    COUNT(*) as total_reviews,
-    AVG(`Overall Rating`) as avg_overall,
-    AVG(`Grading Fairness`) as avg_fairness,
-    AVG(`Behavior and Communication`) as avg_behavior,
-    SUM(CASE WHEN `Would You Take This Course Again?` = 'Yes' THEN 1 ELSE 0 END) as take_again_count
-    FROM review 
-    WHERE P_id = $p_id";
+    COUNT(r.Rv_id) as total_reviews,
+    AVG(r.`Overall Rating`) as avg_overall,
+    AVG(r.`Grading Fairness`) as avg_fairness,
+    AVG(r.`Behavior and Communication`) as avg_behavior,
+    SUM(CASE WHEN r.`Would You Take This Course Again?` = 'Yes' THEN 1 ELSE 0 END) as take_again_count
+    FROM review r
+    INNER JOIN A_Review ar ON r.r_id = ar.R_id
+    WHERE r.P_id = $p_id";
 
 $result_stats = $conn->query($sql_stats);
 $stats = $result_stats->fetch_assoc();
@@ -44,12 +46,15 @@ if ($total_reviews > 0) {
     $take_again_percent = round(($stats['take_again_count'] / $total_reviews) * 100);
 }
 
-// 4. FETCH INDIVIDUAL REVIEWS (Joined with Courses table)
+// 3. FETCH INDIVIDUAL REVIEWS (Modified to show ONLY approved reviews)
+// INNER JOIN A_Review ensures we only get rows that exist in the approved table
 $sql_reviews = "SELECT r.*, c.`Course Name` 
                 FROM review r 
+                INNER JOIN A_Review ar ON r.r_id = ar.R_id
                 LEFT JOIN courses c ON r.C_id = c.c_id 
                 WHERE r.P_id = $p_id 
                 ORDER BY r.r_id DESC"; // Newest first
+
 $result_reviews = $conn->query($sql_reviews);
 
 // --- HELPER FUNCTION FOR STARS ---
@@ -94,7 +99,7 @@ function renderStars($rating) {
         <div class="nav-links">
             <a href="#how-it-works">How it works</a>
             <a href="#features">Features</a>
-            <a href="#search">Search Graders</a>
+            <a href="SearchOutput.php">Search Graders</a>
             <button class="btn btn-primary">Sign Up Free</button>
         </div>
     </div>
@@ -191,8 +196,8 @@ function renderStars($rating) {
                     <?php endwhile; ?>
                 </div>
             <?php else: ?>
-                <div class="no-reviews">
-                    <p>No reviews yet. Be the first to rate <?= htmlspecialchars($prof['Name']) ?>!</p>
+                <div class="no-reviews" style="text-align: center; padding: 3rem; color: #666; background: white; border-radius: 8px; border: 1px dashed #ccc;">
+                    <p>No approved reviews yet. Be the first to rate <?= htmlspecialchars($prof['Name']) ?>!</p>
                 </div>
             <?php endif; ?>
         </div>
