@@ -101,14 +101,16 @@ if (isset($_GET['q'])) {
                     while($row = $result->fetch_assoc()) {
                         $current_p_id = $row['P_id'];
 
-                        // --- 1. GET ACTUAL STATS FROM DB ---
+                        // --- 1. GET ACTUAL STATS FROM DB (APPROVED ONLY) ---
+                        // We JOIN the review table with A_Review to ensure we only count approved reviews
                         $stat_sql = "SELECT 
-                                        COUNT(*) as total_reviews, 
-                                        AVG(`Overall Rating`) as avg_overall,
-                                        AVG(`Grading Fairness`) as avg_fairness,
-                                        AVG(`Behavior and Communication`) as avg_behavior
-                                     FROM review 
-                                     WHERE P_id = '$current_p_id'";
+                                        COUNT(r.r_id) as total_reviews, 
+                                        AVG(r.`Overall Rating`) as avg_overall,
+                                        AVG(r.`Grading Fairness`) as avg_fairness,
+                                        AVG(r.`Behavior and Communication`) as avg_behavior
+                                     FROM review r
+                                     INNER JOIN A_Review ar ON r.r_id = ar.R_id
+                                     WHERE r.P_id = '$current_p_id'";
                         
                         $stat_result = $conn->query($stat_sql);
                         $stats = $stat_result->fetch_assoc();
@@ -204,7 +206,6 @@ if (isset($_GET['q'])) {
                     </div>
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
-
                 <div class="footer-actions">
                     <h5>Apply</h5>
                     <div class="footer-buttons">
@@ -212,7 +213,6 @@ if (isset($_GET['q'])) {
                         <a href="#" class="footer-nav-link">Apply for University Representative</a>
                     </div>
                 </div>
-
                 <div class="footer-socials">
                     <h5>Our Socials</h5>
                     <div class="social-icons">
@@ -227,7 +227,6 @@ if (isset($_GET['q'])) {
                         </a>
                     </div>
                 </div>
-                
             </div>
             
             <div class="footer-bottom">

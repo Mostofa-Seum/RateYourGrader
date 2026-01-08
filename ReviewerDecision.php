@@ -128,7 +128,6 @@ $result = $conn->query($sql_pending);
                         <div class="card-body">
                             <div class="meta-tags">
                                 <span class="tag">Course: <?= htmlspecialchars($row['Course Name']) ?></span>
-                                <span class="tag">Rating: <?= $row['Overall Rating'] ?>/5</span>
                             </div>
                             <p class="review-text">"<?= nl2br(htmlspecialchars($row['Review'])) ?>"</p>
                         </div>
