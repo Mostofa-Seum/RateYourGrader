@@ -147,7 +147,7 @@ if (isset($_GET['q'])) {
                       <div class="card-footer">
                                 <a href="ProfessorReview.php?P_id=<?= $row['P_id'] ?>&name=<?= urlencode($row['Name']) ?>&dept=<?= urlencode($row['Department']) ?>&uni=<?= urlencode($row['University']) ?>" 
                                class="view-profile-btn" style="text-decoration: none;">
-                             View Full Profile <?= $iconArrow ?>
+                             Rate Now   <?= $iconArrow ?>
                              </a>
                                </div>
                     </div>
@@ -163,16 +163,46 @@ if (isset($_GET['q'])) {
     </main>
     <?php endif; ?>
 
-    <footer class="main-footer">
+    <footer>
         <div class="container">
             <div class="footer-grid">
-                <div class="footer-col">
-                    <h5>About Rate My Grader</h5>
-                    <p>Helping students make informed decisions about their graders since 2025.</p>
+                <div class="footer-brand">
+                    <div class="logo-wrapper mb-2">
+                        <div class="logo-icon small">
+                            <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
+                        </div>
+                        <span class="footer-logo-text">Rate My Grader</span>
+                    </div>
+                    <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
+
+                <div class="footer-actions">
+                    <h5>Apply</h5>
+                    <div class="footer-buttons">
+                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
+                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
+                    </div>
+                </div>
+
+                <div class="footer-socials">
+                    <h5>Our Socials</h5>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Facebook">
+                            <img src="Figures/facebook.png" alt="Facebook" class="social-icon">
+                        </a>
+                        <a href="#" aria-label="Instagram">
+                            <img src="Figures/instagram.png" alt="Instagram" class="social-icon">
+                        </a>
+                        <a href="#" aria-label="Twitter">
+                            <img src="Figures/twitter.png" alt="Twitter" class="social-icon">
+                        </a>
+                    </div>
+                </div>
+                
             </div>
-            <div class="copyright">
-                <p>&copy; 2026 Rate My Grader. All rights reserved.</p>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Rate My Grader. All rights reserved. Made with ❤️ for students everywhere.</p>
             </div>
         </div>
     </footer>

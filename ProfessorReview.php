@@ -3,7 +3,6 @@
 include 'Config.php';
 
 // 2. INITIALIZE VARIABLES (From URL)
-// We capture the professor's details passed from the Search page
 $p_id = isset($_GET['P_id']) ? intval($_GET['P_id']) : 0;
 $prof_name = isset($_GET['name']) ? $_GET['name'] : "Unknown Professor";
 $prof_dept = isset($_GET['dept']) ? $_GET['dept'] : "Unknown Department";
@@ -20,35 +19,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Ratings
     $overall = intval($_POST['overallRating']);
     $fairness = intval($_POST['fairnessRating']);
-    $behavior = intval($_POST['feedbackRating']); // Maps to 'Behavior and Communication'
+    $behavior = intval($_POST['feedbackRating']); 
     
     // Text & Choices
-    $take_again = $_POST['takeAgain']; // 'Yes', 'Maybe', 'No'
+    $take_again = $_POST['takeAgain']; 
     $course_name = $conn->real_escape_string($_POST['courseName']);
     $department = $conn->real_escape_string($_POST['department']); 
     $review_text = $conn->real_escape_string($_POST['review']);
-    $difficulty = $_POST['difficulty']; // 'Easy', 'Moderate', etc.
+    $difficulty = $_POST['difficulty']; 
     
-    // User IDs (Placeholder: Replace '1' with actual session IDs if you have login)
+    // User IDs (Placeholder)
     $student_id = 1; 
     $reviewer_id = 1; 
 
-    // B. VALIDATION: Check if Rating is 0
+    // B. VALIDATION
     if ($overall == 0 || $fairness == 0 || $behavior == 0) {
         $message = "Please select all star ratings.";
         $messageType = "error";
     } else {
-        // C. INSERT COURSE (To get new C_id)
-        $sql_course = "INSERT INTO courses (`Course Name`, `P_id`) VALUES ('$course_name', '$p_id_posted')";
         
-        if ($conn->query($sql_course) === TRUE) {
-            $generated_c_id = $conn->insert_id; // Get the ID of the course we just created
+        // --- C. LOGIC CHANGE: CHECK IF COURSE EXISTS ---
+        $final_c_id = 0;
+        $course_error = false;
 
-            // D. INSERT REVIEW (Using the generated C_id)
+        $check_sql = "SELECT c_id FROM courses WHERE `Course Name` = '$course_name' AND P_id = '$p_id_posted'";
+        $check_result = $conn->query($check_sql);
+
+        if ($check_result && $check_result->num_rows > 0) {
+            // Course Exists -> Get ID
+            $row = $check_result->fetch_assoc();
+            $final_c_id = $row['c_id'];
+        } else {
+            // Course Does Not Exist -> Insert New
+            $insert_course_sql = "INSERT INTO courses (`Course Name`, `P_id`) VALUES ('$course_name', '$p_id_posted')";
+            if ($conn->query($insert_course_sql) === TRUE) {
+                $final_c_id = $conn->insert_id;
+            } else {
+                $message = "Error saving course: " . $conn->error;
+                $messageType = "error";
+                $course_error = true;
+            }
+        }
+
+        // --- D. INSERT REVIEW ---
+        if (!$course_error && $final_c_id > 0) {
             $sql_review = "INSERT INTO review 
             (`P_id`, `Rv_id`, `S_id`, `C_id`, `Review`, `Overall Rating`, `Grading Fairness`, `Behavior and Communication`, `Would You Take This Course Again?`, `Department`, `Difficulty Level`) 
             VALUES 
-            ('$p_id_posted', '$reviewer_id', '$student_id', '$generated_c_id', '$review_text', '$overall', '$fairness', '$behavior', '$take_again', '$department', '$difficulty')";
+            ('$p_id_posted', '$reviewer_id', '$student_id', '$final_c_id', '$review_text', '$overall', '$fairness', '$behavior', '$take_again', '$department', '$difficulty')";
 
             if ($conn->query($sql_review) === TRUE) {
                 $message = "Review submitted successfully!";
@@ -57,9 +75,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $message = "Error submitting review: " . $conn->error;
                 $messageType = "error";
             }
-        } else {
-            $message = "Error saving course: " . $conn->error;
-            $messageType = "error";
         }
     }
 }
@@ -70,10 +85,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rate My Grader - Review</title>
     <link rel="stylesheet" href="ProfessorReview.css">
     <style>
-        /* Helper for local icons since we removed Font Awesome */
         .icon-img {
             width: 1.2em;
             height: 1.2em;

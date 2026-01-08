@@ -163,6 +163,7 @@ body {
     color: var(--navy);
     text-decoration: none;
     margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
     font-size: 0.95rem;
     transition: all 0.3s ease;
     font-weight: 500;
