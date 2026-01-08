@@ -173,7 +173,7 @@ if (isset($_GET['q'])) {
                         <div class="logo-icon small">
                             <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
                         </div>
-                        <span class="footer-logo-text">Rate My Grader</span>
+                        <span class="footer-logo-text">Rate Your Grader</span>
                     </div>
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>

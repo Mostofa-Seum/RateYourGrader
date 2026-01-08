@@ -82,24 +82,27 @@ function renderStars($rating) {
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="container nav-container">
-            <div class="logo-wrapper">
-                <div class="logo-icon">
-                    <img src="Images/scolar_cap.png" alt="Logo" class="logo-img">
-                </div>
-                <span class="logo-text">Rate Your Grader</span>
+<nav class="navbar">
+    <div class="container nav-container">
+        <div class="logo-wrapper">
+            <div class="logo-icon">
+                <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
             </div>
-            <div class="nav-links">
-                <a href="SearchOutput.php">Search Graders</a>
-                <a href="#features">Features</a>
-                <button class="btn btn-primary-nav">Sign Up Free</button>
-            </div>
-            <button class="mobile-menu-btn">
-                <img src="Figures/menu.png" alt="Menu" class="mobile-menu-icon">
-            </button>
+            <span class="logo-text">Rate Your Grader</span>
         </div>
-    </nav>
+        
+        <div class="nav-links">
+            <a href="#how-it-works">How it works</a>
+            <a href="#features">Features</a>
+            <a href="#search">Search Graders</a>
+            <button class="btn btn-primary">Sign Up Free</button>
+        </div>
+        
+        <button class="mobile-menu-btn">
+            <img src="Figures/menu.png" alt="Menu" class="mobile-menu-icon">
+        </button>
+    </div>
+</nav>
     <div style="margin-top: 80px;"></div>
 
     <header class="prof-header">
@@ -207,7 +210,7 @@ function renderStars($rating) {
                         <div class="logo-icon small">
                             <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
                         </div>
-                        <span class="footer-logo-text">Rate My Grader</span>
+                        <span class="footer-logo-text">Rate Your Grader</span>
                     </div>
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
@@ -221,12 +224,21 @@ function renderStars($rating) {
                 <div class="footer-socials">
                     <h5>Our Socials</h5>
                     <div class="social-icons">
-                         <a href="#"><img src="Figures/facebook.png" alt="Facebook" class="social-icon"></a>
+                        <a href="#" aria-label="Facebook">
+                            <img src="Figures/facebook.png" alt="Facebook" class="social-icon">
+                        </a>
+                        <a href="#" aria-label="Instagram">
+                            <img src="Figures/instagram.png" alt="Instagram" class="social-icon">
+                        </a>
+                        <a href="#" aria-label="Twitter">
+                            <img src="Figures/twitter.png" alt="Twitter" class="social-icon">
+                        </a>
                     </div>
                 </div>
             </div>
+            
             <div class="footer-bottom">
-                <p>&copy; 2024 Rate My Grader. All rights reserved.</p>
+                <p>&copy; 2024 Rate My Grader. All rights reserved. Made with ❤️ for students everywhere.</p>
             </div>
         </div>
     </footer>
