@@ -2,10 +2,10 @@
 :root {
     --primary-navy: #1e40af;
     --dark-navy: #1e3a8a;
-    --darkest-navy: #1e1b4b;
+
     --text-gray: #4b5563;
     --border-color: rgba(229, 231, 235, 0.5);
-    
+    --darkest-navy: #1e1b4b;
     --gray-50: #f9fafb;
     --gray-100: #f3f4f6;
     --gray-200: #e5e7eb;
@@ -186,6 +186,12 @@ body { font-family: 'Inter', sans-serif; background-color: var(--gray-50); color
     border-color: var(--red-100);
 }
 
+.tag-yellow {
+    background-color: var(--yellow-400);
+    color: var(--darkest-navy);
+    border-color: var(--yellow-400);
+}
+
 .tag-gray {
     background-color: var(--white);
     border-color: var(--gray-200);
@@ -241,7 +247,7 @@ footer {
 .social-icon {
     width: 24px;
     height: 24px;
-    filter: brightness(0) invert(1);
+
 }
 
 /* --- Animations --- */

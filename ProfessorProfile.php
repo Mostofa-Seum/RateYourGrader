@@ -97,10 +97,6 @@ function renderStars($rating) {
             <a href="#search">Search Graders</a>
             <button class="btn btn-primary">Sign Up Free</button>
         </div>
-        
-        <button class="mobile-menu-btn">
-            <img src="Figures/menu.png" alt="Menu" class="mobile-menu-icon">
-        </button>
     </div>
 </nav>
     <div style="margin-top: 80px;"></div>
@@ -181,7 +177,7 @@ function renderStars($rating) {
                             </div>
 
                             <div class="review-tags">
-                                <span class="tag <?= $row['Would You Take This Course Again?'] == 'Yes' ? 'tag-green' : 'tag-red' ?>">
+                                <span class="tag <?= $row['Would You Take This Course Again?'] == 'Yes' ? 'tag-green' : ($row['Would You Take This Course Again?'] == 'Maybe' ? 'tag-yellow' : 'tag-red') ?>">
                                     Take again: <?= htmlspecialchars($row['Would You Take This Course Again?']) ?>
                                 </span>
                                 <span class="tag tag-gray">Fairness: <?= $row['Grading Fairness'] ?>/5</span>

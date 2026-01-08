@@ -99,10 +99,31 @@ if (isset($_GET['q'])) {
                 <?php
                 if ($count > 0) {
                     while($row = $result->fetch_assoc()) {
-                        // Generate random stats for display
-                        $randomRating = number_format(rand(35, 50) / 10, 1);
-                        $randomFairness = number_format(rand(35, 50) / 10, 1);
-                        $randomClarity = number_format(rand(35, 50) / 10, 1);
+                        $current_p_id = $row['P_id'];
+
+                        // --- 1. GET ACTUAL STATS FROM DB ---
+                        $stat_sql = "SELECT 
+                                        COUNT(*) as total_reviews, 
+                                        AVG(`Overall Rating`) as avg_overall,
+                                        AVG(`Grading Fairness`) as avg_fairness,
+                                        AVG(`Behavior and Communication`) as avg_behavior
+                                     FROM review 
+                                     WHERE P_id = '$current_p_id'";
+                        
+                        $stat_result = $conn->query($stat_sql);
+                        $stats = $stat_result->fetch_assoc();
+
+                        // --- 2. FORMAT DATA ---
+                        $total_reviews = $stats['total_reviews'];
+                        
+                        // Default to 0.0 if no reviews exist
+                        $overall_rating = $total_reviews > 0 ? number_format($stats['avg_overall'], 1) : "0.0";
+                        $fairness_score = $total_reviews > 0 ? number_format($stats['avg_fairness'], 1) : "0.0";
+                        $clarity_score  = $total_reviews > 0 ? number_format($stats['avg_behavior'], 1) : "0.0";
+                        
+                        // Calculate percentage for progress bars (Score / 5 * 100)
+                        $fairness_width = ($fairness_score / 5) * 100;
+                        $clarity_width  = ($clarity_score / 5) * 100;
                 ?>
                 
                 <div class="card">
@@ -123,37 +144,43 @@ if (isset($_GET['q'])) {
                         <div style="margin-bottom: 1rem;">
                             <div class="rating-header">
                                 <span style="font-weight: 600;">Overall Rating</span>
-                                <span class="rating-score"><?php echo $randomRating; ?></span>
+                                <span class="rating-score"><?php echo $overall_rating; ?></span>
                             </div>
                             <div class="stars-row">
                                 <?= $starFull . $starFull . $starFull . $starFull . $starHalf ?>
-                                <span class="review-count">(<?php echo rand(10, 150); ?> reviews)</span>
+                                <span class="review-count">(<?php echo $total_reviews; ?> reviews)</span>
                             </div>
                             
                             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                 <div class="rating-row">
                                     <span class="rating-label">Fairness</span>
-                                    <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: <?php echo ($randomFairness/5)*100; ?>%"></div></div>
-                                    <span class="rating-val"><?php echo $randomFairness; ?></span>
+                                    <div class="rating-bar-bg">
+                                        <div class="rating-bar-fill" style="width: <?php echo $fairness_width; ?>%"></div>
+                                    </div>
+                                    <span class="rating-val"><?php echo $fairness_score; ?></span>
                                 </div>
                                 <div class="rating-row">
                                     <span class="rating-label">Clarity</span>
-                                    <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: <?php echo ($randomClarity/5)*100; ?>%"></div></div>
-                                    <span class="rating-val"><?php echo $randomClarity; ?></span>
+                                    <div class="rating-bar-bg">
+                                        <div class="rating-bar-fill" style="width: <?php echo $clarity_width; ?>%"></div>
+                                    </div>
+                                    <span class="rating-val"><?php echo $clarity_score; ?></span>
                                 </div>
                             </div>
                         </div>
                         
-                  <div class="card-footer">
-                    <a href="ProfessorProfile.php?P_id=<?= $row['P_id'] ?>" class="view-profile-link" style="text-decoration: none;">
-                 View Profile &nbsp; <?= $iconArrow ?>
-           </a>
+                        <div class="card-footer">
+                            <a href="ProfessorProfile.php?P_id=<?= $row['P_id'] ?>" class="view-profile-link" style="text-decoration: none;">
+                                View Profile &nbsp; <?= $iconArrow ?>
+                            </a>
 
-              <a href="ProfessorReview.php?P_id=<?= $row['P_id'] ?>&name=<?= urlencode($row['Name']) ?>&dept=<?= urlencode($row['Department']) ?>&uni=<?= urlencode($row['University']) ?>" 
-                                    class="rate-profile-btn" style="text-decoration: none;">
-                        Rate Now &nbsp; <?= $iconArrow ?>
-                 </a>
-                          </div>
+                            <a href="ProfessorReview.php?P_id=<?= $row['P_id'] ?>&name=<?= urlencode($row['Name']) ?>&dept=<?= urlencode($row['Department']) ?>&uni=<?= urlencode($row['University']) ?>" 
+                               class="rate-profile-btn" style="text-decoration: none;">
+                                Rate Now &nbsp; <?= $iconArrow ?>
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 <?php 
                     } 
                 } else {
