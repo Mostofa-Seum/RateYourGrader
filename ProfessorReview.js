@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const signalDiv = document.getElementById('redirect-signal');
 
     if (signalDiv) {
-        console.log("Redirect Signal Found! Redirecting in 2 seconds...");
+        console.log("Redirecting in 2 seconds...");
         
         // Optional: Change button text to show user something is happening
         const submitBtn = document.querySelector('.btn-primary');

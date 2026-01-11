@@ -200,3 +200,25 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
+/* Container to handle position and spacing */
+.forgot-pass-container {
+    text-align: right;      /* Moves link to the right side */
+    margin-top: -10px;      /* Pulls it slightly closer to the password line */
+    margin-bottom: 20px;    /* Adds breathing room before the Sign In button */
+}
+
+/* The actual link styling */
+.forgot-pass-link {
+    color: #888;            /* Soft grey to match your input labels */
+    font-size: 0.85rem;     /* Slightly smaller than input text */
+    text-decoration: none;  /* Removes the default underline */
+    font-weight: 500;       /* Makes it slightly bolder */
+    transition: all 0.3s ease;
+    padding: 5px;           /* Increases clickable area slightly */
+}
+
+/* Hover effect */
+.forgot-pass-link:hover {
+    color: #1a237e;         /* Changes to your main theme blue on hover */
+    cursor: pointer;
+}

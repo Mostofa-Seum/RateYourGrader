@@ -159,10 +159,15 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
                             <label>Email</label>
                         </div>
                         
-                        <div class="input-group">
-                            <input type="password" id="password" name="login_password" required>
-                            <label>Password</label>
-                        </div>
+                   <div class="input-group">
+                      <input type="password" id="password" name="login_password" required>
+                          <label>Password</label>
+                          </div>
+
+                       <div class="forgot-pass-container">
+              <a href="ForgetPassword.php" class="forgot-pass-link">Forgot Password?</a>
+                               </div>
+
                         
                         <button type="submit" class="submit-btn">Sign In</button>
                     </form>
