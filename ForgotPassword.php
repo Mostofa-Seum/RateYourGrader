@@ -122,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="email" id="email" name="email" placeholder="Enter your registered email" required>
                 </div>
 
-                <button type="submit" class="btn-submit">Search Account</button>
+                <button type="submit" class="btn-submit">Reset Password</button>
             </form>
             <?php endif; ?>
 
