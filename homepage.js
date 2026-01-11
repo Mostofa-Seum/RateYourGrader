@@ -52,13 +52,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Mobile Menu Toggle (Optional logic since button exists) ---
-    const mobileBtn = document.querySelector('.mobile-menu-btn');
-    if (mobileBtn) {
-        mobileBtn.addEventListener('click', () => {
-            // Note: To make this fully functional, you would need to add a 
-            // mobile menu container in the HTML and toggle its display here.
-            alert('Mobile menu clicked! (Add menu logic here)');
-        });
-    }
+
 });
