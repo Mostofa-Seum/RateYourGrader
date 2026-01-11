@@ -72,8 +72,13 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
                 $row = $result->fetch_assoc();
                 
                 if ($login_pass === $row['Password']) {
-                    $login_success_name = $row['Username'];
-                } else {
+    // NEW WAY: Save to "Global Memory"
+    $_SESSION['user_name'] = $row['Username']; 
+
+    // Redirect to homepage with a secret flag '?login=success'
+    header("Location: Login.php?login=success"); 
+    exit();
+}else {
                     $login_error = "Incorrect Password";
                 }
             } else {
@@ -88,7 +93,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="Login.css">
     <title>Signin & Signup</title>
     <style>
         .error-msg {
@@ -210,6 +215,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
             </div>
         </div>
     </div>
-    <script src="login.js"></script>
+    <script src="Login.js"></script>
 </body>
 </html>

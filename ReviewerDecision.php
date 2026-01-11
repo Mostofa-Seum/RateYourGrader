@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'Config.php';
 
 $message = "";
@@ -82,7 +83,12 @@ $result = $conn->query($sql_pending);
     <link rel="stylesheet" href="ReviewerDecision.css">
 </head>
 <body>
-
+    <?php if (isset($_GET['login']) && $_GET['login'] == 'success'): ?>
+    <script>
+        // This line cleans the URL so the alert doesn't appear if they refresh
+        window.history.replaceState(null, null, window.location.pathname);
+    </script>
+<?php endif; ?>
     <nav class="navbar">
         <div class="container nav-container">
             <div class="logo-wrapper">
@@ -92,16 +98,19 @@ $result = $conn->query($sql_pending);
                 <span class="logo-text">Rate Your Grader</span>
             </div>
             
-            <div class="nav-links">
-                <a href="#how-it-works">How it works</a>
-                <a href="#features">Features</a>
-                <a href="SearchOutput.php">Search Graders</a>
-                <button class="btn btn-primary">Logout</button>
-            </div>
-            
-            <button class="mobile-menu-btn">
-                <img src="Figures/menu.png" alt="Menu" class="mobile-menu-icon">
-            </button>
+<div class="nav-links">
+    <a href="#how-it-works">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#search">Search Graders</a>
+
+    <?php if (isset($_SESSION['user_name'])): ?>
+        <span style="margin-right: 15px; font-weight: bold;">Hello, <?php echo $_SESSION['user_name']; ?></span>
+        <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
+    <?php else: ?>
+        <a href="Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
+    <?php endif; ?>
+</div>
+        </
         </div>
     </nav>
 

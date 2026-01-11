@@ -1,4 +1,7 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $host="localhost";  // server name
 $user="root"; // username of the db
 $pass=""; // password of the db

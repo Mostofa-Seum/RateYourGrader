@@ -1,4 +1,7 @@
 <?php
+
+session_start(); 
+
 include 'Config.php';
 
 // 1. DEFINE IMAGES (Using your PNG files)
@@ -41,6 +44,12 @@ if (isset($_GET['q'])) {
     <title>Find Your Grader</title>
 </head>
 <body>
+    <?php if (isset($_GET['login']) && $_GET['login'] == 'success'): ?>
+    <script>
+        // This line cleans the URL so the alert doesn't appear if they refresh
+        window.history.replaceState(null, null, window.location.pathname);
+    </script>
+<?php endif; ?>
     <nav class="navbar">
         <div class="container nav-container">
             <div class="logo-wrapper">
@@ -51,14 +60,17 @@ if (isset($_GET['q'])) {
             </div>
             
             <div class="nav-links">
-                <a href="#how-it-works">How it works</a>
-                <a href="#features">Features</a>
-                <button class="btn btn-primary">Sign Up Free</button>
-            </div>
-            
-            <button class="mobile-menu-btn">
-                <img src="Figures/menu.png" alt="Menu" class="mobile-menu-icon">
-            </button>
+    <a href="#how-it-works">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#search">Search Graders</a>
+
+    <?php if (isset($_SESSION['user_name'])): ?>
+        <span style="margin-right: 15px; font-weight: bold;">Hello, <?php echo $_SESSION['user_name']; ?></span>
+        <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
+    <?php else: ?>
+        <a href="Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
+    <?php endif; ?>
+</div>
         </div>
     </nav>
     <div style="margin-top: 80px;"></div>
@@ -104,10 +116,10 @@ if (isset($_GET['q'])) {
                         // --- 1. GET ACTUAL STATS FROM DB (APPROVED ONLY) ---
                         // We JOIN the review table with A_Review to ensure we only count approved reviews
                         $stat_sql = "SELECT 
-                                        COUNT(r.r_id) as total_reviews, 
-                                        AVG(r.`Overall Rating`) as avg_overall,
-                                        AVG(r.`Grading Fairness`) as avg_fairness,
-                                        AVG(r.`Behavior and Communication`) as avg_behavior
+                                            COUNT(r.r_id) as total_reviews, 
+                                            AVG(r.`Overall Rating`) as avg_overall,
+                                            AVG(r.`Grading Fairness`) as avg_fairness,
+                                            AVG(r.`Behavior and Communication`) as avg_behavior
                                      FROM review r
                                      INNER JOIN A_Review ar ON r.r_id = ar.R_id
                                      WHERE r.P_id = '$current_p_id'";
