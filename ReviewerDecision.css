@@ -1,24 +1,61 @@
-/* --- Global Variables --- */
+/* =========================================
+   1. SHARED GLOBAL STYLES (From Working File)
+   ========================================= */
 :root {
+    /* Navbar specific vars */
     --primary-navy: #1e40af;
     --dark-navy: #1e3a8a;
     --darkest-navy: #1e1b4b;
+    --text-gray: #4b5563;
+    --border-color: rgba(229, 231, 235, 0.5);
+    --transition-speed: 0.3s;
+    
+    /* Common Colors */
     --gray-50: #f9fafb;
     --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
     --gray-600: #4b5563;
     --gray-800: #1f2937;
     --white: #ffffff;
+    --blue-600: #2563eb;
+    
+    /* Reviewer Specific Colors */
     --green-600: #16a34a;
     --red-600: #dc2626;
+
+    /* Spacing & Sizing */
     --container-width: 1200px;
-    --border-color: rgba(229, 231, 235, 0.5);
-    --transition-speed: 0.3s;
+    --radius-lg: 0.5rem;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background-color: var(--gray-50); color: var(--gray-800); }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-/* --- Navbar Styling --- */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--gray-50);
+    color: var(--gray-800);
+    line-height: 1.5;
+}
+
+/* Layout Utilities */
+.container {
+    width: 100%;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.text-center { text-align: center; }
+.flex { display: flex; }
+.mb-2 { margin-bottom: 1.5rem; }
+
+/* =========================================
+   2. NAVBAR STYLES (Exact copy from SearchOutput)
+   ========================================= */
 .navbar {
     position: fixed;
     top: 0;
@@ -40,13 +77,9 @@ body { font-family: 'Inter', sans-serif; background-color: var(--gray-50); color
     align-items: center;
     padding-top: 1rem;
     padding-bottom: 1rem;
-    max-width: var(--container-width);
-    margin: 0 auto;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
 }
 
-/* --- Logo Styling --- */
+/* Logo Styling */
 .logo-wrapper {
     display: flex;
     align-items: center;
@@ -72,18 +105,19 @@ body { font-family: 'Inter', sans-serif; background-color: var(--gray-50); color
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
 .logo-img { width: 60%; height: 60%; object-fit: contain; }
 
-/* --- Links & Buttons --- */
+/* Links & Buttons */
 .nav-links {
-    display: none; 
+    display: none; /* Hidden on mobile */
     align-items: center;
     gap: 2rem;
 }
 
 .nav-links a {
     text-decoration: none;
-    color: var(--gray-600);
+    color: var(--text-gray);
     font-weight: 500;
     transition: color 0.2s;
 }
@@ -92,9 +126,7 @@ body { font-family: 'Inter', sans-serif; background-color: var(--gray-50); color
     color: var(--primary-navy);
 }
 
-.btn-primary {
-    background-color: var(--primary-navy);
-    color: white;
+.btn {
     padding: 0.5rem 1.5rem;
     border-radius: 0.75rem;
     font-weight: 500;
@@ -103,12 +135,18 @@ body { font-family: 'Inter', sans-serif; background-color: var(--gray-50); color
     transition: all 0.2s;
 }
 
+.btn-primary {
+    background-color: var(--primary-navy);
+    color: var(--white);
+    font-weight: 600;
+}
+
 .btn-primary:hover {
     background-color: var(--dark-navy);
     transform: translateY(-2px);
 }
 
-/* --- Mobile Menu Button --- */
+/* Mobile Menu */
 .mobile-menu-btn {
     display: block;
     background: none;
@@ -130,97 +168,25 @@ body { font-family: 'Inter', sans-serif; background-color: var(--gray-50); color
     .mobile-menu-btn { display: none; }
 }
 
-/* --- Footer Styling --- */
-footer {
-    background-color: var(--darkest-navy);
-    color: white;
-    padding: 4rem 0;
-    margin-top: 4rem;
+
+/* =========================================
+   3. REVIEWER SPECIFIC STYLES (Preserved)
+   ========================================= */
+.page-title { 
+    font-size: 2rem; 
+    margin-bottom: 2rem; 
+    color: var(--darkest-navy); 
+    font-weight: 800; 
 }
 
-.footer-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    max-width: var(--container-width);
-    margin: 0 auto;
-    padding: 0 1rem;
-}
-
-.logo-icon.small { width: 3rem; height: 3rem; }
-.mb-2 { margin-bottom: 1.5rem; }
-
-.footer-brand p {
-    color: #9ca3af;
-    font-size: 0.875rem;
-    line-height: 1.6;
-}
-
-.footer-actions h5, .footer-socials h5 {
-    font-weight: 700;
-    font-size: 1.125rem;
-    margin-bottom: 1rem;
-}
-
-.footer-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    align-items: flex-start;
-}
-
-.footer-nav-link {
-    text-decoration: none;
-    color: #9ca3af;
-    font-weight: 500;
-    transition: color 0.2s;
-}
-
-.footer-nav-link:hover {
-    color: white;
-}
-
-.footer-socials {
-    justify-self: start;
-}
-@media (min-width: 768px) {
-    .footer-grid { grid-template-columns: repeat(3, 1fr); }
-    .footer-socials { justify-self: end; }
-}
-
-.social-icons {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.social-icon {
-    width: 24px;
-    height: 24px;
-    /* Removed filter to ensure original icon colors show, or add filter: brightness(0) invert(1) for white icons */
-}
-
-.footer-bottom {
-    margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px solid #1f2937;
-    text-align: center;
-    color: #6b7280;
-    font-size: 0.875rem;
-}
-
-/* --- Main Layout --- */
-.container { max-width: var(--container-width); margin: 0 auto; padding: 0 1rem; }
-.page-title { font-size: 2rem; margin-bottom: 2rem; color: var(--darkest-navy); font-weight: 800; }
-
-/* --- Review Grid --- */
+/* Review Grid */
 .review-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
     gap: 1.5rem;
 }
 
-/* --- Admin Card --- */
+/* Admin Card */
 .admin-card {
     background: var(--white);
     border: 1px solid var(--gray-200);
@@ -258,7 +224,7 @@ footer {
 
 .review-text { font-style: italic; line-height: 1.6; color: var(--gray-800); }
 
-/* --- Action Buttons --- */
+/* Action Buttons */
 .card-actions {
     display: flex;
     gap: 1rem;
@@ -293,7 +259,7 @@ footer {
 }
 .btn-reject:hover { background-color: #fef2f2; }
 
-/* --- Modal Styles --- */
+/* Modal Styles */
 .modal-overlay {
     display: none; 
     position: fixed;
@@ -367,7 +333,7 @@ footer {
     font-weight: 600;
 }
 
-/* --- Messages --- */
+/* Messages */
 .alert {
     padding: 1rem;
     margin-bottom: 2rem;
@@ -384,4 +350,106 @@ footer {
     border-radius: 1rem;
     border: 2px dashed var(--gray-200);
     color: var(--gray-600);
+}
+
+
+/* =========================================
+   4. FOOTER STYLES (Exact copy from SearchOutput)
+   ========================================= */
+footer {
+    background-color: var(--darkest-navy);
+    color: white;
+    padding: 4rem 0;
+    margin-top: 4rem; /* Kept margin-top for spacing */
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+}
+
+.logo-icon.small { width: 3rem; height: 3rem; }
+
+.footer-brand p {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.footer-actions h5 {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+}
+
+.footer-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.footer-nav-link {
+    text-decoration: none;
+    color: #9ca3af;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.footer-nav-link:hover {
+    color: white;
+}
+
+.footer-socials {
+    justify-self: end;
+    text-align: left;
+}
+
+.footer-socials .social-icons {
+    justify-content: flex-end;
+}
+
+.footer-socials h5 {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+}
+
+.social-icons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.social-icons a {
+    width: 3rem;
+    height: 3rem;
+    background-color: transparent;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.social-icons a:hover {
+    transform: translateY(-4px);
+}
+
+.social-icon { width: 24px; height: 24px; }
+
+.footer-bottom {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid #1f2937;
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+    .footer-grid { grid-template-columns: repeat(3, 1fr); }
 }
