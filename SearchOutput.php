@@ -22,7 +22,7 @@ if (isset($_GET['q'])) {
     $safe_search = $conn->real_escape_string($search_term);
     
     // Run the query
-    $sql = "SELECT * FROM professors WHERE Name LIKE '%$safe_search%' OR Department LIKE '%$safe_search%' OR University LIKE '%$safe_search%'";
+    $sql = "SELECT * FROM professors WHERE Name LIKE '%$safe_seaarch%' OR Department LIKE '%$safe_search%' OR University LIKE '%$safe_search%'";
     $result = $conn->query($sql);
     
     if (!$result) {

@@ -165,7 +165,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
                           </div>
 
                        <div class="forgot-pass-container">
-              <a href="ForgetPassword.php" class="forgot-pass-link">Forgot Password?</a>
+              <a href="ForgotPassword.php" class="forgot-pass-link">Forgot Password?</a>
                                </div>
 
                         
