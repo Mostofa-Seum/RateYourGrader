@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../Student/MVC/db/Config.php';
+include '../../../Student/MVC/db/Config.php';
 
 // --- 1. HANDLE AJAX REQUESTS (Profile Updates) ---
 // Copied from UserDashboard.php logic
@@ -158,7 +158,7 @@ if ($res_rej) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reviewer Dashboard</title>
-    <link rel="stylesheet" href="ReviewerDashboard.css"> 
+    <link rel="stylesheet" href="../css/ReviewerDashboard.css"> 
     <style>
         .stat-card.pending {
             cursor: pointer;
@@ -173,21 +173,17 @@ if ($res_rej) {
     <div class="container nav-container">
         <div class="logo-wrapper">
             <div class="logo-icon">
-                <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
+                <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
             </div>
             <span class="logo-text">Rate Your Grader</span>
         </div>
         
         <div class="nav-links">
-            <a href="HomePage.php">Home</a>
-            <a href="SearchOutput.php">Search Graders</a>
+            <a href="../../../Common/MVC/php/HomePage.php">Home</a>
+            <a href="../../../Student/MVC/php/SearchOutput.php">Search Graders</a>
             <a href="ReviewerDecision.php" style="color:var(--primary-navy);">Review Panel</a>
-            <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
+            <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
         </div>
-        
-        <button class="mobile-menu-btn">
-            <img src="Figures/menu.png" alt="Menu" class="mobile-menu-icon">
-        </button>
     </div>
 </nav>
 
@@ -197,7 +193,7 @@ if ($res_rej) {
             
             <div class="card profile-card">
                 <div class="profile-avatar">
-                    <img src="Figures/aiden.png" alt="Profile Avatar"> 
+                    <img src="../images/aiden.png" alt="Profile Avatar"> 
                 </div>
                 <div class="profile-name" style="color: var(--primary-navy);"><?php echo htmlspecialchars($user_data['Username']); ?></div>
                 <div class="profile-email"><?php echo htmlspecialchars($user_data['Email']); ?></div>
@@ -297,9 +293,9 @@ if ($res_rej) {
                 <div class="footer-brand">
                     <div class="logo-wrapper mb-2">
                         <div class="logo-icon small">
-                            <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
+                            <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
                         </div>
-                        <span class="footer-logo-text">Rate My Grader</span>
+                        <span class="footer-logo-text">Rate Your Grader</span>
                     </div>
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
@@ -316,20 +312,20 @@ if ($res_rej) {
                     <h5>Our Socials</h5>
                     <div class="social-icons">
                         <a href="#" aria-label="Facebook">
-                            <img src="Figures/facebook.png" alt="Facebook" class="social-icon">
+                            <img src="../images/facebook.png" alt="Facebook" class="social-icon">
                         </a>
                         <a href="#" aria-label="Instagram">
-                            <img src="Figures/instagram.png" alt="Instagram" class="social-icon">
+                            <img src="../images/instagram.png" alt="Instagram" class="social-icon">
                         </a>
                         <a href="#" aria-label="Twitter">
-                            <img src="Figures/twitter.png" alt="Twitter" class="social-icon">
+                            <img src="../images/twitter.png" alt="Twitter" class="social-icon">
                         </a>
                     </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2024 Rate My Grader. All rights reserved.</p>
+                <p>&copy; 2026 Rate My Grader. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -338,7 +334,7 @@ if ($res_rej) {
 <script>
     window.reviewerData = <?php echo json_encode($reviewsData, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 </script>
-<script src="ReviewerDashboard.js"></script>
+<script src="../js/ReviewerDashboard.js"></script>
 
 </body>
 </html>

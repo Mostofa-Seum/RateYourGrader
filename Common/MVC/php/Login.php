@@ -1,4 +1,6 @@
 <?php
+session_start(); // Start session to use $_SESSION variables
+
 // Initialize variables
 $name = "";
 $email = "";
@@ -18,13 +20,18 @@ if (isset($_GET['signup']) && $_GET['signup'] === 'success') {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+    // ==========================================
+    // SIGNUP LOGIC
+    // ==========================================
     if (isset($_POST['action']) && $_POST['action'] == 'signup') {
         
-        $name = htmlspecialchars(trim($_POST['name']));
-        $email = htmlspecialchars(trim($_POST['email']));
+        // Sanitize and Escape inputs for Database Safety
+        $name = $conn->real_escape_string(htmlspecialchars(trim($_POST['name'])));
+        $email = $conn->real_escape_string(htmlspecialchars(trim($_POST['email'])));
         $password = $_POST['password'];
         $confirmPassword = $_POST['confirmPassword'];
 
+        // Validation
         if (empty($name) || empty($email) || empty($password) || empty($confirmPassword)) {
             $signup_error = "All fields are required!";
             $show_signup_form = true; 
@@ -38,19 +45,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $signup_error = "Invalid email format!";
             $show_signup_form = true;
         } else {
-            $sql = "INSERT INTO users (username, password, email)
-                    VALUES ('$name', '$password', '$email')";
+            // --- NEW: CHECK FOR DUPLICATES ---
+            $check_sql = "SELECT * FROM users WHERE Username = '$name' OR Email = '$email'";
+            $check_result = $conn->query($check_sql);
 
-            if ($conn->query($sql) === TRUE) {
-                header("Location: " . $_SERVER['PHP_SELF'] . "?signup=success");
-                exit();
-            } else {
-                $signup_error = "Error: " . $conn->error;
+            if ($check_result->num_rows > 0) {
+                $signup_error = "Username or Email is already taken!";
                 $show_signup_form = true;
+            } else {
+                // Determine default role (Assuming 'Student' is default for signup, change if needed)
+                $default_role = 'Student';
+
+                // Insert new user
+                $sql = "INSERT INTO users (Username, Password, Email, role) 
+                        VALUES ('$name', '$password', '$email', '$default_role')";
+
+                if ($conn->query($sql) === TRUE) {
+                    header("Location: " . $_SERVER['PHP_SELF'] . "?signup=success");
+                    exit();
+                } else {
+                    $signup_error = "Error: " . $conn->error;
+                    $show_signup_form = true;
+                }
             }
         }
     }
 
+    // ==========================================
+    // LOGIN LOGIC
+    // ==========================================
     if (isset($_POST['action']) && $_POST['action'] == 'login') {
         
         $login_email = $conn->real_escape_string($_POST['login_email']);
@@ -58,21 +81,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($login_email === 'admin' && $login_pass === 'admin') {
             $login_success_name = "admin";
+            // Admin redirect can go here if needed
         } else {
-            $sql = "SELECT * FROM users WHERE email = '$login_email'";
+            $sql = "SELECT * FROM users WHERE Email = '$login_email'";
             $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {
                 $row = $result->fetch_assoc();
                 
+                // Compare passwords (Plain text comparison based on your code)
                 if ($login_pass === $row['Password']) {
-                    // Save User Name and ID to Session
+                    
+                    // Save Session Data
                     $_SESSION['user_name'] = $row['Username']; 
                     $_SESSION['s_id'] = $row['s_id']; 
+                    $_SESSION['role'] = $row['role']; 
 
-                    // Redirect to HomePage (Same Directory)
-                    header("Location: HomePage.php?login=success"); 
-                    exit();
+                    // --- NEW: ROLE BASED REDIRECT ---
+                    $user_role = $row['role'];
+
+                    if ($user_role === 'Student') {
+                        // Navigate to: ../Student/MVC/php/UserDashboard.php
+                        header("Location: ../Student/MVC/php/UserDashboard.php");
+                        exit();
+                    } elseif ($user_role === 'Reviewer') {
+                        
+                        header("Location: ../../../Reviewer/MVC/php/ReviewerDashboard.php");
+                        exit();
+                    } else {
+                        // Fallback if role is undefined or something else
+                        header("Location: HomePage.php?login=success"); 
+                        exit();
+                    }
+
                 } else {
                     $login_error = "Incorrect Password";
                 }

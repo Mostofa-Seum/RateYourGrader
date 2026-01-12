@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'Config.php';
+include '../../../Student/MVC/db/Config.php';
 
 $message = "";
 $messageType = "";
@@ -80,7 +80,7 @@ $result = $conn->query($sql_pending);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reviewer Dashboard</title>
-    <link rel="stylesheet" href="ReviewerDecision.css">
+    <link rel="stylesheet" href="../css/ReviewerDecision.css">
 </head>
 <body>
     <?php if (isset($_GET['login']) && $_GET['login'] == 'success'): ?>
@@ -93,24 +93,18 @@ $result = $conn->query($sql_pending);
         <div class="container nav-container">
             <div class="logo-wrapper">
                 <div class="logo-icon">
-                    <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
+                    <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
                 </div>
                 <span class="logo-text">Rate Your Grader</span>
             </div>
             
 <div class="nav-links">
-    <a href="#how-it-works">How it works</a>
-    <a href="#features">Features</a>
-    <a href="#search">Search Graders</a>
-
     <?php if (isset($_SESSION['user_name'])): ?>
-        <span style="margin-right: 15px; font-weight: bold;">Hello, <?php echo $_SESSION['user_name']; ?></span>
-        <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
+        <a href="../../../Common/MVC/phpLogout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
     <?php else: ?>
-        <a href="Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
+        <a href="../../../Common/MVC/php/Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
     <?php endif; ?>
 </div>
-        </
         </div>
     </nav>
 
@@ -194,9 +188,9 @@ $result = $conn->query($sql_pending);
                 <div class="footer-brand">
                     <div class="logo-wrapper mb-2">
                         <div class="logo-icon small">
-                            <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
+                            <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
                         </div>
-                        <span class="footer-logo-text">Rate My Grader</span>
+                        <span class="footer-logo-text">Rate Your Grader</span>
                     </div>
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
@@ -212,23 +206,23 @@ $result = $conn->query($sql_pending);
                     <h5>Our Socials</h5>
                     <div class="social-icons">
                         <a href="#" aria-label="Facebook">
-                            <img src="Figures/facebook.png" alt="Facebook" class="social-icon">
+                            <img src="../images/facebook.png" alt="Facebook" class="social-icon">
                         </a>
                         <a href="#" aria-label="Instagram">
-                            <img src="Figures/instagram.png" alt="Instagram" class="social-icon">
+                            <img src="../images/instagram.png" alt="Instagram" class="social-icon">
                         </a>
                         <a href="#" aria-label="Twitter">
-                            <img src="Figures/twitter.png" alt="Twitter" class="social-icon">
+                            <img src="../images/twitter.png" alt="Twitter" class="social-icon">
                         </a>
                     </div>
                 </div>
             </div>
              <div class="footer-bottom">
-                <p>&copy; 2024 Rate My Grader. All rights reserved. Made with ❤️ for students everywhere.</p>
+                <p>&copy; 2026 Rate Your Grader. All rights reserved. Made with ❤️ for students everywhere.</p>
             </div>
         </div>
     </footer>
 
-    <script src="ReviewerDecision.js"></script>
+    <script src="../js/ReviewerDecision.js"></script>
 </body>
 </html>
