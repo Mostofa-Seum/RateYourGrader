@@ -51,7 +51,7 @@ if (isset($_GET['q'])) {
                     <a href="UserDashboard.php" style="text-decoration: none;">
                         <span style="margin-right: 15px; font-weight: bold; color: inherit;">Hello, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
                     </a>
-                    <a href="../../Common/MVC/php/Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
+                    <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
                 <?php else: ?>
                     <a href="../../../Common/MVC/php/Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
                 <?php endif; ?>
