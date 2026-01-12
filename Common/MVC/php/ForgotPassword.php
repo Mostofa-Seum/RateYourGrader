@@ -49,9 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             if ($conn->query($update_sql) === TRUE) {
                 $success_msg = "Password updated successfully! Redirecting to login...";
+                $success_msg .= "<script>setTimeout(function(){ window.location.href = 'Login.php'; }, 3000);</script>";
                 session_unset();
                 session_destroy();
-                header("refresh:3;url=Login.php"); 
             } else {
                 $error_msg = "Error updating record: " . $conn->error;
             }
@@ -67,6 +67,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
     <link rel="stylesheet" href="../css/ForgotPassword.css">
+    <style>
+        /* Small override to ensure navbar style consistency if not fully present in ForgotPassword.css */
+        .navbar { position: fixed; top: 0; width: 100%; z-index: 1000; background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(229, 231, 235, 0.5); }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; max-width: 1280px; margin: 0 auto; }
+        .logo-wrapper { display: flex; align-items: center; gap: 0.5rem; }
+        .logo-icon { width: 40px; height: 40px; background: linear-gradient(to right, #1e40af, #1e3a8a); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; }
+        .logo-text { font-size: 1.5rem; font-weight: 700; background: linear-gradient(to right, #1e3a8a, #1e1b4b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a { text-decoration: none; color: #4b5563; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: #1e40af; }
+        @media (max-width: 768px) { .nav-links { display: none; } }
+    </style>
 </head>
 <body>
 
@@ -80,10 +92,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             
             <div class="nav-links">
-                <a href="HomePage.php#how-it-works">How it works</a>
-                <a href="HomePage.php#features">Features</a>
-                <a href="Login.php" class="btn btn-primary">Sign Up Free</a>
-            </div>
+                <a href="../../../Common/MVC/php/HomePage.php">Home</a>
+                <a href="SearchOutput.php">Search Graders</a>
+                </div>
             
             <button class="mobile-menu-btn">
                 <img src="../images/menu.png" alt="Menu" class="mobile-menu-icon">
@@ -91,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </nav>
 
-    <div style="margin-top: 80px;"></div>
+    <div style="margin-top: 100px;"></div>
 
     <div class="main-wrapper">
         <div class="auth-card">
@@ -161,6 +172,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
 
+                <div class="footer-actions">
+                    <h5>Apply</h5>
+                    <div class="footer-buttons">
+                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
+                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
+                    </div>
+                </div>
+
                 <div class="footer-socials">
                     <h5>Our Socials</h5>
                     <div class="social-icons">
@@ -178,7 +197,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2024 Rate My Grader. All rights reserved. Made with ❤️ for students everywhere.</p>
+                <p>&copy; 2026 Rate Your Grader. All rights reserved.</p>
             </div>
         </div>
     </footer>
