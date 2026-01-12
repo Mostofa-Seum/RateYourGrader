@@ -79,7 +79,7 @@ function renderStars($rating) {
                     <a href="ReviewerDashboard.php" style="color: var(--dark-navy); font-weight: 600;">
                         Hello, <?php echo htmlspecialchars($_SESSION['user_name']); ?>
                     </a>
-                    <a href="../../Common/MVC/php/Logout.php" class="btn btn-danger">Logout</a>
+                    <a href="../../../Common/MVC/php/Logout.php" class="btn btn-danger">Logout</a>
                 <?php else: ?>
                     <a href="../../../Common/MVC/php/Login.php" class="btn btn-primary">Sign Up Free</a>
                 <?php endif; ?>

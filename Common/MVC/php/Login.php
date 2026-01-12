@@ -102,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     if ($user_role === 'Student') {
                         // Navigate to: ../Student/MVC/php/UserDashboard.php
-                        header("Location: ../Student/MVC/php/UserDashboard.php");
+                        header("Location: HomePage.php");
                         exit();
                     } elseif ($user_role === 'Reviewer') {
                         

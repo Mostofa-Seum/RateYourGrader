@@ -1,6 +1,39 @@
 <?php
 session_start();
 include "../db/config.php";
+
+// Initialize default variables (Default path for guests or students)
+$dashboardLink = "#"; 
+$searchAction = "../../../Student/MVC/php/SearchOutput.php"; 
+
+// Check if the user is logged in
+if (isset($_SESSION['user_name'])) {
+    $username = $_SESSION['user_name'];
+    
+    $safe_username = mysqli_real_escape_string($conn, $username);
+
+    $sql = "SELECT role FROM users WHERE Username = '$safe_username'";
+    $result = mysqli_query($conn, $sql);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $role = $row['role'];
+
+        if ($role == 'Reviewer') {
+            // Reviewer Dashboard Path
+            $dashboardLink = "../../../Reviewer/MVC/php/ReviewerDashboard.php"; 
+            
+            // ⚠️ EDIT THIS PATH: Reviewer Search Output Path
+            $searchAction = "../../../Reviewer/MVC/php/SearchOutput.php"; 
+
+        } elseif ($role == 'Student') {
+            // Student Dashboard Path
+            $dashboardLink = "../../../Student/MVC/php/UserDashboard.php";
+            $searchAction = "../../../Student/MVC/php/SearchOutput.php";
+        }
+    }
+}
+?>
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,19 +59,19 @@ include "../db/config.php";
             </div>
             
 <div class="nav-links">
-    <a href="#how-it-works">How it works</a>
-    <a href="#features">Features</a>
-    <a href="javascript:void(0)" onclick="goToSearch()">Search Graders</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#features">Features</a>
+        <a href="javascript:void(0)" onclick="goToSearch()">Search Graders</a>
 
-    <?php if (isset($_SESSION['user_name'])): ?>
-        <a href="../../../Student/MVC/php/UserDashboard.php" style="text-decoration:none;">
-            <span style="margin-right: 15px; font-weight: bold; color: inherit;">Hello, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
-        </a>
-        <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545;color: white;">Logout</a>
-    <?php else: ?>
-        <a href="Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
-    <?php endif; ?>
-</div>
+        <?php if (isset($_SESSION['user_name'])): ?>
+            <a href="<?php echo $dashboardLink; ?>" style="text-decoration:none;">
+                <span style="margin-right: 15px; font-weight: bold; color: inherit;">Hello, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+            </a>
+            <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545;color: white;">Logout</a>
+        <?php else: ?>
+            <a href="Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
+        <?php endif; ?>
+    </div>
     </nav>
 
     <section class="hero-section">
@@ -185,14 +218,14 @@ include "../db/config.php";
             <h2>Ready to discover fair graders?</h2></center>
             <p class="cta-subtitle">Search your graders and grade them like how they did for you.</p>
             
-            <form action="../../../Student/MVC/php/SearchOutput.php" method="GET" class="search-bar-wrapper" onsubmit="return validateSearch()">
-                <div class="search-bar">
-                    <input type="text" id="mainSearchInput" name="q" placeholder="Search by name, course, or department...">
-                    <button type="submit" class="btn-search">
-                        <img src="../images/search_black.png" alt="Logo"> Search Now
-                    </button>
-                </div>
-            </form>
+<form action="<?php echo $searchAction; ?>" method="GET" class="search-bar-wrapper" onsubmit="return validateSearch()">
+    <div class="search-bar">
+        <input type="text" id="mainSearchInput" name="q" placeholder="Search by name, course, or department...">
+        <button type="submit" class="btn-search">
+            <img src="../images/search_black.png" alt="Logo"> Search Now
+        </button>
+    </div>
+</form>
             
             <div class="trust-indicators">
                 <div><img src="../images/verify.png" alt="Logo"> Verified Students</div>

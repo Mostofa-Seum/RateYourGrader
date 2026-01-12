@@ -93,7 +93,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             <div class="nav-links">
                 <a href="../../../Common/MVC/php/HomePage.php">Home</a>
-                <a href="SearchOutput.php">Search Graders</a>
                 </div>
             
             <button class="mobile-menu-btn">
