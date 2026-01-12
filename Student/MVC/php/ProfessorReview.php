@@ -4,7 +4,7 @@ if (!isset($_SESSION['s_id'])) {
     header("Location: ../../Common/MVC/php/Login.php");
     exit();
 }
-include '../../Common/MVC/db/Config.php';
+include '../db/Config.php';
 
 $p_id = isset($_GET['P_id']) ? intval($_GET['P_id']) : 0;
 $prof_name = isset($_GET['name']) ? $_GET['name'] : "Unknown Professor";
@@ -78,19 +78,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .icon-img { width: 1.2em; height: 1.2em; vertical-align: middle; object-fit: contain; }
         .professor-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         #redirect-signal { display: none; }
+        /* Add hover effect for the Hello text link */
+        .nav-links a span:hover { color: #1e40af; }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="container nav-container">
             <div class="logo-wrapper">
-                <div class="logo-icon"><img src="../../Common/MVC/images/scolar_cap.png" alt="Logo" class="logo-img"></div>
+                <div class="logo-icon"><img src="../images/scolar_cap.png" alt="Logo" class="logo-img"></div>
                 <span class="logo-text">Rate Your Grader</span>
             </div>
+            
             <div class="nav-links">
-                <a href="#how-it-works">How it works</a>
+                <a href="../../../Common/MVC/php/HomePage.php">Home</a> 
                 <a href="SearchOutput.php">Search Graders</a>
-                <a href="../../Common/MVC/php/Logout.php" class="btn btn-primary-nav">Logout</a>
+
+                <?php if (isset($_SESSION['user_name'])): ?>
+                    <a href="UserDashboard.php" style="text-decoration: none;">
+                        <span style="margin-right: 15px; font-weight: bold; color: inherit;">Hello, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                    </a>
+                    <a href="../../Common/MVC/php/Logout.php" class="btn btn-primary-nav" style="background-color: #dc3545; color: white;">Logout</a>
+                <?php else: ?>
+                    <a href="../../Common/MVC/php/Logout.php" class="btn btn-primary-nav" style="background-color: #dc3545; color: white;">Logout</a>
+                <?php endif; ?>
             </div>
         </div>
     </nav>
@@ -99,17 +110,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="container">
         <a href="SearchOutput.php" class="back-btn">
-            <img src="../images/iconArrow.png" alt="Back" class="icon-img" style="transform: rotate(180deg); margin-right: 5px;"> Back to Search
+            <img src="../images/iconArrow.png" alt="Back" class="icon-img" 
+            style="transform: rotate(180deg); margin-right: 5px;"> Back to Search
         </a>
 
         <?php if ($message != ""): ?>
-        <div class="success-message show" style="display: flex; background-color: <?= $messageType == 'error' ? '#f8d7da' : '#d4edda' ?>; color: <?= $messageType == 'error' ? '#721c24' : '#155724' ?>; border-left: 5px solid <?= $messageType == 'error' ? '#f5c6cb' : '#28a745' ?>;">
+        <div class="success-message show" style="display: flex; background-color: 
+        <?= $messageType == 'error' ? '#f8d7da' : '#d4edda' ?>; color: <?= $messageType == 'error' ? '#721c24' : '#155724' ?>; 
+        border-left: 5px solid <?= $messageType == 'error' ? '#f5c6cb' : '#28a745' ?>;">
             <span><?= $message ?></span>
         </div>
         <?php endif; ?>
 
         <div class="professor-card">
-            <div class="professor-avatar"><img src="../../Common/MVC/images/iconUser.png" alt="Professor"></div>
+            <div class="professor-avatar"><img src="../images/iconUser.png" alt="Professor"></div>
             <div class="professor-info">
                 <h2><?= htmlspecialchars($prof_name) ?></h2>
                 <p><?= htmlspecialchars($prof_dept) ?></p>
