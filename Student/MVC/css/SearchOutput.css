@@ -1,4 +1,4 @@
-/* --- 1. Essential Variables (Colors & Spacing) --- */
+/* --- 1. Essential Variables --- */
 :root {
     /* Navbar specific vars */
     --primary-navy: #1e40af;
@@ -27,7 +27,7 @@
     --yellow-400: #fbbf24;
 
     /* Spacing & Sizing */
-    --container-width: 1200px; /* Aligned to match both */
+    --container-width: 1200px;
     --radius-lg: 0.5rem;
     --radius-full: 9999px;
 }
@@ -60,13 +60,12 @@ body {
 .justify-between { justify-content: space-between; }
 .justify-center { justify-content: center; }
 
-/* Responsive adjustments for flex containers */
 @media (min-width: 768px) {
     .md-flex-row { flex-direction: row; }
     .md-mb-0 { margin-bottom: 0; }
 }
 
-/* --- NEW NAVBAR STYLES START --- */
+/* --- NAVBAR STYLES --- */
 .navbar {
     position: fixed;
     top: 0;
@@ -88,10 +87,8 @@ body {
     align-items: center;
     padding-top: 1rem;
     padding-bottom: 1rem;
-    /* Container max-width handled by utility class above */
 }
 
-/* Logo Styling */
 .logo-wrapper {
     display: flex;
     align-items: center;
@@ -118,9 +115,8 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
-/* Links & Buttons (Hidden on Mobile by default) */
 .nav-links {
-    display: none; /* Hidden on mobile */
+    display: none;
     align-items: center;
     gap: 2rem;
 }
@@ -145,7 +141,6 @@ body {
     transition: all 0.2s;
 }
 
-/* Mobile Menu Button */
 .mobile-menu-btn {
     display: block;
     background: none;
@@ -162,22 +157,19 @@ body {
     object-fit: contain;
 }
 
-/* Media Query for Navbar */
 @media (min-width: 768px) {
-    .nav-links { display: flex; }    /* Show links on Desktop */
-    .mobile-menu-btn { display: none; } /* Hide hamburger on Desktop */
+    .nav-links { display: flex; }
+    .mobile-menu-btn { display: none; }
 }
-/* --- NEW NAVBAR STYLES END --- */
 
-
-/* --- Component: Search Section --- */
+/* --- Search Section --- */
 .search-section {
     padding: 3rem 1rem;
     background-color: var(--white);
 }
 
 .search-container {
-    max-width: 56rem; /* equivalent to max-w-4xl */
+    max-width: 56rem;
     margin: 0 auto;
 }
 
@@ -231,7 +223,7 @@ body {
     background-color: var(--blue-700);
 }
 
-/* --- Component: Results Grid --- */
+/* --- Results Grid --- */
 .results-section {
     padding: 3rem 1rem;
 }
@@ -250,7 +242,7 @@ body {
     .results-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* --- Component: Cards --- */
+/* --- Cards --- */
 .card {
     background-color: var(--white);
     border-radius: var(--radius-lg);
@@ -328,7 +320,7 @@ body {
 .rating-label {
     font-size: 0.875rem;
     color: var(--gray-600);
-    width: 3rem; /* Fixed width for labels */
+    width: 3rem; 
 }
 
 .rating-bar-bg {
@@ -357,13 +349,10 @@ body {
     border-top: 1px solid #e5e7eb;
     margin-top: 1rem;
     padding: 1rem;
-    
-    /* ADDED: Flexbox to align items side-by-side */
     display: flex;
-    justify-content: space-between; /* Pushes one left, one right */
+    justify-content: space-between;
     align-items: center;
 }
-
 
 .rate-profile-btn, 
 .view-profile-link {
@@ -383,11 +372,10 @@ body {
 .view-profile-link:hover {
     color: var(--blue-800);
 }
-/* --- Component: Buttons --- */
+
 .btn-primary {
     background-color: var(--primary-navy);
     color: var(--white);
-    /* padding handled by .btn class in navbar section */
     font-weight: 600;
     border: none;
     cursor: pointer;
@@ -399,13 +387,12 @@ body {
     transform: translateY(-2px);
 }
 
-
-
 /* Animations */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
 footer {
     background-color: var(--darkest-navy);
     color: white;
@@ -531,4 +518,3 @@ footer {
 @media (min-width: 1024px) {
     .footer-grid { grid-template-columns: repeat(3, 1fr); }
 }
-

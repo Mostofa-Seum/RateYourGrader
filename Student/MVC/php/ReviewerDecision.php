@@ -1,36 +1,23 @@
 <?php
 session_start();
-include 'Config.php';
+include '../../Common/MVC/db/Config.php';
 
 $message = "";
 $messageType = "";
 
-// --- HANDLE FORM SUBMISSIONS ---
-
-// 1. APPROVE LOGIC
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'approve') {
-    // FIX: Use the unique ID (r_id)
     $target_id = intval($_POST['review_id']);
-    
-    // Fetch review text
-    // FIX: WHERE r_id = ...
     $fetch_sql = "SELECT Review FROM review WHERE r_id = $target_id";
     $fetch_result = $conn->query($fetch_sql);
     
     if ($fetch_result && $fetch_result->num_rows > 0) {
         $row = $fetch_result->fetch_assoc();
         $review_text = $conn->real_escape_string($row['Review']);
-        
-        // Insert into A_Review
-        // Note: We store the unique review ID ($target_id) in R_id column of A_Review
         $sql_insert = "INSERT INTO A_Review (R_id, Review, Report) VALUES ('$target_id', '$review_text', 0)";
         
         if ($conn->query($sql_insert) === TRUE) {
-            
-            // FIX: UPDATE WHERE r_id (Unique ID)
             $sql_update = "UPDATE review SET Reviewed = 1 WHERE r_id = $target_id";
             $conn->query($sql_update);
-
             $message = "Review #$target_id Approved Successfully!";
             $messageType = "success";
         } else {
@@ -40,20 +27,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     }
 }
 
-// 2. REJECT LOGIC
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'reject') {
     $target_id = intval($_POST['review_id']);
     $cause = $conn->real_escape_string($_POST['rejection_reason']);
-    
-    // Insert into R_Review
     $sql_insert = "INSERT INTO R_Review (R_id, Cause) VALUES ('$target_id', '$cause')";
     
     if ($conn->query($sql_insert) === TRUE) {
-
-        // FIX: UPDATE WHERE r_id (Unique ID)
         $sql_update = "UPDATE review SET Reviewed = 1 WHERE r_id = $target_id";
         $conn->query($sql_update);
-
         $message = "Review #$target_id Rejected.";
         $messageType = "success"; 
     } else {
@@ -62,15 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     }
 }
 
-// --- FETCH PENDING REVIEWS ---
-// FIX: Ensure we select r_id (Unique) 
-$sql_pending = "SELECT r.*, p.Name as ProfName, c.`Course Name`
-                FROM review r
-                LEFT JOIN professors p ON r.P_id = p.P_id
-                LEFT JOIN courses c ON r.C_id = c.c_id
-                WHERE r.Reviewed = 0
-                ORDER BY r.r_id ASC";
-
+$sql_pending = "SELECT r.*, p.Name as ProfName, c.`Course Name` FROM review r LEFT JOIN professors p ON r.P_id = p.P_id LEFT JOIN courses c ON r.C_id = c.c_id WHERE r.Reviewed = 0 ORDER BY r.r_id ASC";
 $result = $conn->query($sql_pending);
 ?>
 
@@ -80,37 +53,28 @@ $result = $conn->query($sql_pending);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reviewer Dashboard</title>
-    <link rel="stylesheet" href="ReviewerDecision.css">
+    <link rel="stylesheet" href="../css/ReviewerDecision.css">
 </head>
 <body>
-    <?php if (isset($_GET['login']) && $_GET['login'] == 'success'): ?>
-    <script>
-        // This line cleans the URL so the alert doesn't appear if they refresh
-        window.history.replaceState(null, null, window.location.pathname);
-    </script>
-<?php endif; ?>
     <nav class="navbar">
         <div class="container nav-container">
             <div class="logo-wrapper">
-                <div class="logo-icon">
-                    <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
-                </div>
+                <div class="logo-icon"><img src="../../Common/MVC/images/scolar_cap.png" alt="Logo" class="logo-img"></div>
                 <span class="logo-text">Rate Your Grader</span>
             </div>
             
 <div class="nav-links">
     <a href="#how-it-works">How it works</a>
     <a href="#features">Features</a>
-    <a href="#search">Search Graders</a>
+    <a href="SearchOutput.php">Search Graders</a>
 
     <?php if (isset($_SESSION['user_name'])): ?>
         <span style="margin-right: 15px; font-weight: bold;">Hello, <?php echo $_SESSION['user_name']; ?></span>
-        <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
+        <a href="../../Common/MVC/php/Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
     <?php else: ?>
-        <a href="Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
+        <a href="../../Common/MVC/php/Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
     <?php endif; ?>
 </div>
-        </
         </div>
     </nav>
 
@@ -133,26 +97,17 @@ $result = $conn->query($sql_pending);
                             <span class="review-id">ID: #<?= $row['r_id'] ?></span>
                             <span class="date-badge">Prof: <?= htmlspecialchars($row['ProfName']) ?></span>
                         </div>
-                        
                         <div class="card-body">
-                            <div class="meta-tags">
-                                <span class="tag">Course: <?= htmlspecialchars($row['Course Name']) ?></span>
-                            </div>
+                            <div class="meta-tags"><span class="tag">Course: <?= htmlspecialchars($row['Course Name']) ?></span></div>
                             <p class="review-text">"<?= nl2br(htmlspecialchars($row['Review'])) ?>"</p>
                         </div>
-
                         <div class="card-actions">
                             <form method="POST" action="">
                                 <input type="hidden" name="action" value="approve">
                                 <input type="hidden" name="review_id" value="<?= $row['r_id'] ?>">
-                                <button type="submit" class="btn-action btn-approve">
-                                    Approve
-                                </button>
+                                <button type="submit" class="btn-action btn-approve">Approve</button>
                             </form>
-
-                            <button class="btn-action btn-reject" onclick="openRejectModal(<?= $row['r_id'] ?>)">
-                                Reject
-                            </button>
+                            <button class="btn-action btn-reject" onclick="openRejectModal(<?= $row['r_id'] ?>)">Reject</button>
                         </div>
                     </div>
                 <?php endwhile; ?>
@@ -174,12 +129,10 @@ $result = $conn->query($sql_pending);
             <form method="POST" action="">
                 <input type="hidden" name="action" value="reject">
                 <input type="hidden" id="modal_review_id" name="review_id" value="">
-                
                 <div class="form-group">
                     <label for="rejection_reason">Reason for Rejection:</label>
-                    <textarea name="rejection_reason" id="rejection_reason" rows="4" placeholder="e.g., Inappropriate language, Spam, Irrelevant content..." required></textarea>
+                    <textarea name="rejection_reason" id="rejection_reason" rows="4" placeholder="e.g., Inappropriate language..." required></textarea>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" onclick="closeRejectModal()">Cancel</button>
                     <button type="submit" class="btn-confirm-reject">Confirm Rejection</button>
@@ -193,9 +146,7 @@ $result = $conn->query($sql_pending);
             <div class="footer-grid">
                 <div class="footer-brand">
                     <div class="logo-wrapper mb-2">
-                        <div class="logo-icon small">
-                            <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
-                        </div>
+                        <div class="logo-icon small"><img src="../../Common/MVC/images/scolar_cap.png" alt="Logo" class="logo-img"></div>
                         <span class="footer-logo-text">Rate My Grader</span>
                     </div>
                     <p>Empowering students with transparent grading information since 2024.</p>
@@ -207,28 +158,20 @@ $result = $conn->query($sql_pending);
                         <a href="#" class="footer-nav-link">Apply for University Representative</a>
                     </div>
                 </div>
-
                 <div class="footer-socials">
                     <h5>Our Socials</h5>
                     <div class="social-icons">
-                        <a href="#" aria-label="Facebook">
-                            <img src="Figures/facebook.png" alt="Facebook" class="social-icon">
-                        </a>
-                        <a href="#" aria-label="Instagram">
-                            <img src="Figures/instagram.png" alt="Instagram" class="social-icon">
-                        </a>
-                        <a href="#" aria-label="Twitter">
-                            <img src="Figures/twitter.png" alt="Twitter" class="social-icon">
-                        </a>
+                        <a href="#"><img src="../../Common/MVC/images/facebook.png" alt="Facebook" class="social-icon"></a>
+                        <a href="#"><img src="../../Common/MVC/images/instagram.png" alt="Instagram" class="social-icon"></a>
+                        <a href="#"><img src="../../Common/MVC/images/twitter.png" alt="Twitter" class="social-icon"></a>
                     </div>
                 </div>
             </div>
              <div class="footer-bottom">
-                <p>&copy; 2024 Rate My Grader. All rights reserved. Made with ❤️ for students everywhere.</p>
+                <p>&copy; 2024 Rate My Grader. All rights reserved.</p>
             </div>
         </div>
     </footer>
-
-    <script src="ReviewerDecision.js"></script>
+    <script src="../js/ReviewerDecision.js"></script>
 </body>
 </html>

@@ -7,12 +7,14 @@ $signup_success = "";
 $login_error = "";        
 $login_success_name = ""; 
 $show_signup_form = false; 
-include "Config.php";
+
+// Path to DB Config: Step out of 'php', into 'db'
+include "../db/Config.php";
+
 if (isset($_GET['signup']) && $_GET['signup'] === 'success') {
     $signup_success = "Account created successfully! Please login.";
     $show_signup_form = false; // Show login form
 }
-
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -23,24 +25,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password = $_POST['password'];
         $confirmPassword = $_POST['confirmPassword'];
 
-        
         if (empty($name) || empty($email) || empty($password) || empty($confirmPassword)) {
             $signup_error = "All fields are required!";
             $show_signup_form = true; 
         } elseif ($password !== $confirmPassword) {
             $signup_error = "Passwords do not match!";
             $show_signup_form = true; 
-        }elseif (strlen($password) < 6) {
+        } elseif (strlen($password) < 6) {
             $signup_error = "Password must be at least 6 characters long!";
             $show_signup_form = true;
-        }
-         elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $signup_error = "Invalid email format!";
             $show_signup_form = true;
-        }
-
-         else {
-            
+        } else {
             $sql = "INSERT INTO users (username, password, email)
                     VALUES ('$name', '$password', '$email')";
 
@@ -54,17 +51,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-if (isset($_POST['action']) && $_POST['action'] == 'login') {
+    if (isset($_POST['action']) && $_POST['action'] == 'login') {
         
         $login_email = $conn->real_escape_string($_POST['login_email']);
         $login_pass  = $_POST['login_password'];
 
-
         if ($login_email === 'admin' && $login_pass === 'admin') {
             $login_success_name = "admin";
-        }
-
-        else {
+        } else {
             $sql = "SELECT * FROM users WHERE email = '$login_email'";
             $result = $conn->query($sql);
 
@@ -72,13 +66,14 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
                 $row = $result->fetch_assoc();
                 
                 if ($login_pass === $row['Password']) {
-    // NEW WAY: Save to "Global Memory"
-    $_SESSION['user_name'] = $row['Username']; 
+                    // Save User Name and ID to Session
+                    $_SESSION['user_name'] = $row['Username']; 
+                    $_SESSION['s_id'] = $row['s_id']; 
 
-    // Redirect to homepage with a secret flag '?login=success'
-    header("Location: Login.php?login=success"); 
-    exit();
-}else {
+                    // Redirect to HomePage (Same Directory)
+                    header("Location: HomePage.php?login=success"); 
+                    exit();
+                } else {
                     $login_error = "Incorrect Password";
                 }
             } else {
@@ -93,7 +88,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="Login.css">
+    <link rel="stylesheet" href="../css/Login.css">
     <title>Signin & Signup</title>
     <style>
         .error-msg {
@@ -106,7 +101,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
             padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 0.9rem;
             text-align: center; width: 100%;
         }
-        /* Style for the Hello message */
         .hello-msg {
             font-size: 2rem;
             color: #333;
@@ -139,16 +133,13 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
             <div class="form-container login-form">
                 
                 <?php if (!empty($login_success_name)): ?>
-                    
                     <div class="hello-msg">
                         Hello <?php echo htmlspecialchars($login_success_name); ?>
                     </div>
-
                 <?php else: ?>
 
                     <form class="form" action="" method="POST" novalidate>
                         <h2>Sign In</h2>
-                        
                         <input type="hidden" name="action" value="login">
 
                         <?php if (!empty($signup_success)): ?>
@@ -164,15 +155,14 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
                             <label>Email</label>
                         </div>
                         
-                   <div class="input-group">
-                      <input type="password" id="password" name="login_password" required>
-                          <label>Password</label>
-                          </div>
+                        <div class="input-group">
+                            <input type="password" id="password" name="login_password" required>
+                            <label>Password</label>
+                        </div>
 
-                       <div class="forgot-pass-container">
-              <a href="ForgotPassword.php" class="forgot-pass-link">Forgot Password?</a>
-                               </div>
-
+                        <div class="forgot-pass-container">
+                            <a href="ForgotPassword.php" class="forgot-pass-link">Forgot Password?</a>
+                        </div>
                         
                         <button type="submit" class="submit-btn">Sign In</button>
                     </form>
@@ -215,6 +205,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
             </div>
         </div>
     </div>
-    <script src="Login.js"></script>
+    <script src="../js/Login.js"></script>
 </body>
 </html>

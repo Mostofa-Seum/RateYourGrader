@@ -1,20 +1,21 @@
 <?php
-// 1. DATABASE CONNECTION
-include 'Config.php';
+session_start();
+if (!isset($_SESSION['s_id'])) {
+    header("Location: ../../Common/MVC/php/Login.php");
+    exit();
+}
+include '../../Common/MVC/db/Config.php';
 
-// 2. INITIALIZE VARIABLES
 $p_id = isset($_GET['P_id']) ? intval($_GET['P_id']) : 0;
 $prof_name = isset($_GET['name']) ? $_GET['name'] : "Unknown Professor";
 $prof_dept = isset($_GET['dept']) ? $_GET['dept'] : "Unknown Department";
 $prof_uni  = isset($_GET['uni'])  ? $_GET['uni']  : "Unknown University";
 
-// 3. HANDLE FORM SUBMISSION
 $message = "";
 $messageType = "";
-$redirect = false; // Redirect Flag
+$redirect = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // A. Collect Data
     $p_id_posted = intval($_POST['p_id']);
     $overall = intval($_POST['overallRating']);
     $fairness = intval($_POST['fairnessRating']);
@@ -25,16 +26,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $review_text = $conn->real_escape_string($_POST['review']);
     $difficulty = $_POST['difficulty']; 
     
-    // User IDs (Placeholder)
-    $student_id = 1; 
+    $student_id = $_SESSION['s_id']; // Use actual session ID
     $reviewer_id = 1; 
 
-    // B. Validation
     if ($overall == 0 || $fairness == 0 || $behavior == 0) {
         $message = "Please select all star ratings.";
         $messageType = "error";
     } else {
-        // C. Check Course
         $final_c_id = 0;
         $course_error = false;
         $check_sql = "SELECT c_id FROM courses WHERE `Course Name` = '$course_name' AND P_id = '$p_id_posted'";
@@ -54,17 +52,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        // D. Insert Review
         if (!$course_error && $final_c_id > 0) {
-            $sql_review = "INSERT INTO review 
-            (`P_id`, `Rv_id`, `S_id`, `C_id`, `Review`, `Overall Rating`, `Grading Fairness`, `Behavior and Communication`, `Would You Take This Course Again?`, `Department`, `Difficulty Level`) 
-            VALUES 
-            ('$p_id_posted', '$reviewer_id', '$student_id', '$final_c_id', '$review_text', '$overall', '$fairness', '$behavior', '$take_again', '$department', '$difficulty')";
+            $sql_review = "INSERT INTO review (`P_id`, `Rv_id`, `S_id`, `C_id`, `Review`, `Overall Rating`, `Grading Fairness`, `Behavior and Communication`, `Would You Take This Course Again?`, `Department`, `Difficulty Level`) VALUES ('$p_id_posted', '$reviewer_id', '$student_id', '$final_c_id', '$review_text', '$overall', '$fairness', '$behavior', '$take_again', '$department', '$difficulty')";
 
             if ($conn->query($sql_review) === TRUE) {
                 $message = "Review submitted successfully! Wait for approval.";
                 $messageType = "success";
-                $redirect = true; // TRIGGER REDIRECT
+                $redirect = true; 
             } else {
                 $message = "Error submitting review: " . $conn->error;
                 $messageType = "error";
@@ -79,11 +73,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="ProfessorReview.css">
+    <link rel="stylesheet" href="../css/ProfessorReview.css">
     <style>
         .icon-img { width: 1.2em; height: 1.2em; vertical-align: middle; object-fit: contain; }
         .professor-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        /* Hide the signal div visually */
         #redirect-signal { display: none; }
     </style>
 </head>
@@ -91,13 +84,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <nav class="navbar">
         <div class="container nav-container">
             <div class="logo-wrapper">
-                <div class="logo-icon"><img src="Images/scolar_cap.png" alt="Logo" class="logo-img"></div>
+                <div class="logo-icon"><img src="../../Common/MVC/images/scolar_cap.png" alt="Logo" class="logo-img"></div>
                 <span class="logo-text">Rate Your Grader</span>
             </div>
             <div class="nav-links">
                 <a href="#how-it-works">How it works</a>
                 <a href="SearchOutput.php">Search Graders</a>
-                <button class="btn btn-primary-nav">Logout</button>
+                <a href="../../Common/MVC/php/Logout.php" class="btn btn-primary-nav">Logout</a>
             </div>
         </div>
     </nav>
@@ -106,8 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="container">
         <a href="SearchOutput.php" class="back-btn">
-            <img src="Images/iconArrow.png" alt="Back" class="icon-img" style="transform: rotate(180deg); margin-right: 5px;"> 
-            Back to Search
+            <img src="../../Common/MVC/images/iconArrow.png" alt="Back" class="icon-img" style="transform: rotate(180deg); margin-right: 5px;"> Back to Search
         </a>
 
         <?php if ($message != ""): ?>
@@ -117,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php endif; ?>
 
         <div class="professor-card">
-            <div class="professor-avatar"><img src="Images/iconUser.png" alt="Professor"></div>
+            <div class="professor-avatar"><img src="../../Common/MVC/images/iconUser.png" alt="Professor"></div>
             <div class="professor-info">
                 <h2><?= htmlspecialchars($prof_name) ?></h2>
                 <p><?= htmlspecialchars($prof_dept) ?></p>
@@ -197,6 +189,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php if ($redirect): ?>
         <div id="redirect-signal" data-target="SearchOutput.php"></div>
     <?php endif; ?>
-    <script src="ProfessorReview.js"></script>
+    <script src="../js/ProfessorReview.js"></script>
 </body>
 </html>

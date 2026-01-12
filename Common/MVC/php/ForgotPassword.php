@@ -1,6 +1,7 @@
 <?php
 session_start();
-include "Config.php"; // Ensure this connects to your database
+// Path to DB Config
+include "../db/Config.php"; 
 
 $error_msg = "";
 $success_msg = "";
@@ -65,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
-    <link rel="stylesheet" href="ForgotPassword.css">
+    <link rel="stylesheet" href="../css/ForgotPassword.css">
 </head>
 <body>
 
@@ -73,19 +74,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="container nav-container">
             <div class="logo-wrapper">
                 <div class="logo-icon">
-                    <img src="Images/scolar_cap.png" alt="Logo" class="logo-img">
+                    <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
                 </div>
                 <span class="logo-text">Rate Your Grader</span>
             </div>
             
             <div class="nav-links">
-                <a href="#how-it-works">How it works</a>
-                <a href="#features">Features</a>
-                <button class="btn btn-primary">Sign Up Free</button>
+                <a href="HomePage.php#how-it-works">How it works</a>
+                <a href="HomePage.php#features">Features</a>
+                <a href="Login.php" class="btn btn-primary">Sign Up Free</a>
             </div>
             
             <button class="mobile-menu-btn">
-                <img src="Figures/menu.png" alt="Menu" class="mobile-menu-icon">
+                <img src="../images/menu.png" alt="Menu" class="mobile-menu-icon">
             </button>
         </div>
     </nav>
@@ -153,32 +154,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="footer-brand">
                     <div class="logo-wrapper mb-2">
                         <div class="logo-icon small">
-                            <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
+                            <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
                         </div>
                         <span class="footer-logo-text">Rate Your Grader</span>
                     </div>
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
 
-                <div class="footer-actions">
-                    <h5>Apply</h5>
-                    <div class="footer-buttons">
-                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
-                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
-                    </div>
-                </div>
-
                 <div class="footer-socials">
                     <h5>Our Socials</h5>
                     <div class="social-icons">
                         <a href="#" aria-label="Facebook">
-                            <img src="Figures/facebook.png" alt="Facebook" class="social-icon">
+                            <img src="../images/facebook.png" alt="Facebook" class="social-icon">
                         </a>
                         <a href="#" aria-label="Instagram">
-                            <img src="Figures/instagram.png" alt="Instagram" class="social-icon">
+                            <img src="../images/instagram.png" alt="Instagram" class="social-icon">
                         </a>
                         <a href="#" aria-label="Twitter">
-                            <img src="Figures/twitter.png" alt="Twitter" class="social-icon">
+                            <img src="../images/twitter.png" alt="Twitter" class="social-icon">
                         </a>
                     </div>
                 </div>
@@ -190,6 +183,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </footer>
 
-    <script src="ForgotPassword.js"></script>
+    <script src="../js/ForgotPassword.js"></script>
 </body>
 </html>

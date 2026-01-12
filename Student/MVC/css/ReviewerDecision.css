@@ -1,5 +1,5 @@
 /* =========================================
-   1. SHARED GLOBAL STYLES (From Working File)
+   1. SHARED GLOBAL STYLES
    ========================================= */
 :root {
     /* Navbar specific vars */
@@ -54,7 +54,7 @@ body {
 .mb-2 { margin-bottom: 1.5rem; }
 
 /* =========================================
-   2. NAVBAR STYLES (Exact copy from SearchOutput)
+   2. NAVBAR STYLES
    ========================================= */
 .navbar {
     position: fixed;
@@ -170,7 +170,7 @@ body {
 
 
 /* =========================================
-   3. REVIEWER SPECIFIC STYLES (Preserved)
+   3. REVIEWER SPECIFIC STYLES
    ========================================= */
 .page-title { 
     font-size: 2rem; 
@@ -354,13 +354,13 @@ body {
 
 
 /* =========================================
-   4. FOOTER STYLES (Exact copy from SearchOutput)
+   4. FOOTER STYLES
    ========================================= */
 footer {
     background-color: var(--darkest-navy);
     color: white;
     padding: 4rem 0;
-    margin-top: 4rem; /* Kept margin-top for spacing */
+    margin-top: 4rem; 
 }
 
 .footer-grid {

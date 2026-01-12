@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 
-/* --- 1. Essential Variables (Merged) --- */
+/* --- 1. Essential Variables --- */
 :root {
     /* Navbar Specific */
     --primary-navy: #1e40af;
@@ -15,7 +15,7 @@
     --transition-speed: 0.3s;
     --container-width: 1280px;
 
-    /* Page Content Specific (Old variables kept for compatibility) */
+    /* Page Content Specific */
     --navy: #001f3f;
     --light-navy: #003d7a;
     --white: #ffffff;
@@ -29,7 +29,7 @@ body {
     color: var(--navy);
 }
 
-/* --- 2. Main Navbar Styles (NEW) --- */
+/* --- 2. Main Navbar Styles --- */
 .navbar {
     position: fixed;
     top: 0;
