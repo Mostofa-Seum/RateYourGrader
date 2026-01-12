@@ -1,7 +1,13 @@
-// --- GLOBAL FUNCTIONS ---
+// --- GLOBAL VARIABLES ---
+let reviewIdToDelete = null;
+let reviewTypeToDelete = null;
+
+// --- HELPER FUNCTIONS ---
 
 function toggleEditProfileSection() {
     const section = document.getElementById('edit-profile-section');
+    if (!section) return;
+
     if (section.style.display === 'none' || section.style.display === '') {
         section.style.display = 'block';
         section.scrollIntoView({ behavior: 'smooth' });
@@ -12,22 +18,43 @@ function toggleEditProfileSection() {
 
 function showMessage(elementId, message, type) {
     const messageBox = document.getElementById(elementId);
-    messageBox.className = 'message-box active';
-    messageBox.classList.add(type);
+    if (!messageBox) return;
+    
+    // Reset animation
+    messageBox.className = 'message-box';
+    void messageBox.offsetWidth; 
+    
+    messageBox.className = `message-box active ${type}`;
     messageBox.textContent = message;
+
     setTimeout(() => {
-        messageBox.className = 'message-box';
+        messageBox.className = 'message-box'; 
         messageBox.textContent = '';
     }, 5000);
 }
 
-// --- UPDATE USERNAME FUNCTION ---
+function showSuccessMessage(message) {
+    const successMessage = document.getElementById('successMessage');
+    if (!successMessage) return;
+
+    successMessage.textContent = message;
+    successMessage.classList.add('active');
+    
+    // Note: We don't remove the class here automatically if we are reloading, 
+    // to ensure the user sees it until the reload happens.
+    setTimeout(() => {
+        successMessage.classList.remove('active');
+    }, 3000);
+}
+
+// --- PROFILE UPDATES ---
+
 function updateUsername() {
     const username = document.getElementById('username').value;
-    document.getElementById('username-message').textContent = '';
+    const msgId = 'username-message';
 
     if (!username) {
-        showMessage('username-message', '⚠ Please enter a username.', 'error');
+        showMessage(msgId, '⚠ Please enter a username.', 'error');
         return;
     }
 
@@ -35,45 +62,35 @@ function updateUsername() {
     formData.append('action', 'update_username');
     formData.append('username', username);
 
-    // FETCH PATH UPDATED TO POINT TO COMMON MODULE
-    fetch('../../Common/MVC/php/update_profile.php', {
-        method: 'POST',
-        body: formData
-    })
+    fetch('UserDashboard.php', { method: 'POST', body: formData })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
             document.querySelector('.profile-name').textContent = username;
-            showMessage('username-message', '✔ ' + data.message, 'success');
+            showMessage(msgId, '✔ ' + data.message, 'success');
         } else {
-            showMessage('username-message', '⚠ ' + data.message, 'error');
+            showMessage(msgId, '⚠ ' + data.message, 'error');
         }
     })
-    .catch(error => {
-        console.error('Error:', error);
-        showMessage('username-message', '⚠ An error occurred connecting to the server.', 'error');
-    });
+    .catch(() => showMessage(msgId, '⚠ Server error.', 'error'));
 }
 
 function updatePassword() {
     const currentPassword = document.getElementById('current-password').value;
     const newPassword = document.getElementById('new-password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
-
-    document.getElementById('password-message').textContent = '';
+    const msgId = 'password-message';
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-        showMessage('password-message', '⚠ Please fill in all password fields.', 'error');
+        showMessage(msgId, '⚠ Please fill all fields.', 'error');
         return;
     }
-
     if (newPassword !== confirmPassword) {
-        showMessage('password-message', '⚠ New passwords do not match.', 'error');
+        showMessage(msgId, '⚠ Passwords mismatch.', 'error');
         return;
     }
-
     if (newPassword.length < 6) {
-        showMessage('password-message', '⚠ Password min length is 6 characters.', 'error');
+        showMessage(msgId, '⚠ Min length 6 chars.', 'error');
         return;
     }
 
@@ -83,26 +100,19 @@ function updatePassword() {
     formData.append('new_password', newPassword);
     formData.append('confirm_password', confirmPassword);
 
-    // FETCH PATH UPDATED TO POINT TO COMMON MODULE
-    fetch('../../Common/MVC/php/update_profile.php', {
-        method: 'POST',
-        body: formData
-    })
+    fetch('UserDashboard.php', { method: 'POST', body: formData })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            showMessage('password-message', '✔ ' + data.message, 'success');
+            showMessage(msgId, '✔ ' + data.message, 'success');
             document.getElementById('current-password').value = '';
             document.getElementById('new-password').value = '';
             document.getElementById('confirm-password').value = '';
         } else {
-            showMessage('password-message', '⚠ ' + data.message, 'error');
+            showMessage(msgId, '⚠ ' + data.message, 'error');
         }
     })
-    .catch(error => {
-        console.error('Error:', error);
-        showMessage('password-message', '⚠ An error occurred connecting to the server.', 'error');
-    });
+    .catch(() => showMessage(msgId, '⚠ Server error.', 'error'));
 }
 
 function resetPasswordForm() {
@@ -111,17 +121,23 @@ function resetPasswordForm() {
     document.getElementById('confirm-password').value = '';
 }
 
-function openReviewsModal(status) {
-    document.getElementById('reviewsModal').classList.add('active');
-    document.getElementById('reviews-modal-title').textContent = 
-        status.charAt(0).toUpperCase() + status.slice(1) + ' Reviews';
+// --- REVIEWS MODAL ---
 
-    const reviews = reviewsData[status] || [];
-    const reviewsList = document.getElementById('reviews-list');
-    reviewsList.innerHTML = '';
+function openReviewsModal(status) {
+    const modal = document.getElementById('reviewsModal');
+    const title = document.getElementById('reviews-modal-title');
+    const list = document.getElementById('reviews-list');
+
+    modal.classList.add('active');
+    title.textContent = status.charAt(0).toUpperCase() + status.slice(1) + ' Reviews';
+
+    // Access data safely
+    const reviews = (window.reviewsData && window.reviewsData[status]) ? window.reviewsData[status] : [];
+    
+    list.innerHTML = '';
 
     if (reviews.length === 0) {
-        reviewsList.innerHTML = `
+        list.innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">📭</div>
                 <p>No ${status} reviews at the moment.</p>
@@ -134,20 +150,29 @@ function openReviewsModal(status) {
         const rejectionReason = status === 'rejected' && review.rejectionReason
             ? `<div class="review-meta"><strong>Rejection reason:</strong> ${review.rejectionReason}</div>`
             : '';
-        const reviewHTML = `
-            <div class="review-item">
-                <div class="review-header">
-                    <div class="review-title">${review.title}</div>
+
+        const item = document.createElement('div');
+        item.className = 'review-item';
+        // Add ID just in case, though we rely on reload now
+        item.id = `review-card-${review.id}`;
+        
+        item.innerHTML = `
+            <div class="review-header">
+                <div class="review-title">${review.title}</div>
+                <div style="display: flex; gap: 10px; align-items: center;">
                     <div class="review-status ${status}">${status.toUpperCase()}</div>
+                    <button class="delete-icon-btn" onclick="initiateDelete(${review.id}, '${status}')" title="Delete Review">
+                        🗑️
+                    </button>
                 </div>
-                <div class="review-meta">
-                    <strong>Rating:</strong> ⭐ ${review.rating} | <strong>Review ID:</strong> ${review.date}
-                </div>
-                ${rejectionReason}
-                <div class="review-content">${review.content}</div>
             </div>
+            <div class="review-meta">
+                <strong>Rating:</strong> ⭐ ${review.rating} | <strong>Review ID:</strong> ${review.date}
+            </div>
+            ${rejectionReason}
+            <div class="review-content">${review.content}</div>
         `;
-        reviewsList.innerHTML += reviewHTML;
+        list.appendChild(item);
     });
 }
 
@@ -155,60 +180,111 @@ function closeReviewsModal() {
     document.getElementById('reviewsModal').classList.remove('active');
 }
 
-function showSuccessMessage(message) {
-    const successMessage = document.getElementById('successMessage');
-    successMessage.textContent = message;
-    successMessage.classList.add('active');
-    setTimeout(() => { successMessage.classList.remove('active'); }, 3000);
+// --- DELETE LOGIC (PAGE RELOAD APPROACH) ---
+
+function initiateDelete(id, type) {
+    reviewIdToDelete = id;
+    reviewTypeToDelete = type;
+    document.getElementById('deleteConfirmationModal').classList.add('active');
 }
 
+function closeDeleteModal() {
+    document.getElementById('deleteConfirmationModal').classList.remove('active');
+    reviewIdToDelete = null;
+    reviewTypeToDelete = null;
+}
+
+function confirmDelete() {
+    if (!reviewIdToDelete || !reviewTypeToDelete) return;
+
+    const formData = new FormData();
+    formData.append('action', 'delete_review');
+    formData.append('r_id', reviewIdToDelete);
+    formData.append('type', reviewTypeToDelete);
+
+    fetch('UserDashboard.php', { 
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        closeDeleteModal(); 
+
+        if (data.status === 'success') {
+            // 1. Show Success Message
+            showSuccessMessage('✔ Review deleted succesfully!');
+            
+            // 2. Reload Page after a short delay so user sees the message
+            setTimeout(() => {
+                location.reload(); 
+            }, 1000); 
+
+        } else {
+            showSuccessMessage('⚠ ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        closeDeleteModal();
+        showSuccessMessage('⚠ Network error.');
+    });
+}
+
+// --- INITIALIZATION ---
+
 function renderRecentReviews() {
-    const recentReviewsList = document.getElementById('recent-reviews-list');
-    if (!recentReviewsList) return;
+    const list = document.getElementById('recent-reviews-list');
+    if (!list) return;
 
-    const allReviews = [
-        ...reviewsData.accepted.map(review => ({ ...review, status: 'accepted' })),
-        ...reviewsData.pending.map(review => ({ ...review, status: 'pending' })),
-        ...reviewsData.rejected.map(review => ({ ...review, status: 'rejected' }))
-    ];
+    // Use empty object default if window.reviewsData is missing
+    const data = window.reviewsData || { accepted: [], pending: [], rejected: [] };
 
-    const recentReviews = allReviews.slice(0, 6);
+    let allReviews = [];
+    if (data.accepted) allReviews = allReviews.concat(data.accepted.map(r => ({...r, status: 'accepted'})));
+    if (data.pending) allReviews = allReviews.concat(data.pending.map(r => ({...r, status: 'pending'})));
+    if (data.rejected) allReviews = allReviews.concat(data.rejected.map(r => ({...r, status: 'rejected'})));
 
-    if (recentReviews.length === 0) {
-        recentReviewsList.innerHTML = `
+    // Sort by ID descending (newest first)
+    allReviews.sort((a, b) => b.id - a.id);
+
+    const recent = allReviews.slice(0, 6);
+    list.innerHTML = '';
+
+    if (recent.length === 0) {
+        list.innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">📭</div>
                 <p>No reviews yet.</p>
-            </div>
-        `;
+            </div>`;
         return;
     }
 
-    recentReviewsList.innerHTML = '';
-    recentReviews.forEach(review => {
-        const reviewHTML = `
-            <div class="recent-review-item">
-                <div class="recent-review-header">
-                    <div class="recent-review-title">${review.title}</div>
-                    <div class="recent-review-status ${review.status}">${review.status.toUpperCase()}</div>
-                </div>
-                <div class="recent-review-meta">
-                    <strong>Rating:</strong> ⭐ ${review.rating} | <strong>Review ID:</strong> ${review.date}
-                </div>
+    recent.forEach(review => {
+        const item = document.createElement('div');
+        item.className = 'recent-review-item';
+        item.innerHTML = `
+            <div class="recent-review-header">
+                <div class="recent-review-title">${review.title}</div>
+                <div class="recent-review-status ${review.status}">${review.status.toUpperCase()}</div>
+            </div>
+            <div class="recent-review-meta">
+                <strong>Rating:</strong> ⭐ ${review.rating} | <strong>Review ID:</strong> ${review.date}
             </div>
         `;
-        recentReviewsList.innerHTML += reviewHTML;
+        list.appendChild(item);
     });
 }
 
+// Events
 document.addEventListener('DOMContentLoaded', () => {
     renderRecentReviews();
+    
+    // Close modals on outside click
     window.addEventListener('click', (e) => {
         const reviewsModal = document.getElementById('reviewsModal');
-        if (e.target === reviewsModal) { closeReviewsModal(); }
+        const deleteModal = document.getElementById('deleteConfirmationModal');
+
+        if (e.target === reviewsModal) closeReviewsModal();
+        if (e.target === deleteModal) closeDeleteModal();
     });
 });
-
-function resetUsernameForm() {
-    location.reload(); 
-}
