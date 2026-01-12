@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'Config.php';
+include '../db/Config.php';
 
 // --- 1. HANDLE AJAX REQUESTS (Profile Updates & Deletion) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -194,7 +194,7 @@ $stmt->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="UserDashboard.css">
+    <link rel="stylesheet" href="../css/UserDashboard.css">
     <title>User Dashboard</title>
 </head>
 <body>
@@ -202,15 +202,15 @@ $stmt->close();
     <div class="container nav-container">
         <div class="logo-wrapper">
             <div class="logo-icon">
-                <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
+                <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
             </div>
             <span class="logo-text">Rate Your Grader</span>
         </div>
         
         <div class="nav-links">
-            <a href="HomePage.php">Home</a>
+            <a href="../../../Common/MVC/php/HomePage.php">Home</a>
             <a href="SearchOutput.php">Search Graders</a>
-            <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
+            <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary-nav" style="background-color: #dc3545; color: white;">Logout</a>
         </div>
         
         <button class="mobile-menu-btn">
@@ -224,7 +224,7 @@ $stmt->close();
         <div class="dashboard-grid">
             
             <div class="card profile-card">
-                <div class="profile-avatar"><img src="Figures/aiden.png" alt="Profile Avatar"></div>
+                <div class="profile-avatar"><img src="../images/aiden.png" alt="Profile Avatar"></div>
                 <div class="profile-name"><?php echo htmlspecialchars($db_username); ?></div>
                 <div class="profile-email"><?php echo htmlspecialchars($db_email); ?></div>
                 <button class="edit-profile-btn" onclick="toggleEditProfileSection()">Edit Profile</button>
@@ -340,9 +340,9 @@ $stmt->close();
                 <div class="footer-brand">
                     <div class="logo-wrapper mb-2">
                         <div class="logo-icon small">
-                            <img src="Figures/scolar_cap.png" alt="Logo" class="logo-img">
+                            <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
                         </div>
-                        <span class="footer-logo-text">Rate My Grader</span>
+                        <span class="footer-logo-text">Rate Your Grader</span>
                     </div>
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
@@ -359,20 +359,20 @@ $stmt->close();
                     <h5>Our Socials</h5>
                     <div class="social-icons">
                         <a href="#" aria-label="Facebook">
-                            <img src="Figures/facebook.png" alt="Facebook" class="social-icon">
+                            <img src="../images/facebook.png" alt="Facebook" class="social-icon">
                         </a>
                         <a href="#" aria-label="Instagram">
-                            <img src="Figures/instagram.png" alt="Instagram" class="social-icon">
+                            <img src="../images/instagram.png" alt="Instagram" class="social-icon">
                         </a>
                         <a href="#" aria-label="Twitter">
-                            <img src="Figures/twitter.png" alt="Twitter" class="social-icon">
+                            <img src="../images/twitter.png" alt="Twitter" class="social-icon">
                         </a>
                     </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2024 Rate My Grader. All rights reserved.</p>
+                <p>&copy; 2026 Rate Your Grader. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -447,6 +447,6 @@ $stmt->close();
     window.reviewsData = <?php echo json_encode($reviewsData, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 </script>
 
-<script src="UserDashboard.js"></script>
+<script src="../js/UserDashboard.js"></script>
 </body>
 </html>

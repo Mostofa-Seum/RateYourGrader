@@ -1,5 +1,6 @@
 <?php
 session_start();
+include "../db/config.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +12,6 @@ session_start();
 <body>
 <?php if (isset($_GET['login']) && $_GET['login'] == 'success'): ?>
     <script>
-        // This line cleans the URL so the alert doesn't appear if they refresh
         window.history.replaceState(null, null, window.location.pathname);
     </script>
 <?php endif; ?>
@@ -31,7 +31,7 @@ session_start();
     <a href="javascript:void(0)" onclick="goToSearch()">Search Graders</a>
 
     <?php if (isset($_SESSION['user_name'])): ?>
-        <a href="UserDashboard.php" style="text-decoration:none;">
+        <a href="../../../Student/MVC/php/UserDashboard.php" style="text-decoration:none;">
             <span style="margin-right: 15px; font-weight: bold; color: inherit;">Hello, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
         </a>
         <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545;color: white;">Logout</a>

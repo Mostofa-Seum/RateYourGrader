@@ -97,6 +97,27 @@ body {
     color: var(--primary-navy);
 }
 
+/* Specific class for Nav Button (Logout) */
+.btn-primary-nav {
+    padding: 0.35rem 1rem;   
+    font-size: 0.9rem;      
+    border-radius: 0.5rem;   
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    background-color: var(--primary-navy);
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary-nav:hover {
+    background-color: var(--dark-navy);
+    transform: translateY(-2px);
+}
+
+/* General Buttons */
 .btn {
     padding: 0.5rem 1.5rem;
     border-radius: 0.75rem;
@@ -387,7 +408,7 @@ footer { background-color: var(--darkest-navy); color: white; padding: 4rem 0; m
 
 .delete-icon-btn:hover {
     color: var(--danger-color);
-    background-color: rgba(231, 76, 60, 0.1);
+    background-color: red;
     transform: scale(1.1);
 }
 
