@@ -99,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="container">
         <a href="SearchOutput.php" class="back-btn">
-            <img src="../../Common/MVC/images/iconArrow.png" alt="Back" class="icon-img" style="transform: rotate(180deg); margin-right: 5px;"> Back to Search
+            <img src="../images/iconArrow.png" alt="Back" class="icon-img" style="transform: rotate(180deg); margin-right: 5px;"> Back to Search
         </a>
 
         <?php if ($message != ""): ?>

@@ -36,7 +36,7 @@ function renderStars($rating) {
     $fullStars = floor($rating);
     $hasHalf = ($rating - $fullStars) >= 0.5;
     $emptyStars = 5 - $fullStars - ($hasHalf ? 1 : 0);
-    $imgDir = '../../Common/MVC/images/';
+    $imgDir = '../images/';
 
     for ($i = 0; $i < $fullStars; $i++) { $output .= '<img src="'.$imgDir.'starFull.png" class="star-icon">'; }
     if ($hasHalf) { $output .= '<img src="'.$imgDir.'starHalf.jpg" class="star-icon">'; }
@@ -50,7 +50,6 @@ function renderStars($rating) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($prof['Name']) ?> - Rate Your Grader</title>
     <link rel="stylesheet" href="../css/ProfessorProfile.css">
 </head>
 <body>
@@ -69,7 +68,7 @@ function renderStars($rating) {
                 </a>
                 <a href="../../Common/MVC/php/Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
             <?php else: ?>
-                <a href="../../Common/MVC/php/Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
+                <a href="../../../Common/MVC/php/Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
             <?php endif; ?>
         </div>
     </div>
@@ -79,11 +78,11 @@ function renderStars($rating) {
 <header class="prof-header">
     <div class="container">
         <a href="SearchOutput.php" class="back-link">
-            <img src="../../Common/MVC/images/iconArrow.png" style="transform: rotate(180deg); width: 1em;"> Back to Search
+            <img src="../images/iconArrow.png" style="transform: rotate(180deg); width: 1em;"> Back to Search
         </a>
         <div class="prof-summary-card">
             <div class="prof-bio">
-                <div class="prof-avatar-large"><img src="../../Common/MVC/images/iconUser.png" alt="Professor"></div>
+                <div class="prof-avatar-large"><img src="../images/iconUser.png" alt="Professor"></div>
                 <div class="prof-details">
                     <h1><?= htmlspecialchars($prof['Name']) ?></h1>
                     <p class="dept-text"><?= htmlspecialchars($prof['Department']) ?> at <strong><?= htmlspecialchars($prof['University']) ?></strong></p>
@@ -148,7 +147,7 @@ function renderStars($rating) {
         <div class="footer-grid">
             <div class="footer-brand">
                 <div class="logo-wrapper mb-2">
-                    <div class="logo-icon small"><img src="../../Common/MVC/images/scolar_cap.png" alt="Logo" class="logo-img"></div>
+                    <div class="logo-icon small"><img src="../images/scolar_cap.png" alt="Logo" class="logo-img"></div>
                     <span class="footer-logo-text">Rate Your Grader</span>
                 </div>
                 <p>Empowering students with transparent grading information since 2024.</p>
@@ -163,13 +162,13 @@ function renderStars($rating) {
             <div class="footer-socials">
                 <h5>Our Socials</h5>
                 <div class="social-icons">
-                    <a href="#"><img src="../../Common/MVC/images/facebook.png" alt="Facebook" class="social-icon"></a>
-                    <a href="#"><img src="../../Common/MVC/images/instagram.png" alt="Instagram" class="social-icon"></a>
-                    <a href="#"><img src="../../Common/MVC/images/twitter.png" alt="Twitter" class="social-icon"></a>
+                    <a href="#"><img src="../images/facebook.png" alt="Facebook" class="social-icon"></a>
+                    <a href="#"><img src="../images/instagram.png" alt="Instagram" class="social-icon"></a>
+                    <a href="#"><img src="../images/twitter.png" alt="Twitter" class="social-icon"></a>
                 </div>
             </div>
         </div>
-        <div class="footer-bottom"><p>&copy; 2024 Rate My Grader. All rights reserved.</p></div>
+        <div class="footer-bottom"><p>&copy; 2026 Rate My Grader. All rights reserved.</p></div>
     </div>
 </footer>
 </body>

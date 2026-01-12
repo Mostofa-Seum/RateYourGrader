@@ -2,12 +2,12 @@
 session_start(); 
 include '../db/Config.php';
 
-
 $iconUser  = '<img src="../images/iconUser.png" alt="User" style="width: 4rem; height: 4rem; object-fit: contain;">';
 $starFull  = '<img src="../images/starFull.png" alt="Star" style="width: 1.2em; height: 1.2em; vertical-align: middle;">';
 $starHalf  = '<img src="../images/starHalf.jpg" alt="Half Star" style="width: 1.2em; height: 1.2em; vertical-align: middle;">';
 $starEmpty = '<img src="../images/zeroStar.png" alt="Empty Star" style="width: 1.2em; height: 1.2em; vertical-align: middle;">';
 $iconArrow = '<img src="../images/iconArrow.png" alt="Arrow" style="width: 1em; height: 1em; vertical-align: middle;">';
+
 // 2. SEARCH LOGIC
 $search_term = "";
 $search_performed = false;
@@ -53,7 +53,7 @@ if (isset($_GET['q'])) {
                     </a>
                     <a href="../../Common/MVC/php/Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
                 <?php else: ?>
-                    <a href="../../Common/MVC/php/Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
+                    <a href="../../../Common/MVC/php/Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -68,7 +68,8 @@ if (isset($_GET['q'])) {
             </div>
             
             <form action="" method="GET" class="search-wrapper" onsubmit="return validateSearch()">
-                <input type="text" id="searchBox" name="q" value="<?php echo htmlspecialchars($search_term); ?>" placeholder="Enter grader's name, dept, or university" class="search-input" required>
+                <input type="text" id="searchBox" name="q" value="<?php echo htmlspecialchars($search_term); ?>" 
+                placeholder="Enter grader's name, dept, or university" class="search-input" required>
                 <button type="submit" class="search-btn">
                     <img src="../images/SearchIcon.png" alt="Search Icon">
                 </button>
@@ -79,6 +80,11 @@ if (isset($_GET['q'])) {
     <?php if ($search_performed): ?>
     <main class="results-section">
         <div class="container">
+            
+            <div id="login-warning-msg">
+                ⚠️ You must <a href="../../../Common/MVC/php/Login.php">Login / Sign Up</a> to rate a professor.
+            </div>
+
             <div style="margin-bottom: 1.5rem;">
                 <h3 style="font-size: 1.5rem; font-weight: 700;">Search Results</h3>
                 <p>Found <span id="resultCount"><?php echo $count; ?></span> graders matching your search</p>
@@ -89,7 +95,9 @@ if (isset($_GET['q'])) {
                 if ($count > 0) {
                     while($row = $result->fetch_assoc()) {
                         $current_p_id = $row['P_id'];
-                        $stat_sql = "SELECT COUNT(r.r_id) as total_reviews, AVG(r.`Overall Rating`) as avg_overall, AVG(r.`Grading Fairness`) as avg_fairness, AVG(r.`Behavior and Communication`) as avg_behavior FROM review r INNER JOIN A_Review ar ON r.r_id = ar.R_id WHERE r.P_id = '$current_p_id'";
+                        $stat_sql = "SELECT COUNT(r.r_id) as total_reviews, AVG(r.`Overall Rating`) as avg_overall,
+                         AVG(r.`Grading Fairness`) as avg_fairness, AVG(r.`Behavior and Communication`) as avg_behavior 
+                         FROM review r INNER JOIN A_Review ar ON r.r_id = ar.R_id WHERE r.P_id = '$current_p_id'";
                         $stat_result = $conn->query($stat_sql);
                         $stats = $stat_result->fetch_assoc();
 
@@ -142,11 +150,21 @@ if (isset($_GET['q'])) {
                             <a href="ProfessorProfile.php?P_id=<?= $row['P_id'] ?>" class="view-profile-link" style="text-decoration: none;">
                                 View Profile &nbsp; <?= $iconArrow ?>
                             </a>
-                            <a href="ProfessorReview.php?P_id=<?= $row['P_id'] ?>&name=<?= urlencode($row['Name']) ?>&dept=<?= urlencode($row['Department']) ?>&uni=<?= urlencode($row['University']) ?>" 
-                               class="rate-profile-btn" style="text-decoration: none;">
-                                Rate Now &nbsp; <?= $iconArrow ?>
-                            </a>
+                            
+                            <?php if (isset($_SESSION['user_name'])): ?>
+                                <a href="ProfessorReview.php?P_id=<?= $row['P_id'] ?>&name=<?= urlencode($row['Name']) ?>&dept=<?= urlencode($row['Department']) ?>&uni=<?= urlencode($row['University']) ?>" 
+                                   class="rate-profile-btn" style="text-decoration: none;">
+                                    Rate Now &nbsp; <?= $iconArrow ?>
+                                </a>
+                            <?php else: ?>
+                                <a href="javascript:void(0);" 
+                                   onclick="showLoginMessage()"
+                                   class="rate-profile-btn" style="text-decoration: none;">
+                                    Rate Now &nbsp; <?= $iconArrow ?>
+                                </a>
+                            <?php endif; ?>
                         </div>
+
                     </div>
                 </div>
                 <?php 
@@ -182,9 +200,11 @@ if (isset($_GET['q'])) {
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Rate My Grader. All rights reserved.</p>
+                <p>&copy; 2026 Rate My Grader. All rights reserved.</p>
             </div>
         </div>
     </footer>
+
+    <script src="../js/SearchOutput.js"></script>
 </body>
 </html>
