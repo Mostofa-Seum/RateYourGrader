@@ -158,7 +158,7 @@ function openHistoryModal(status) {
                 <div class="review-status ${status}">${status.toUpperCase()}</div>
             </div>
             <div class="review-meta">
-                <strong>Rating:</strong> ⭐ ${review.rating} | <strong>Review ID:</strong> ${review.date}
+                <strong>Rating:</strong> ⭐ ${review.rating} | ${review.date}
             </div>
             ${rejectionHtml}
             <div class="review-content">${review.content}</div>
