@@ -21,13 +21,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fairness = intval($_POST['fairnessRating']);
     $behavior = intval($_POST['feedbackRating']); 
     $take_again = $_POST['takeAgain']; 
-    $course_name = $conn->real_escape_string($_POST['courseName']);
+    
+    // Added trim() to remove accidental whitespace around the name
+    $course_name = $conn->real_escape_string(trim($_POST['courseName']));
     $department = $conn->real_escape_string($_POST['department']); 
     $review_text = $conn->real_escape_string($_POST['review']);
     $difficulty = $_POST['difficulty']; 
     
-    $student_id = $_SESSION['s_id']; // Use actual session ID
-    $reviewer_id = 1; 
+    $student_id = $_SESSION['s_id']; 
+    $reviewer_id = 1; // You might want to update this logic later if needed
 
     if ($overall == 0 || $fairness == 0 || $behavior == 0) {
         $message = "Please select all star ratings.";
@@ -35,16 +37,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $final_c_id = 0;
         $course_error = false;
-        $check_sql = "SELECT c_id FROM courses WHERE `Course Name` = '$course_name' AND P_id = '$p_id_posted'";
+
+        // --- UPDATED LOGIC START ---
+
+        // 1. Check if this exact course ALREADY exists for this SPECIFIC professor
+// --- UPDATED LOGIC START ---
+
+        // 1. Search by Course Name ONLY. 
+        // We do not care about P_id here. If "TOC" exists, we want that existing ID.
+        $check_sql = "SELECT c_id FROM courses WHERE `Course Name` = '$course_name' LIMIT 1";
         $check_result = $conn->query($check_sql);
 
         if ($check_result && $check_result->num_rows > 0) {
+            // SCENARIO A: The Course Name already exists (e.g., TOC is 107).
+            // We reuse this existing ID. We do NOT insert a new row into the courses table.
             $row = $check_result->fetch_assoc();
             $final_c_id = $row['c_id'];
         } else {
+            // SCENARIO B: This Course Name has never been seen before.
+            // Insert it as a new course.
             $insert_course_sql = "INSERT INTO courses (`Course Name`, `P_id`) VALUES ('$course_name', '$p_id_posted')";
             if ($conn->query($insert_course_sql) === TRUE) {
-                $final_c_id = $conn->insert_id;
+                $final_c_id = $conn->insert_id; // Get the new ID
             } else {
                 $message = "Error saving course: " . $conn->error;
                 $messageType = "error";
@@ -52,8 +66,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
+        // --- UPDATED LOGIC END ---
+
+        // Only proceed to insert review if we have a valid Course ID (final_c_id)
         if (!$course_error && $final_c_id > 0) {
-            $sql_review = "INSERT INTO review (`P_id`, `Rv_id`, `S_id`, `C_id`, `Review`, `Overall Rating`, `Grading Fairness`, `Behavior and Communication`, `Would You Take This Course Again?`, `Department`, `Difficulty Level`) VALUES ('$p_id_posted', '$reviewer_id', '$student_id', '$final_c_id', '$review_text', '$overall', '$fairness', '$behavior', '$take_again', '$department', '$difficulty')";
+            $sql_review = "INSERT INTO review 
+                (`P_id`, `Rv_id`, `S_id`, `C_id`, `Review`, `Overall Rating`, `Grading Fairness`, `Behavior and Communication`, `Would You Take This Course Again?`, `Department`, `Difficulty Level`) 
+                VALUES 
+                ('$p_id_posted', '$reviewer_id', '$student_id', '$final_c_id', '$review_text', '$overall', '$fairness', '$behavior', '$take_again', '$department', '$difficulty')";
 
             if ($conn->query($sql_review) === TRUE) {
                 $message = "Review submitted successfully! Wait for approval.";
