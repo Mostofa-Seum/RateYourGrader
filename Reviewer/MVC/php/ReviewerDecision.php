@@ -100,7 +100,7 @@ $result = $conn->query($sql_pending);
             
 <div class="nav-links">
     <?php if (isset($_SESSION['user_name'])): ?>
-        <a href="../../../Common/MVC/phpLogout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
+        <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
     <?php else: ?>
         <a href="../../../Common/MVC/php/Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
     <?php endif; ?>
