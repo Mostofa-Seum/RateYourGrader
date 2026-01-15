@@ -181,8 +181,8 @@ if ($res_rej) {
         <div class="nav-links">
             <a href="../../../Common/MVC/php/HomePage.php">Home</a>
             <a href="SearchOutput.php">Search Graders</a>
-            <a href="ReviewerDecision.php" style="color:var(--primary-navy);">Review Panel</a>
-            <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
+            <a href="ReviewerDecision.php">Review Panel</a>
+            <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary" style="color: white;">Logout</a>
         </div>
     </div>
 </nav>

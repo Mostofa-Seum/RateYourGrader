@@ -108,7 +108,7 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    background-color: #dc3545;
     color: white;
 }
 
