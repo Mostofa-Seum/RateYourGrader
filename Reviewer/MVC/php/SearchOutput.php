@@ -196,7 +196,7 @@ if (isset($_GET['q'])) {
     </main>
     <?php endif; ?>
 
-    <footer>
+     <footer>
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
@@ -208,15 +208,31 @@ if (isset($_GET['q'])) {
                     </div>
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
+
+                <div class="footer-actions">
+                    <h5>Apply</h5>
+                    <div class="footer-buttons">
+                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
+                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
+                    </div>
+                </div>
+
                 <div class="footer-socials">
                     <h5>Our Socials</h5>
                     <div class="social-icons">
-                        <a href="#"><img src="../images/facebook.png" alt="Facebook" class="social-icon"></a>
-                        <a href="#"><img src="../images/instagram.png" alt="Instagram" class="social-icon"></a>
-                        <a href="#"><img src="../images/twitter.png" alt="Twitter" class="social-icon"></a>
+                        <a href="https://www.facebook.com" aria-label="Facebook">
+                            <img src="../images/facebook.png" alt="Facebook" class="social-icon">
+                        </a>
+                        <a href="https://www.instagram.com" aria-label="Instagram">
+                            <img src="../images/instagram.png" alt="Instagram" class="social-icon">
+                        </a>
+                        <a href="https://www.twitter.com" aria-label="Twitter">
+                            <img src="../images/twitter.png" alt="Twitter" class="social-icon">
+                        </a>
                     </div>
                 </div>
             </div>
+            
             <div class="footer-bottom">
                 <p>&copy; 2026 Rate My Grader. All rights reserved.</p>
             </div>

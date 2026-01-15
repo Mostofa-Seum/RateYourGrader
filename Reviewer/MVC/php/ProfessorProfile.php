@@ -208,13 +208,13 @@ function renderStars($rating) {
                 <div class="footer-socials">
                     <h5>Our Socials</h5>
                     <div class="social-icons">
-                        <a href="#" aria-label="Facebook">
+                        <a href="https://www.facebook.com" aria-label="Facebook">
                             <img src="../images/facebook.png" alt="Facebook" class="social-icon">
                         </a>
-                        <a href="#" aria-label="Instagram">
+                        <a href="https://www.instagram.com" aria-label="Instagram">
                             <img src="../images/instagram.png" alt="Instagram" class="social-icon">
                         </a>
-                        <a href="#" aria-label="Twitter">
+                        <a href="https://www.twitter.com" aria-label="Twitter">
                             <img src="../images/twitter.png" alt="Twitter" class="social-icon">
                         </a>
                     </div>

@@ -369,7 +369,10 @@ footer {
     gap: 3rem;
 }
 
-.logo-icon.small { width: 3rem; height: 3rem; }
+.logo-icon.small 
+{ width: 3rem; 
+    height: 3rem; 
+}
 
 .footer-brand p {
     color: #9ca3af;
@@ -439,7 +442,10 @@ footer {
     transform: translateY(-4px);
 }
 
-.social-icon { width: 24px; height: 24px; }
+.social-icon { 
+    width: 48px;
+     height: 48px;
+     }
 
 .footer-bottom {
     margin-top: 4rem;
