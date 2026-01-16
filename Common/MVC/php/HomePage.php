@@ -3,7 +3,6 @@ session_start();
 include "../db/config.php";
 
 // Initialize default variables (Default path for guests or students)
-$dashboardLink = "#"; 
 $searchAction = "../../../Student/MVC/php/SearchOutput.php"; 
 
 // Check if the user is logged in

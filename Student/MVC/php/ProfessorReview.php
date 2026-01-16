@@ -6,10 +6,24 @@ if (!isset($_SESSION['s_id'])) {
 }
 include '../db/Config.php';
 
+// 1. Initialize Variables
 $p_id = isset($_GET['P_id']) ? intval($_GET['P_id']) : 0;
 $prof_name = isset($_GET['name']) ? $_GET['name'] : "Unknown Professor";
 $prof_dept = isset($_GET['dept']) ? $_GET['dept'] : "Unknown Department";
 $prof_uni  = isset($_GET['uni'])  ? $_GET['uni']  : "Unknown University";
+
+// 2. Fetch Available Courses for Dropdown (ID and Name)
+$available_courses = [];
+if ($p_id > 0) {
+    // We select both ID and Name. ID will be the value sent to the database.
+    $course_sql = "SELECT `c_id`, `Course Name` FROM courses WHERE P_id = '$p_id'";
+    $course_result = $conn->query($course_sql);
+    if ($course_result) {
+        while($row = $course_result->fetch_assoc()) {
+            $available_courses[] = $row; // Stores ['c_id' => 101, 'Course Name' => 'Math']
+        }
+    }
+}
 
 $message = "";
 $messageType = "";
@@ -22,67 +36,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $behavior = intval($_POST['feedbackRating']); 
     $take_again = $_POST['takeAgain']; 
     
-    // Added trim() to remove accidental whitespace around the name
-    $course_name = $conn->real_escape_string(trim($_POST['courseName']));
+    // --- UPDATED: Directly get Course ID from Dropdown ---
+    // The dropdown value is now the c_id (e.g., "101")
+    $final_c_id = isset($_POST['courseSelect']) ? intval($_POST['courseSelect']) : 0;
+    
     $department = $conn->real_escape_string($_POST['department']); 
     $review_text = $conn->real_escape_string($_POST['review']);
     $difficulty = $_POST['difficulty']; 
     
     $student_id = $_SESSION['s_id']; 
-    $reviewer_id = 1; // You might want to update this logic later if needed
+    $reviewer_id = 1; 
 
+    // Validation
     if ($overall == 0 || $fairness == 0 || $behavior == 0) {
         $message = "Please select all star ratings.";
         $messageType = "error";
+    } elseif ($final_c_id == 0) {
+        // Validation in case user manipulated the form or didn't select
+        $message = "Please select a valid course.";
+        $messageType = "error";
     } else {
-        $final_c_id = 0;
-        $course_error = false;
+        // 3. Insert Review (Logic Simplified: No need to check/insert course)
+        $sql_review = "INSERT INTO review 
+            (`P_id`, `Rv_id`, `S_id`, `C_id`, `Review`, `Overall Rating`, `Grading Fairness`, `Behavior and Communication`, `Would You Take This Course Again?`, `Department`, `Difficulty Level`) 
+            VALUES 
+            ('$p_id_posted', '$reviewer_id', '$student_id', '$final_c_id', '$review_text', '$overall', '$fairness', '$behavior', '$take_again', '$department', '$difficulty')";
 
-        // --- UPDATED LOGIC START ---
-
-        // 1. Check if this exact course ALREADY exists for this SPECIFIC professor
-// --- UPDATED LOGIC START ---
-
-        // 1. Search by Course Name ONLY. 
-        // We do not care about P_id here. If "TOC" exists, we want that existing ID.
-        $check_sql = "SELECT c_id FROM courses WHERE `Course Name` = '$course_name' LIMIT 1";
-        $check_result = $conn->query($check_sql);
-
-        if ($check_result && $check_result->num_rows > 0) {
-            // SCENARIO A: The Course Name already exists (e.g., TOC is 107).
-            // We reuse this existing ID. We do NOT insert a new row into the courses table.
-            $row = $check_result->fetch_assoc();
-            $final_c_id = $row['c_id'];
+        if ($conn->query($sql_review) === TRUE) {
+            $message = "Review submitted successfully! Wait for approval.";
+            $messageType = "success";
+            $redirect = true; 
         } else {
-            // SCENARIO B: This Course Name has never been seen before.
-            // Insert it as a new course.
-            $insert_course_sql = "INSERT INTO courses (`Course Name`, `P_id`) VALUES ('$course_name', '$p_id_posted')";
-            if ($conn->query($insert_course_sql) === TRUE) {
-                $final_c_id = $conn->insert_id; // Get the new ID
-            } else {
-                $message = "Error saving course: " . $conn->error;
-                $messageType = "error";
-                $course_error = true;
-            }
-        }
-
-        // --- UPDATED LOGIC END ---
-
-        // Only proceed to insert review if we have a valid Course ID (final_c_id)
-        if (!$course_error && $final_c_id > 0) {
-            $sql_review = "INSERT INTO review 
-                (`P_id`, `Rv_id`, `S_id`, `C_id`, `Review`, `Overall Rating`, `Grading Fairness`, `Behavior and Communication`, `Would You Take This Course Again?`, `Department`, `Difficulty Level`) 
-                VALUES 
-                ('$p_id_posted', '$reviewer_id', '$student_id', '$final_c_id', '$review_text', '$overall', '$fairness', '$behavior', '$take_again', '$department', '$difficulty')";
-
-            if ($conn->query($sql_review) === TRUE) {
-                $message = "Review submitted successfully! Wait for approval.";
-                $messageType = "success";
-                $redirect = true; 
-            } else {
-                $message = "Error submitting review: " . $conn->error;
-                $messageType = "error";
-            }
+            $message = "Error submitting review: " . $conn->error;
+            $messageType = "error";
         }
     }
 }
@@ -98,7 +84,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .icon-img { width: 1.2em; height: 1.2em; vertical-align: middle; object-fit: contain; }
         .professor-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         #redirect-signal { display: none; }
-        /* Add hover effect for the Hello text link */
         .nav-links a span:hover { color: #1e40af; }
     </style>
 </head>
@@ -118,8 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <a href="UserDashboard.php" style="text-decoration: none;">
                         <span style="margin-right: 15px; font-weight: bold; color: inherit;">Hello, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
                     </a>
-                    <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary-nav" 
-                    style="background-color: #dc3545; color: white;">Logout</a>
+                    <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary-nav" style="background-color: #dc3545; color: white;">Logout</a>
                 <?php else: ?>
                 <?php endif; ?>
             </div>
@@ -130,14 +114,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="container">
         <a href="SearchOutput.php" class="back-btn">
-            <img src="../images/iconArrow.png" alt="Back" class="icon-img" 
-            style="transform: rotate(180deg); margin-right: 5px;"> Back to Search
+            <img src="../images/iconArrow.png" alt="Back" class="icon-img" style="transform: rotate(180deg); margin-right: 5px;"> Back to Search
         </a>
 
         <?php if ($message != ""): ?>
-        <div class="success-message show" style="display: flex; background-color: 
-        <?= $messageType == 'error' ? '#f8d7da' : '#d4edda' ?>; color: <?= $messageType == 'error' ? '#721c24' : '#155724' ?>; 
-        border-left: 5px solid <?= $messageType == 'error' ? '#f5c6cb' : '#28a745' ?>;">
+        <div class="success-message show" style="display: flex; background-color: <?= $messageType == 'error' ? '#f8d7da' : '#d4edda' ?>; color: <?= $messageType == 'error' ? '#721c24' : '#155724' ?>; border-left: 5px solid <?= $messageType == 'error' ? '#f5c6cb' : '#28a745' ?>;">
             <span><?= $message ?></span>
         </div>
         <?php endif; ?>
@@ -194,8 +175,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Course Name</label>
-                    <input type="text" name="courseName" placeholder="e.g., Intro to Algorithms" required>
+                    <select name="courseSelect" id="courseSelect" required style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px; background-color: white;">
+                        <option value="" disabled selected>Select a Course</option>
+                        <?php 
+                        if (!empty($available_courses)) {
+                            foreach($available_courses as $course) {
+                                // VALUE is the ID, TEXT is the Name
+                                echo '<option value="' . htmlspecialchars($course['c_id']) . '">' . htmlspecialchars($course['Course Name']) . '</option>';
+                            }
+                        } else {
+                            echo '<option value="" disabled>No courses available for this professor</option>';
+                        }
+                        ?>
+                    </select>
                 </div>
+
                 <div class="form-group">
                     <label class="form-label">Department</label>
                     <input type="text" name="department" value="<?= htmlspecialchars($prof_dept) ?>" required>
