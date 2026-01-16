@@ -14,11 +14,19 @@ $search_performed = false;
 $result = null;
 $count = 0;
 
-if (isset($_GET['q'])) {
+if (isset($_GET['q']) && !empty(trim($_GET['q']))) {
+    // SCENARIO A: User performed a search
     $search_performed = true;
     $search_term = $_GET['q'];
     $safe_search = $conn->real_escape_string($search_term);
     $sql = "SELECT * FROM professors WHERE Name LIKE '%$safe_search%' OR Department LIKE '%$safe_search%' OR University LIKE '%$safe_search%'";
+    $result = $conn->query($sql);
+    if (!$result) { die("Query Failed: " . $conn->error); }
+    $count = $result->num_rows;
+} else {
+    // SCENARIO B: Default View (Show 3 random professors)
+    $search_performed = true; 
+    $sql = "SELECT * FROM professors ORDER BY RAND() LIMIT 3";
     $result = $conn->query($sql);
     if (!$result) { die("Query Failed: " . $conn->error); }
     $count = $result->num_rows;
@@ -69,7 +77,7 @@ if (isset($_GET['q'])) {
             
             <form action="" method="GET" class="search-wrapper" onsubmit="return validateSearch()">
                 <input type="text" id="searchBox" name="q" value="<?php echo htmlspecialchars($search_term); ?>" 
-                placeholder="Enter grader's name, dept, or university" class="search-input" required>
+                placeholder="Enter grader's name, dept, or university" class="search-input">
                 <button type="submit" class="search-btn">
                     <img src="../images/SearchIcon.png" alt="Search Icon">
                 </button>
@@ -86,8 +94,13 @@ if (isset($_GET['q'])) {
             </div>
 
             <div style="margin-bottom: 1.5rem;">
-                <h3 style="font-size: 1.5rem; font-weight: 700;">Search Results</h3>
-                <p>Found <span id="resultCount"><?php echo $count; ?></span> graders matching your search</p>
+                <h3 style="font-size: 1.5rem; font-weight: 700;">
+                    <?php echo empty($search_term) ? "Suggested Professors" : "Search Results"; ?>
+                </h3>
+                
+                <?php if (!empty($search_term)): ?>
+                    <p>Found <span id="resultCount"><?php echo $count; ?></span> graders matching your search</p>
+                <?php endif; ?>
             </div>
 
             <div id="graderResults" class="results-grid">
@@ -95,6 +108,8 @@ if (isset($_GET['q'])) {
                 if ($count > 0) {
                     while($row = $result->fetch_assoc()) {
                         $current_p_id = $row['P_id'];
+                        
+                        // 1. STATS QUERY (Existing logic)
                         $stat_sql = "SELECT COUNT(r.r_id) as total_reviews, AVG(r.`Overall Rating`) as avg_overall,
                          AVG(r.`Grading Fairness`) as avg_fairness, AVG(r.`Behavior and Communication`) as avg_behavior 
                          FROM review r INNER JOIN A_Review ar ON r.r_id = ar.R_id WHERE r.P_id = '$current_p_id'";
@@ -107,6 +122,23 @@ if (isset($_GET['q'])) {
                         $clarity_score  = $total_reviews > 0 ? number_format($stats['avg_behavior'], 1) : "0.0";
                         $fairness_width = ($fairness_score / 5) * 100;
                         $clarity_width  = ($clarity_score / 5) * 100;
+
+                        // 2. NEW FEATURE: FETCH LATEST REVIEW TEXT
+                        $review_text_display = "No written reviews yet.";
+                        $review_text_sql = "SELECT ar.Review FROM A_Review ar 
+                                            INNER JOIN review r ON ar.r_id = r.r_id 
+                                            WHERE r.P_id = '$current_p_id' 
+                                            ORDER BY ar.AR_id DESC LIMIT 1";
+                        $review_text_result = $conn->query($review_text_sql);
+                        
+                        if ($review_text_result && $review_text_result->num_rows > 0) {
+                            $r_row = $review_text_result->fetch_assoc();
+                            $review_text_display = '"' . htmlspecialchars($r_row['Review']) . '"';
+                            // Truncate if too long
+                            if (strlen($review_text_display) > 150) {
+                                $review_text_display = substr($review_text_display, 0, 150) . '..."';
+                            }
+                        }
                 ?>
                 
                 <div class="card">
@@ -145,7 +177,11 @@ if (isset($_GET['q'])) {
                                 </div>
                             </div>
                         </div>
-                        
+
+                        <div style="background-color: #f9fafb; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; font-style: italic; color: #4b5563; font-size: 0.9rem;">
+                            <strong>Latest Review:</strong><br>
+                            <?php echo $review_text_display; ?>
+                        </div>
                         <div class="card-footer">
                             <a href="ProfessorProfile.php?P_id=<?= $row['P_id'] ?>" class="view-profile-link" style="text-decoration: none;">
                                 View Profile &nbsp; <?= $iconArrow ?>
