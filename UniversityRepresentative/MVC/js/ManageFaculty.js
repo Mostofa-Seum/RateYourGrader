@@ -1,16 +1,54 @@
-// Open Modal & Fetch Data
+let fetchTimeout;
+
+// 1. AUTO-FETCH COURSE NAME (For Modal)
+function fetchCourseName() {
+    const cIdInput = document.getElementById('new_course_id');
+    const nameInput = document.getElementById('new_course_name');
+    const cId = cIdInput.value.trim();
+
+    clearTimeout(fetchTimeout);
+
+    if (!cId) {
+        nameInput.value = '';
+        nameInput.placeholder = "Waiting for ID...";
+        nameInput.classList.remove('error-text');
+        return;
+    }
+
+    // Debounce 300ms
+    fetchTimeout = setTimeout(() => {
+        const formData = new FormData();
+        formData.append('action', 'get_course_name');
+        formData.append('c_id', cId);
+
+        fetch('ManageFaculty.php', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success') {
+                nameInput.value = data.course_name;
+                nameInput.classList.remove('error-text');
+                nameInput.style.backgroundColor = "#e9ecef";
+            } else {
+                nameInput.value = "No course found";
+                nameInput.classList.add('error-text');
+            }
+        })
+        .catch(e => console.error("Fetch error:", e));
+    }, 300);
+}
+
+// 2. OPEN MODAL
 function openEditModal(pId) {
     const modal = document.getElementById('editModal');
     
     // Reset inputs
     document.getElementById('new_course_id').value = '';
     document.getElementById('new_course_name').value = '';
+    document.getElementById('new_course_name').classList.remove('error-text');
     document.getElementById('course-list-container').innerHTML = '<div style="color:#888;">Loading courses...</div>';
     
-    // Set hidden ID
     document.getElementById('edit_p_id').value = pId;
 
-    // Fetch Details
     fetchDetails(pId);
     modal.classList.add('active');
 }
@@ -29,7 +67,6 @@ function fetchDetails(pId) {
             document.getElementById('edit_dept').value = data.Department;
             document.getElementById('edit_uni').value = data.University;
             
-            // Parse "ID::Name||ID::Name" string
             renderCourseList(data.CourseData);
         } else {
             showToast('Error: ' + d.message, 'error');
@@ -62,7 +99,7 @@ function renderCourseList(courseString) {
                     <span class="c-id">#${cId}</span>
                     <span class="c-name">${cName}</span>
                 </div>
-                <button class="btn-sm btn-danger" onclick="removeCourse(${cId})">Remove</button>
+                <button class="btn-sm btn-danger" onclick="removeCourse('${cId}')">Remove</button>
             `;
             container.appendChild(item);
         }
@@ -71,11 +108,62 @@ function renderCourseList(courseString) {
 
 function closeEditModal() {
     document.getElementById('editModal').classList.remove('active');
-    // Reload page to reflect changes on main dashboard cards
     setTimeout(() => location.reload(), 200); 
 }
 
-// Update Details
+// 3. ADD COURSE (Assign existing course to this prof)
+function addCourse() {
+    const pId = document.getElementById('edit_p_id').value;
+    const cId = document.getElementById('new_course_id').value;
+    const cName = document.getElementById('new_course_name').value;
+
+    if (!cId || !cName) {
+        showToast('Please enter a valid Course ID.', 'error');
+        return;
+    }
+
+    if (cName === "No course found") {
+        showToast('Cannot add invalid course.', 'error');
+        return;
+    }
+
+    const fd = new FormData();
+    fd.append('action', 'add_course');
+    fd.append('p_id', pId);
+    fd.append('course_id', cId);
+    fd.append('course_name', cName);
+
+    fetch('ManageFaculty.php', { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(d => {
+        showToast(d.message, d.status);
+        if(d.status === 'success') {
+            document.getElementById('new_course_id').value = '';
+            document.getElementById('new_course_name').value = '';
+            fetchDetails(pId); // Refresh list inside modal
+        }
+    });
+}
+
+// 4. REMOVE COURSE
+function removeCourse(cId) {
+    if (!confirm("Unassign this course?")) return;
+
+    const pId = document.getElementById('edit_p_id').value;
+    const fd = new FormData();
+    fd.append('action', 'remove_course');
+    fd.append('c_id', cId);
+    fd.append('p_id', pId); // Send P_id to delete specific relation
+
+    fetch('ManageFaculty.php', { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(d => {
+        showToast(d.message, d.status);
+        if(d.status === 'success') fetchDetails(pId);
+    });
+}
+
+// 5. UPDATE PROF DETAILS
 function updateProfessor() {
     const pId = document.getElementById('edit_p_id').value;
     const name = document.getElementById('edit_name').value;
@@ -94,9 +182,9 @@ function updateProfessor() {
     .then(d => showToast(d.message, d.status));
 }
 
-// Delete Professor
+// 6. DELETE PROFESSOR
 function deleteProfessor() {
-    if (!confirm("Delete this professor? This will remove all their courses too.")) return;
+    if (!confirm("Delete this professor completely?")) return;
 
     const pId = document.getElementById('edit_p_id').value;
     const fd = new FormData();
@@ -107,62 +195,14 @@ function deleteProfessor() {
     .then(r => r.json())
     .then(d => {
         if (d.status === 'success') {
-            alert('Professor deleted.');
-            location.reload();
+            showToast(d.message, 'success');
+            setTimeout(() => location.reload(), 1500);
         } else {
             showToast(d.message, 'error');
         }
     });
 }
 
-// Add Course
-function addCourse() {
-    const pId = document.getElementById('edit_p_id').value;
-    const cId = document.getElementById('new_course_id').value;
-    const cName = document.getElementById('new_course_name').value;
-
-    if (!cId || !cName) {
-        showToast('Please enter both ID and Name.', 'error');
-        return;
-    }
-
-    const fd = new FormData();
-    fd.append('action', 'add_course');
-    fd.append('p_id', pId);
-    fd.append('course_id', cId);
-    fd.append('course_name', cName);
-
-    fetch('ManageFaculty.php', { method: 'POST', body: fd })
-    .then(r => r.json())
-    .then(d => {
-        showToast(d.message, d.status);
-        if(d.status === 'success') {
-            // Clear inputs and refresh list immediately
-            document.getElementById('new_course_id').value = '';
-            document.getElementById('new_course_name').value = '';
-            fetchDetails(pId);
-        }
-    });
-}
-
-// Remove Course
-function removeCourse(cId) {
-    if (!confirm("Unassign this course?")) return;
-
-    const pId = document.getElementById('edit_p_id').value;
-    const fd = new FormData();
-    fd.append('action', 'remove_course');
-    fd.append('c_id', cId);
-
-    fetch('ManageFaculty.php', { method: 'POST', body: fd })
-    .then(r => r.json())
-    .then(d => {
-        showToast(d.message, d.status);
-        if(d.status === 'success') fetchDetails(pId);
-    });
-}
-
-// Toast Notification
 function showToast(message, type) {
     const toast = document.getElementById('toast-box');
     toast.textContent = message;
@@ -170,7 +210,6 @@ function showToast(message, type) {
     setTimeout(() => { toast.className = 'toast-box'; }, 3500);
 }
 
-// Close on outside click
 window.onclick = function(e) {
     if (e.target.classList.contains('modal')) closeEditModal();
 }

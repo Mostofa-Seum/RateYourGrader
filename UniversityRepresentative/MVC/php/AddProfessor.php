@@ -1,9 +1,12 @@
 <?php
+// Prevent whitespace issues
+ob_start();
 session_start();
 include '../db/Config.php';
 
-// --- HANDLE AJAX REQUEST (Form Submission) ---
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add_new_professor') {
+// --- HANDLE AJAX REQUESTS ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    ob_clean();
     header('Content-Type: application/json');
 
     // Security Check
@@ -12,71 +15,93 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         exit;
     }
 
-    $name = trim($_POST['name']);
-    $dept = trim($_POST['department']);
-    $uni  = trim($_POST['university']);
-    $course_name = trim($_POST['course_name']);
-    $c_id = trim($_POST['c_id']); 
+    $action = $_POST['action'];
 
-    if (empty($name) || empty($dept) || empty($uni) || empty($course_name) || empty($c_id)) {
-        echo json_encode(['status' => 'error', 'message' => 'All fields are required.']);
+    // --- 1. FETCH COURSE NAME ---
+    if ($action === 'get_course_name') {
+        $c_id = trim($_POST['c_id']);
+        
+        if (empty($c_id)) {
+            echo json_encode(['status' => 'error']);
+            exit;
+        }
+
+        // Fetch just the name. Use Backticks for column name.
+        $stmt = $conn->prepare("SELECT `Course Name` FROM courses WHERE c_id = ? LIMIT 1");
+        $stmt->bind_param("s", $c_id);
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        if ($row = $res->fetch_assoc()) {
+            echo json_encode(['status' => 'success', 'course_name' => $row['Course Name']]);
+        } else {
+            echo json_encode(['status' => 'not_found']);
+        }
+        $stmt->close();
         exit;
     }
 
-    // --- START TRANSACTION ---
-    $conn->begin_transaction();
+    // --- 2. ADD NEW PROFESSOR ---
+    if ($action === 'add_new_professor') {
+        $name = trim($_POST['name']);
+        $dept = trim($_POST['department']);
+        $uni  = trim($_POST['university']);
+        $c_id = trim($_POST['c_id']); 
+        $course_name = trim($_POST['course_name']);
 
-    try {
-        // 1. CHECK IF PROFESSOR ALREADY EXISTS
-        // We check Name, Department, and University combination
-        $check_stmt = $conn->prepare("SELECT P_id FROM professors WHERE Name = ? AND Department = ? AND University = ?");
-        $check_stmt->bind_param("sss", $name, $dept, $uni);
-        $check_stmt->execute();
-        $check_result = $check_stmt->get_result();
-        
-        if ($check_result->num_rows > 0) {
-            $check_stmt->close();
-            throw new Exception("This professor already exists in the database.");
+        // Validation
+        if (empty($name) || empty($dept) || empty($uni) || empty($c_id) || empty($course_name)) {
+            echo json_encode(['status' => 'error', 'message' => 'All fields are required.']);
+            exit;
         }
-        $check_stmt->close();
 
-        // 2. Insert Name, Dept, and Uni into 'professors' table
-        $stmt1 = $conn->prepare("INSERT INTO professors (Name, Department, University) VALUES (?, ?, ?)");
-        $stmt1->bind_param("sss", $name, $dept, $uni);
-        if (!$stmt1->execute()) throw new Exception("Error inserting professor: " . $stmt1->error);
-        
-        $new_p_id = $conn->insert_id;
-        $stmt1->close();
+        if ($course_name === "No course found") {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid Course ID. Please enter a valid ID.']);
+            exit;
+        }
 
-        // 3. Insert P_id and Uni Name into 'university' table
-        $stmt2 = $conn->prepare("INSERT INTO university (p_id, uni_name) VALUES (?, ?)");
-        $stmt2->bind_param("is", $new_p_id, $uni);
-        if (!$stmt2->execute()) throw new Exception("Error inserting university data: " . $stmt2->error);
-        $stmt2->close();
+        $conn->begin_transaction();
 
-        // 4. Insert c_id, Course Name, and P_id into 'courses' table
-        // We do NOT update the professors table with C_id, as the link is stored here in the courses table.
-        $stmt3 = $conn->prepare("INSERT INTO courses (c_id, `Course Name`, P_id) VALUES (?, ?, ?)");
-        // 'isi' means integer (c_id), string (Name), integer (P_id)
-        $stmt3->bind_param("isi", $c_id, $course_name, $new_p_id); 
-        if (!$stmt3->execute()) {
-            if ($conn->errno == 1062) {
-                throw new Exception("Course ID ($c_id) already exists. Please use a unique ID.");
+        try {
+            // A. Check for Duplicate Professor
+            $check_stmt = $conn->prepare("SELECT P_id FROM professors WHERE Name = ? AND Department = ? AND University = ?");
+            $check_stmt->bind_param("sss", $name, $dept, $uni);
+            $check_stmt->execute();
+            if ($check_stmt->get_result()->num_rows > 0) {
+                throw new Exception("This professor is already registered.");
             }
-            throw new Exception("Error inserting course: " . $stmt3->error);
+            $check_stmt->close();
+
+            // B. Insert Professor
+            $stmt1 = $conn->prepare("INSERT INTO professors (Name, Department, University) VALUES (?, ?, ?)");
+            $stmt1->bind_param("sss", $name, $dept, $uni);
+            if (!$stmt1->execute()) throw new Exception("DB Error (Prof): " . $stmt1->error);
+            $new_p_id = $conn->insert_id;
+            $stmt1->close();
+
+            // C. Insert University Data
+            $stmt2 = $conn->prepare("INSERT INTO university (p_id, uni_name) VALUES (?, ?)");
+            $stmt2->bind_param("is", $new_p_id, $uni);
+            if (!$stmt2->execute()) throw new Exception("DB Error (Uni): " . $stmt2->error);
+            $stmt2->close();
+
+            // D. Assign Course (Insert new row in courses table linked to this prof)
+            $stmt3 = $conn->prepare("INSERT INTO courses (c_id, `Course Name`, P_id) VALUES (?, ?, ?)");
+            $stmt3->bind_param("ssi", $c_id, $course_name, $new_p_id); 
+            if (!$stmt3->execute()) {
+                throw new Exception("DB Error (Course): " . $stmt3->error);
+            }
+            $stmt3->close();
+
+            $conn->commit();
+            echo json_encode(['status' => 'success', 'message' => 'Professor added and course assigned!']);
+
+        } catch (Exception $e) {
+            $conn->rollback();
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         }
-        $stmt3->close();
-
-        // Commit changes
-        $conn->commit();
-        echo json_encode(['status' => 'success', 'message' => 'Professor and Course added successfully!']);
-
-    } catch (Exception $e) {
-        // Rollback if any error occurs
-        $conn->rollback();
-        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        exit;
     }
-    exit;
 }
 ?>
 
@@ -115,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         <div class="form-card">
             <div class="form-header">
                 <h2>Add New Faculty</h2>
-                <p>Register a new professor and assign their course.</p>
+                <p>Register a new professor and assign an existing course.</p>
             </div>
 
             <form id="addProfForm" onsubmit="return false;">
@@ -137,12 +162,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
                     <div class="form-group">
                         <label for="c_id">Course ID</label>
-                        <input type="number" id="c_id" name="c_id" placeholder="e.g. 101" required>
+                        <input type="text" id="c_id" name="c_id" placeholder="e.g. CSE101" oninput="fetchCourseName()" required>
                     </div>
 
                     <div class="form-group full-width">
                         <label for="course_name">Course Name</label>
-                        <input type="text" id="course_name" name="course_name" placeholder="e.g. CSE101" required>
+                        <input type="text" id="course_name" name="course_name" placeholder="Waiting for valid Course ID..." disabled required>
                     </div>
                 </div>
 
@@ -156,6 +181,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         </div>
     </div>
 </main>
+
+<div id="toast-box" class="toast-box"></div>
 
 <footer>
     <div class="container">
@@ -200,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     </div>
 </footer>
 
-<script src="AddProfessor.js"></script>
+<script src="../js/AddProfessor.js"></script>
 
 </body>
 </html>

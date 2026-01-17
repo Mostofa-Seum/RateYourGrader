@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Get All Users
     if ($action === 'get_users') {
-        $sql = "SELECT s_id, Username, Email, Role FROM users WHERE Role = 'student' OR Role = 'User' OR Role IS NULL OR Role = ''";
+        $sql = "SELECT s_id, Username, Email, Role FROM users WHERE Role = 'student' OR Role = 'User' OR ROLE = 'Reviewer'OR Role = 'UniRep'";
         $res = $conn->query($sql);
         $users = [];
         if($res) while ($row = $res->fetch_assoc()) $users[] = $row;
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'get_unireps') {
-        $res = $conn->query("SELECT s_id, Username, Email FROM users WHERE Role = 'UniRep' OR Role = 'uni_rep'");
+        $res = $conn->query("SELECT s_id, Username, Email FROM users WHERE Role = 'UniRep'");
         $users = [];
         if($res) while ($row = $res->fetch_assoc()) $users[] = $row;
         echo json_encode(['status' => 'success', 'data' => $users]);
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'demote_user') {
         $s_id = intval($_POST['user_id']);
         $conn->query("DELETE FROM reviwer WHERE s_id = $s_id");
-        $conn->query("UPDATE users SET Role = 'student' WHERE s_id = $s_id");
+        $conn->query("UPDATE users SET Role = 'Student' WHERE s_id = $s_id");
         echo json_encode(['status' => 'success', 'message' => 'User demoted successfully']);
         exit;
     }
@@ -169,17 +169,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // --- 4. REVIEW MANAGEMENT ---
 
     if ($action === 'get_reviews') {
-        $acc_sql = "SELECT ar.AR_id, ar.Review, r.r_id, r.`Overall Rating` as Overall_Rating, 'Approved' as status, u.Username as ReviewerName 
+        // UPDATED SQL:
+        // 1. Checks 'u_act' (User who performed the Action) first.
+        // 2. CASE statement: If that user has Role='Admin', display 'Admin'. Else display their Username.
+        // 3. Fallback to 'u_assign' (Original Reviewer) if no action logger exists.
+        
+        $acc_sql = "SELECT ar.AR_id, ar.Review, r.r_id, r.`Overall Rating` as Overall_Rating, 'Approved' as status, 
+                    CASE 
+                        WHEN u_act.Role = 'Admin' THEN 'Admin'
+                        WHEN u_act.Username IS NOT NULL THEN u_act.Username
+                        WHEN u_assign.Role = 'Admin' THEN 'Admin'
+                        ELSE COALESCE(u_assign.Username, 'Unknown')
+                    END as ReviewerName 
                     FROM a_review ar 
                     JOIN review r ON ar.r_id = r.r_id 
-                    LEFT JOIN reviwer rv ON ar.AR_id = rv.AR_id 
-                    LEFT JOIN users u ON rv.s_id = u.s_id";
+                    -- Link 1: Action based (Who approved it?)
+                    LEFT JOIN reviwer rv_act ON ar.AR_id = rv_act.AR_id 
+                    LEFT JOIN users u_act ON rv_act.s_id = u_act.s_id
+                    -- Link 2: Assignment based (Who was assigned?)
+                    LEFT JOIN reviwer rv_assign ON r.Rv_id = rv_assign.RV_id
+                    LEFT JOIN users u_assign ON rv_assign.s_id = u_assign.s_id";
         
-        $rej_sql = "SELECT rr.RR_id, r.Review, r.r_id, r.`Overall Rating` as Overall_Rating, 'Rejected' as status, u.Username as ReviewerName, rr.Cause
+        $rej_sql = "SELECT rr.RR_id, r.Review, r.r_id, r.`Overall Rating` as Overall_Rating, 'Rejected' as status, rr.Cause,
+                    CASE 
+                        WHEN u_act.Role = 'Admin' THEN 'Admin'
+                        WHEN u_act.Username IS NOT NULL THEN u_act.Username
+                        WHEN u_assign.Role = 'Admin' THEN 'Admin'
+                        ELSE COALESCE(u_assign.Username, 'Unknown')
+                    END as ReviewerName
                     FROM r_review rr 
                     JOIN review r ON rr.r_id = r.r_id 
-                    LEFT JOIN reviwer rv ON rr.RR_id = rv.RR_id
-                    LEFT JOIN users u ON rv.s_id = u.s_id";
+                    -- Link 1: Action based (Who rejected it?)
+                    LEFT JOIN reviwer rv_act ON rr.RR_id = rv_act.RR_id
+                    LEFT JOIN users u_act ON rv_act.s_id = u_act.s_id
+                    -- Link 2: Assignment based (Who was assigned?)
+                    LEFT JOIN reviwer rv_assign ON r.Rv_id = rv_assign.RV_id
+                    LEFT JOIN users u_assign ON rv_assign.s_id = u_assign.s_id";
         
         $reviews = [];
         $acc = $conn->query($acc_sql);
@@ -191,6 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // --- MODIFIED SECTION STARTS HERE ---
     if ($action === 'toggle_review') {
         $r_id = intval($_POST['r_id']);
         $current_status = $_POST['current_status'];
@@ -205,14 +231,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 $conn->query("DELETE FROM a_review WHERE r_id = $r_id");
 
+                // Insert into Rejected
                 $stmt = $conn->prepare("INSERT INTO r_review (r_id, Cause) VALUES (?, 'Admin Rejected')");
                 $stmt->bind_param("i", $r_id);
                 $stmt->execute();
-                $new_rr_id = $conn->insert_id;
-
-                $stmt_log = $conn->prepare("INSERT INTO reviwer (s_id, RR_id) VALUES (?, ?)");
-                $stmt_log->bind_param("ii", $current_admin_id, $new_rr_id);
-                $stmt_log->execute();
+                
+                // DELETED: Logging Admin Action in reviwer table
 
                 $new_status = 'Rejected';
             } else {
@@ -227,17 +251,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 $conn->query("DELETE FROM r_review WHERE r_id = $r_id");
 
+                // Insert into Approved
                 $stmt = $conn->prepare("INSERT INTO a_review (r_id, Review, Report) VALUES (?, ?, 0)");
                 $stmt->bind_param("is", $r_id, $text);
                 $stmt->execute();
-                $new_ar_id = $conn->insert_id;
-
-                $stmt_log = $conn->prepare("INSERT INTO reviwer (s_id, AR_id) VALUES (?, ?)");
-                $stmt_log->bind_param("ii", $current_admin_id, $new_ar_id);
-                $stmt_log->execute();
+                
+                // DELETED: Logging Admin Action in reviwer table
                 
                 $new_status = 'Approved';
             }
+
             $conn->commit();
             echo json_encode(['status' => 'success', 'message' => "Review changed to $new_status"]);
         } catch (Exception $e) {
@@ -246,6 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         exit;
     }
+    // --- MODIFIED SECTION ENDS HERE ---
 
     // --- 5. REQUESTS ---
     if ($action === 'get_requests') {
@@ -296,7 +320,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // --- PAGE LOAD COUNTS ---
-if (!isset($_SESSION['s_id'])) { header("Location: Login.php"); exit(); }
+// UPDATED SECURITY CHECK
+if (!isset($_SESSION['s_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') { 
+    header("Location: ../../../Common/MVC/php/Login.php"); 
+    exit(); 
+}
 
 $cnt_users = $conn->query("SELECT COUNT(*) as c FROM users WHERE Role = 'student' OR Role = 'Reviewer' OR Role = 'UniRep'")->fetch_assoc()['c'];
 $cnt_rev = $conn->query("SELECT COUNT(*) as c FROM users WHERE Role = 'Reviewer'")->fetch_assoc()['c'];
@@ -327,7 +355,6 @@ $cnt_req = ($check_req && $check_req->num_rows > 0) ? $conn->query("SELECT COUNT
             <span class="logo-text">Admin Panel</span>
         </div>
         <div class="nav-links">
-            <a href="../../../Common/MVC/php/HomePage.php">Home</a>
             <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
         </div>
     </div>

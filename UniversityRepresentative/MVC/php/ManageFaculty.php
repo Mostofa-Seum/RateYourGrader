@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
     // 1. GET DETAILS
-    // Fetches professor info AND a concatenated list of their courses (ID::Name)
     if ($action === 'get_details') {
         $p_id = intval($_POST['p_id']);
         
@@ -44,7 +43,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // 2. UPDATE PROFESSOR (Personal Details Only)
+    // 2. SEARCH COURSE NAME (For Auto-fill)
+    if ($action === 'get_course_name') {
+        $c_id = trim($_POST['c_id']);
+        
+        if (empty($c_id)) {
+            echo json_encode(['status' => 'error']);
+            exit;
+        }
+
+        $stmt = $conn->prepare("SELECT `Course Name` FROM courses WHERE c_id = ? LIMIT 1");
+        $stmt->bind_param("s", $c_id);
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        if ($row = $res->fetch_assoc()) {
+            echo json_encode(['status' => 'success', 'course_name' => $row['Course Name']]);
+        } else {
+            echo json_encode(['status' => 'not_found']);
+        }
+        $stmt->close();
+        exit;
+    }
+
+    // 3. ADD COURSE (Assign Existing Course to Professor)
+    if ($action === 'add_course') {
+        $p_id = intval($_POST['p_id']); 
+        $course_name = trim($_POST['course_name']);
+        $course_id = trim($_POST['course_id']);
+
+        if(empty($course_name) || empty($course_id)) {
+            echo json_encode(['status' => 'error', 'message' => 'Course Name and ID required']);
+            exit;
+        }
+
+        if ($course_name === "No course found") {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid Course ID.']);
+            exit;
+        }
+
+        // --- NEW: DUPLICATE CHECK ---
+        // Check if this professor (P_id) is already assigned this course (c_id)
+        $check_stmt = $conn->prepare("SELECT serial FROM courses WHERE c_id = ? AND P_id = ?");
+        $check_stmt->bind_param("si", $course_id, $p_id);
+        $check_stmt->execute();
+        $check_result = $check_stmt->get_result();
+
+        if ($check_result->num_rows > 0) {
+            echo json_encode(['status' => 'error', 'message' => 'This professor is already assigned to this course.']);
+            $check_stmt->close();
+            exit;
+        }
+        $check_stmt->close();
+        // -----------------------------
+
+        // Insert new row if check passes
+        $stmt = $conn->prepare("INSERT INTO courses (c_id, `Course Name`, P_id) VALUES (?, ?, ?)");
+        $stmt->bind_param("ssi", $course_id, $course_name, $p_id); 
+
+        if($stmt->execute()) {
+            echo json_encode(['status' => 'success', 'message' => 'New course assigned']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Error adding course: ' . $stmt->error]);
+        }
+        $stmt->close();
+        exit;
+    }
+
+    // 4. UPDATE PROFESSOR DETAILS
     if ($action === 'update_professor') {
         $p_id = intval($_POST['p_id']);
         $name = $_POST['name'];
@@ -70,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // 3. DELETE PROFESSOR (Cascading delete)
+    // 5. DELETE PROFESSOR
     if ($action === 'delete_professor') {
         $p_id = intval($_POST['p_id']);
         $conn->begin_transaction();
@@ -88,43 +154,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // 4. ADD COURSE (Inserts into courses table)
-    if ($action === 'add_course') {
-        $p_id = intval($_POST['p_id']); 
-        $course_name = trim($_POST['course_name']);
-        $course_id = trim($_POST['course_id']);
-
-        if(empty($course_name) || empty($course_id)) {
-            echo json_encode(['status' => 'error', 'message' => 'Course Name and ID required']);
-            exit;
-        }
-
-        // Prepare Insert
-        $stmt = $conn->prepare("INSERT INTO courses (c_id, `Course Name`, P_id) VALUES (?, ?, ?)");
-        // 'isi' -> integer (c_id), string (Name), integer (P_id)
-        // If your c_id is actually a string (e.g. "CSE101"), change to 'ssi'
-        $stmt->bind_param("isi", $course_id, $course_name, $p_id); 
-
-        if($stmt->execute()) {
-            echo json_encode(['status' => 'success', 'message' => 'New course assigned']);
-        } else {
-            // Error 1062 is for Duplicate Entry
-            if ($conn->errno == 1062) {
-                echo json_encode(['status' => 'error', 'message' => 'Course ID already exists!']);
-            } else {
-                echo json_encode(['status' => 'error', 'message' => 'Error adding course: ' . $stmt->error]);
-            }
-        }
-        $stmt->close();
-        exit;
-    }
-
-    // 5. REMOVE COURSE
+    // 6. REMOVE COURSE
     if ($action === 'remove_course') {
         $c_id = trim($_POST['c_id']);
+        $p_id = intval($_POST['p_id']); 
 
-        $stmt = $conn->prepare("DELETE FROM courses WHERE c_id = ?");
-        $stmt->bind_param("i", $c_id); // Change to 's' if c_id is string
+        $stmt = $conn->prepare("DELETE FROM courses WHERE c_id = ? AND P_id = ?");
+        $stmt->bind_param("si", $c_id, $p_id); 
 
         if ($stmt->execute()) {
             echo json_encode(['status' => 'success', 'message' => 'Course removed']);
@@ -185,7 +221,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
             $defaultAvatar = '../images/aiden.png';
 
-            // Fetch distinct professors and a summary of their courses
             $sql = "SELECT p.*, GROUP_CONCAT(c.`Course Name` SEPARATOR ', ') as CourseNames 
                     FROM professors p 
                     LEFT JOIN courses c ON p.P_id = c.P_id 
@@ -263,13 +298,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="course-management-section">
                 <h3>Assigned Courses</h3>
                 
-                <div id="course-list-container" class="course-list">
-                    </div>
+                <div id="course-list-container" class="course-list"></div>
 
-                <h4 style="margin-top:1.5rem; color:#444;">Add New Course</h4>
+                <h4 style="margin-top:1.5rem; color:#444;">Assign New Course</h4>
                 <div class="add-course-row">
-                    <input type="number" id="new_course_id" placeholder="ID (e.g. 101)" class="sm-input">
-                    <input type="text" id="new_course_name" placeholder="Name (e.g. CSE101)" class="lg-input">
+                    <input type="text" id="new_course_id" placeholder="Course ID (e.g. CSE101)" class="sm-input" oninput="fetchCourseName()">
+                    <input type="text" id="new_course_name" placeholder="Waiting for ID..." class="lg-input" disabled>
                     <button class="btn btn-secondary" onclick="addCourse()">Add</button>
                 </div>
             </div>
@@ -291,33 +325,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <p>Empowering students with transparent grading information since 2024.</p>
             </div>
-
-            <div class="footer-actions">
-                <h5>Apply</h5>
-                <div class="footer-buttons">
-                    <a href="#" class="footer-nav-link">Apply for Reviewer</a>
-                    <a href="#" class="footer-nav-link">Apply for University Representative</a>
-                </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Rate My Grader. All rights reserved.</p>
             </div>
-
-            <div class="footer-socials">
-                <h5>Our Socials</h5>
-                <div class="social-icons">
-                    <a href="#" aria-label="Facebook">
-                        <img src="../images/facebook.png" alt="Facebook" class="social-icon">
-                    </a>
-                    <a href="#" aria-label="Instagram">
-                        <img src="../images/instagram.png" alt="Instagram" class="social-icon">
-                    </a>
-                    <a href="#" aria-label="Twitter">
-                        <img src="../images/twitter.png" alt="Twitter" class="social-icon">
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer-bottom">
-            <p>&copy; 2026 Rate Your Grader. All rights reserved.</p>
         </div>
     </div>
 </footer>

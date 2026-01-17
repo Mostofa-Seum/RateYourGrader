@@ -1,14 +1,71 @@
+let fetchTimeout;
+
+// 1. AUTO-FETCH COURSE NAME
+function fetchCourseName() {
+    const cIdInput = document.getElementById('c_id');
+    const nameInput = document.getElementById('course_name');
+    const cId = cIdInput.value.trim();
+
+    // Clear previous timer
+    clearTimeout(fetchTimeout);
+
+    // If empty, reset
+    if (!cId) {
+        nameInput.value = '';
+        nameInput.classList.remove('error-text');
+        nameInput.placeholder = "Waiting for Course ID...";
+        return;
+    }
+
+    // Debounce: Wait 300ms after typing stops
+    fetchTimeout = setTimeout(() => {
+        const formData = new FormData();
+        formData.append('action', 'get_course_name');
+        formData.append('c_id', cId);
+
+        fetch('AddProfessor.php', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Success: Fill name and ensure clean state
+                nameInput.value = data.course_name;
+                nameInput.classList.remove('error-text');
+                nameInput.style.backgroundColor = "#e9ecef"; 
+                nameInput.style.color = "#333";
+            } else {
+                // Not Found: Show error
+                nameInput.value = "No course found";
+                nameInput.classList.add('error-text');
+                showToast('Course not available. Please add the course first.', 'error');
+            }
+        })
+        .catch(e => {
+            console.error("Fetch error:", e);
+            showToast('Error connecting to database.', 'error');
+        });
+    }, 300);
+}
+
+// 2. SUBMIT FORM
 function submitProfessor() {
     // Get values
     const name = document.getElementById('name').value;
     const dept = document.getElementById('department').value;
     const uni = document.getElementById('university').value;
-    const c_id = document.getElementById('c_id').value; // Get Course ID
-    const course_name = document.getElementById('course_name').value; // Renamed ID in HTML
+    const c_id = document.getElementById('c_id').value; 
     
-    // Basic validation
-    if (!name || !dept || !uni || !course_name || !c_id) {
-        showMessage('⚠ Please fill in all fields.', 'error');
+    // Get course_name directly (works even if disabled)
+    const course_name = document.getElementById('course_name').value;
+    
+    // Validation: Empty Fields
+    if (!name || !dept || !uni || !c_id) {
+        showToast('Please fill in all fields.', 'error');
+        return;
+    }
+
+    // Validation: Invalid Course
+    if (!course_name || course_name === "No course found" || course_name === "") {
+        showToast('Invalid Course ID. Cannot add professor.', 'error');
         return;
     }
 
@@ -17,10 +74,10 @@ function submitProfessor() {
     formData.append('name', name);
     formData.append('department', dept);
     formData.append('university', uni);
-    formData.append('c_id', c_id); // Send Course ID
+    formData.append('c_id', c_id);
     formData.append('course_name', course_name);
 
-    // Disable button to indicate loading
+    // Disable button to prevent double submit
     const btn = document.querySelector('.btn-primary');
     const originalText = btn.textContent;
     btn.disabled = true;
@@ -30,40 +87,37 @@ function submitProfessor() {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(r => r.json())
     .then(data => {
         btn.disabled = false;
         btn.textContent = originalText;
 
         if (data.status === 'success') {
-            showMessage('✔ ' + data.message, 'success');
-            // Clear form on success
+            showToast('✔ ' + data.message, 'success');
+            // Reset form
             document.getElementById('addProfForm').reset();
+            document.getElementById('course_name').value = '';
         } else {
-            showMessage('⚠ ' + data.message, 'error');
+            showToast('⚠ ' + data.message, 'error');
         }
     })
     .catch(error => {
         btn.disabled = false;
         btn.textContent = originalText;
-        showMessage('⚠ Server Error. Check console.', 'error');
+        showToast('Server connection failed.', 'error');
         console.error('Error:', error);
     });
 }
 
-function showMessage(message, type) {
-    const box = document.getElementById('response-message');
-    
-    // Reset classes to trigger animation if needed
-    box.className = 'message-box';
-    void box.offsetWidth; 
-    
-    box.className = `message-box active ${type}`;
-    box.textContent = message;
+// 3. TOAST NOTIFICATION
+function showToast(message, type) {
+    const toast = document.getElementById('toast-box');
+    if(!toast) return;
 
-    // Auto hide after 4 seconds
+    toast.textContent = message;
+    toast.className = `toast-box show ${type}`;
+
     setTimeout(() => {
-        box.className = 'message-box';
-        box.textContent = '';
+        toast.className = 'toast-box';
     }, 4000);
 }
