@@ -223,12 +223,17 @@ $stmt->close();
     <div class="container">
         <div class="dashboard-grid">
             
-            <div class="card profile-card">
-                <div class="profile-avatar"><img src="../images/aiden.png" alt="Profile Avatar"></div>
-                <div class="profile-name"><?php echo htmlspecialchars($db_username); ?></div>
-                <div class="profile-email"><?php echo htmlspecialchars($db_email); ?></div>
-                <button class="edit-profile-btn" onclick="toggleEditProfileSection()">Edit Profile</button>
-            </div>
+<div class="card profile-card">
+    <div class="profile-avatar"><img src="../images/aiden.png" alt="Profile Avatar"></div>
+    <div class="profile-name"><?php echo htmlspecialchars($db_username); ?></div>
+    <div class="profile-email"><?php echo htmlspecialchars($db_email); ?></div>
+    
+    <button class="edit-profile-btn" onclick="toggleEditProfileSection()">Edit Profile</button>
+
+    <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="window.location.href='../../../UniversityRepresentative/MVC/php/UniversityRepDashboard.php'">
+       <b> Switch to University Representative View </b>
+    </button>
+</div>
 
             <div class="stats-section">
                 <h2>Your Reviews</h2>

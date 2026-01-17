@@ -87,11 +87,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 }
 
 // --- FETCH PENDING REVIEWS ---
+// --- FETCH PENDING REVIEWS ---
 $sql_pending = "SELECT r.*, p.Name as ProfName, c.`Course Name`
                 FROM review r
                 LEFT JOIN professors p ON r.P_id = p.P_id
                 LEFT JOIN courses c ON r.C_id = c.c_id
                 WHERE r.Reviewed = 0
+                GROUP BY r.r_id  -- <--- ADD THIS LINE
                 ORDER BY r.r_id ASC";
 
 $result = $conn->query($sql_pending);

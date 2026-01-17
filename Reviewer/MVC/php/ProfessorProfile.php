@@ -35,7 +35,13 @@ $avg_fairness = $total_reviews > 0 ? number_format($stats['avg_fairness'], 1) : 
 $avg_behavior = $total_reviews > 0 ? number_format($stats['avg_behavior'], 1) : 0;
 $take_again_percent = ($total_reviews > 0) ? round(($stats['take_again_count'] / $total_reviews) * 100) : 0;
 
-$sql_reviews = "SELECT r.*, c.`Course Name` FROM review r INNER JOIN A_Review ar ON r.r_id = ar.R_id LEFT JOIN courses c ON r.C_id = c.c_id WHERE r.P_id = $p_id ORDER BY r.r_id DESC";
+$sql_reviews = "SELECT r.*, c.`Course Name` 
+                FROM review r 
+                INNER JOIN A_Review ar ON r.r_id = ar.R_id 
+                LEFT JOIN courses c ON r.C_id = c.c_id 
+                WHERE r.P_id = $p_id 
+                GROUP BY r.r_id 
+                ORDER BY r.r_id DESC";
 $result_reviews = $conn->query($sql_reviews);
 
 function renderStars($rating) {
