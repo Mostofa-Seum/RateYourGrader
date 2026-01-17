@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $signup_error = "Invalid email format!";
             $show_signup_form = true;
         } else {
-            // --- NEW: CHECK FOR DUPLICATES ---
+            // Check for duplicates
             $check_sql = "SELECT * FROM users WHERE Username = '$name' OR Email = '$email'";
             $check_result = $conn->query($check_sql);
 
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $signup_error = "Username or Email is already taken!";
                 $show_signup_form = true;
             } else {
-                // Determine default role (Assuming 'Student' is default for signup, change if needed)
+                // Determine default role
                 $default_role = 'Student';
 
                 // Insert new user
@@ -79,17 +79,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $login_email = $conn->real_escape_string($_POST['login_email']);
         $login_pass  = $_POST['login_password'];
 
+        // ---------------------------------------------------------
+        // 1. HARDCODED ADMIN CHECK (FIXED)
+        // ---------------------------------------------------------
         if ($login_email === 'admin' && $login_pass === 'admin') {
-            $login_success_name = "admin";
-            // Admin redirect can go here if needed
+            $_SESSION['user_name'] = "System Admin";
+            $_SESSION['role'] = "Admin"; 
+            
+            // CRITICAL FIX: The dashboard checks if 's_id' is set. 
+            // We must give the hardcoded admin a dummy ID (e.g., 0).
+            $_SESSION['s_id'] = 0; 
+            
+            // Redirect to Admin Dashboard
+            header("Location: ../../../Admin/MVC/php/AdminDashboard.php");
+            exit();
         } else {
+            // -----------------------------------------------------
+            // 2. DATABASE USER CHECK
+            // -----------------------------------------------------
             $sql = "SELECT * FROM users WHERE Email = '$login_email'";
             $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {
                 $row = $result->fetch_assoc();
                 
-                // Compare passwords (Plain text comparison based on your code)
+                // Compare passwords
                 if ($login_pass === $row['Password']) {
                     
                     // Save Session Data
@@ -97,19 +111,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $_SESSION['s_id'] = $row['s_id']; 
                     $_SESSION['role'] = $row['role']; 
 
-                    // --- NEW: ROLE BASED REDIRECT ---
-                    $user_role = $row['role'];
+                    // --- ROLE BASED REDIRECT ---
+                    $user_role = $row['role']; // Ensure database role is capitalized like 'Admin'
 
                     if ($user_role === 'Student') {
-                        // Navigate to: ../Student/MVC/php/UserDashboard.php
                         header("Location: HomePage.php");
                         exit();
-                    } elseif ($user_role === 'Reviewer') {
-                        
+                    } 
+                    elseif ($user_role === 'Reviewer') {
                         header("Location: ../../../Reviewer/MVC/php/ReviewerDashboard.php");
                         exit();
-                    } else {
-                        // Fallback if role is undefined or something else
+                    } 
+                    // FIXED ADMIN REDIRECT LOGIC
+                    elseif ($user_role === 'Admin') {
+                        header("Location: ../../../Admin/MVC/php/AdminDashboard.php");
+                        exit();
+                    } 
+                    else {
+                        // Fallback
                         header("Location: HomePage.php?login=success"); 
                         exit();
                     }

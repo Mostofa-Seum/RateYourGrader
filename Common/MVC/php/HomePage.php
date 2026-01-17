@@ -30,6 +30,15 @@ if (isset($_SESSION['user_name'])) {
             $dashboardLink = "../../../Student/MVC/php/UserDashboard.php";
             $searchAction = "../../../Student/MVC/php/SearchOutput.php";
         }
+                elseif ($role == 'UniRep') {
+            // University Representative Dashboard Path
+            $dashboardLink = "../../../UniversityRepresentative/MVC/php/UniversityRepDashboard.php"; 
+            $searchAction = "../../../UniversityRepresentative/MVC/php/SearchOutput.php"; 
+    }
+    elseif ($role == 'Admin') {
+            // Admin Dashboard Path
+            $dashboardLink = "../../../Admin/MVC/php/AdminDashboard.php"; 
+        }
     }
 }
 ?>
