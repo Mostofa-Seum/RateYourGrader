@@ -2,13 +2,12 @@
 session_start();
 include "../db/config.php";
 
-// Initialize default variables (Default path for guests or students)
+// Initialize default variables
 $searchAction = "../../../Student/MVC/php/SearchOutput.php"; 
 
 // Check if the user is logged in
 if (isset($_SESSION['user_name'])) {
     $username = $_SESSION['user_name'];
-    
     $safe_username = mysqli_real_escape_string($conn, $username);
 
     $sql = "SELECT role FROM users WHERE Username = '$safe_username'";
@@ -19,27 +18,17 @@ if (isset($_SESSION['user_name'])) {
         $role = $row['role'];
 
         if ($role == 'Reviewer') {
-            // Reviewer Dashboard Path
             $dashboardLink = "../../../Reviewer/MVC/php/ReviewerDashboard.php"; 
-            
-            // ⚠️ EDIT THIS PATH: Reviewer Search Output Path
             $searchAction = "../../../Reviewer/MVC/php/SearchOutput.php"; 
-
         } elseif ($role == 'Student') {
-            // Student Dashboard Path
             $dashboardLink = "../../../Student/MVC/php/UserDashboard.php";
             $searchAction = "../../../Student/MVC/php/SearchOutput.php";
-        }
-                elseif ($role == 'UniRep') {
-            // University Representative Dashboard Path
+        } elseif ($role == 'UniRep') {
             $dashboardLink = "../../../UniversityRepresentative/MVC/php/UniversityRepDashboard.php"; 
-            
-            // ⚠️ EDIT THIS PATH: University Rep Search Output Path
             $searchAction = "../../../UniversityRepresentative/MVC/php/SearchOutput.php"; 
-    }
+        }
     }
 }
-?>
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,6 +36,49 @@ if (isset($_SESSION['user_name'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/homepage.css">
+    <title>Rate Your Grader</title>
+    <style>
+        /* --- Styles for the Toast Notification --- */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 14px;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.95;
+        }
+
+        /* Toast Colors based on type */
+        .toast.error { background-color: #dc3545; } /* Red */
+        .toast.success { background-color: #28a745; } /* Green */
+        .toast.info { background-color: #17a2b8; } /* Blue */
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 20px; opacity: 0.95;}
+        }
+        @keyframes fadeout {
+            from {bottom: 20px; opacity: 0.95;}
+            to {bottom: 0; opacity: 0;}
+        }
+    </style>
 </head>
 <body>
 <?php if (isset($_GET['login']) && $_GET['login'] == 'success'): ?>
@@ -54,30 +86,31 @@ if (isset($_SESSION['user_name'])) {
         window.history.replaceState(null, null, window.location.pathname);
     </script>
 <?php endif; ?>
+
     <nav class="navbar">
         <div class="container nav-container">
             <div class="logo-wrapper">
                 <div class="logo-icon">
                     <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
-
                 </div>
                 <span class="logo-text">Rate Your Grader</span>
             </div>
             
-<div class="nav-links">
-        <a href="#how-it-works">How it works</a>
-        <a href="#features">Features</a>
-        <a href="javascript:void(0)" onclick="goToSearch()">Search Graders</a>
+            <div class="nav-links">
+                <a href="#how-it-works">How it works</a>
+                <a href="#features">Features</a>
+                <a href="javascript:void(0)" onclick="goToSearch()">Search Graders</a>
 
-        <?php if (isset($_SESSION['user_name'])): ?>
-            <a href="<?php echo $dashboardLink; ?>" style="text-decoration:none;">
-                <span style="margin-right: 15px; font-weight: bold; color: inherit;">Hello, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
-            </a>
-            <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545;color: white;">Logout</a>
-        <?php else: ?>
-            <a href="Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
-        <?php endif; ?>
-    </div>
+                <?php if (isset($_SESSION['user_name'])): ?>
+                    <a href="<?php echo $dashboardLink; ?>" style="text-decoration:none;">
+                        <span style="margin-right: 15px; font-weight: bold; color: inherit;">Hello, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                    </a>
+                    <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545;color: white;">Logout</a>
+                <?php else: ?>
+                    <a href="Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
+                <?php endif; ?>
+            </div>
+        </div>
     </nav>
 
     <section class="hero-section">
@@ -98,140 +131,134 @@ if (isset($_SESSION['user_name'])) {
                     <button class="btn btn-white" onclick="goToSearch()">
                         <img src="../images/search_blue.png" alt="Logo"> Search Graders
                     </button>
-
-                </div>
-                                
+                </div>       
             </div>
 
             <div class="hero-slider fade-in">
-<div class="slider-box">
-        <div class="slider-track">
-            
-            <div class="review-card">
-                <div class="quote-icon">"</div>
-                <p class="review-text">Challenging but rewarding, this physics course builds strong problem-solving skills while making complex concepts feel surprisingly intuitive.</p>
-                <div class="rating">★★★★★</div>
-                <div class="student-info">
-                    <img src="../images/caleb.png" alt="Avatar" class="student-avatar">
-                    <div class="student-details">
-                        <h3>Khaled Mahamud</h3>
-                        <p>Physics 101</p>
+                <div class="slider-box">
+                    <div class="slider-track">
+                        <div class="review-card">
+                            <div class="quote-icon">"</div>
+                            <p class="review-text">Challenging but rewarding, this physics course builds strong problem-solving skills while making complex concepts feel surprisingly intuitive.</p>
+                            <div class="rating">★★★★★</div>
+                            <div class="student-info">
+                                <img src="../images/caleb.png" alt="Avatar" class="student-avatar">
+                                <div class="student-details">
+                                    <h3>Khaled Mahamud</h3>
+                                    <p>Physics 101</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="quote-icon">"</div>
+                            <p class="review-text">Comprehensive curriculum. The mentorship program connected me with real professionals.</p>
+                            <div class="rating">★★★★★</div>
+                            <div class="student-info">
+                                <img src="../images/sofia.png" alt="Avatar" class="student-avatar">
+                                <div class="student-details">
+                                    <h3>Tasnim Jara</h3>
+                                    <p>Data Science 202</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="quote-icon">"</div>
+                            <p class="review-text">The supportive community made the journey enjoyable. I've now built three apps!</p>
+                            <div class="rating">★★★★★</div>
+                            <div class="student-info">
+                                <img src="../images/caleb.png" alt="Avatar" class="student-avatar">
+                                <div class="student-details">
+                                    <h3>Khorshed Alom</h3>
+                                    <p>Web Development</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="quote-icon">"</div>
+                            <p class="review-text">Clear, practical, and well-structured, this database course makes complex concepts easy to understand through hands-on examples.</p>
+                            <div class="rating">★★★★★</div>
+                            <div class="student-info">
+                                <img src="../images/destiny.png" alt="Avatar" class="student-avatar">
+                                <div class="student-details">
+                                    <h3>Sadia Afrin</h3>
+                                    <p>Database Managemnet System</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="quote-icon">"</div>
+                            <p class="review-text">Challenging yet fascinating, the Theory of Computation course sharpens logical thinking and reveals the mathematical foundations of computer science.</p>
+                            <div class="rating">★★★★★</div>
+                            <div class="student-info">
+                                <img src="../images/jessica.png" alt="Avatar" class="student-avatar">
+                                <div class="student-details">
+                                    <h3>Riazul Islam</h3>
+                                    <p>Theory of Computation</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="quote-icon">"</div>
+                            <p class="review-text">Comprehensive curriculum. The mentorship program connected me with real professionals.</p>
+                            <div class="rating">★★★★★</div>
+                            <div class="student-info">
+                                <img src="../images/maria.png" alt="Avatar" class="student-avatar">
+                                <div class="student-details">
+                                    <h3>Sirajum Munira</h3>
+                                    <p>Machine Learning</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="quote-icon">"</div>
+                            <p class="review-text">Beginner-friendly and engaging, the Introduction to Programming course builds strong fundamentals through clear explanations and practical exercises.</p>
+                            <div class="rating">★★★★★</div>
+                            <div class="student-info">
+                                <img src="../images/ryan.png" alt="Avatar" class="student-avatar">
+                                <div class="student-details">
+                                    <h3>Oishi Sultana</h3>
+                                    <p>Introduction to programming</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="quote-icon">"</div>
+                            <p class="review-text">Well-structured and practical, the Electrical Circuit course clearly explains fundamentals while strengthening analytical and problem-solving skills.</p>
+                            <div class="rating">★★★★★</div>
+                            <div class="student-info">
+                                <img src="../images/micah.png" alt="Avatar" class="student-avatar">
+                                <div class="student-details">
+                                    <h3>Mousumi Bala</h3>
+                                    <p>Electrical Circuits</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="review-card">
-                <div class="quote-icon">"</div>
-                <p class="review-text">Comprehensive curriculum. The mentorship program connected me with real professionals.</p>
-                <div class="rating">★★★★★</div>
-                <div class="student-info">
-                    <img src="../images/sofia.png" alt="Avatar" class="student-avatar">
-                    <div class="student-details">
-                        <h3>Tasnim Jara</h3>
-                        <p>Data Science 202</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="review-card">
-                <div class="quote-icon">"</div>
-                <p class="review-text">The supportive community made the journey enjoyable. I've now built three apps!</p>
-                <div class="rating">★★★★★</div>
-                <div class="student-info">
-                    <img src="../images/caleb.png" alt="Avatar" class="student-avatar">
-                    <div class="student-details">
-                        <h3>Khorshed Alom</h3>
-                        <p>Web Development</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="review-card">
-                <div class="quote-icon">"</div>
-                <p class="review-text">Clear, practical, and well-structured, this database course makes complex concepts easy to understand through hands-on examples.</p>
-                <div class="rating">★★★★★</div>
-                <div class="student-info">
-                    <img src="../images/destiny.png" alt="Avatar" class="student-avatar">
-                    <div class="student-details">
-                        <h3>Sadia Afrin</h3>
-                        <p>Database Managemnet System</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="review-card">
-                <div class="quote-icon">"</div>
-                <p class="review-text">Challenging yet fascinating, the Theory of Computation course sharpens logical thinking and reveals the mathematical foundations of computer science.</p>
-                <div class="rating">★★★★★</div>
-                <div class="student-info">
-                    <img src="../images/jessica.png" alt="Avatar" class="student-avatar">
-                    <div class="student-details">
-                        <h3>Riazul Islam</h3>
-                        <p>Theory of Computation</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="review-card">
-                <div class="quote-icon">"</div>
-                <p class="review-text">Comprehensive curriculum. The mentorship program connected me with real professionals.</p>
-                <div class="rating">★★★★★</div>
-                <div class="student-info">
-                    <img src="../images/maria.png" alt="Avatar" class="student-avatar">
-                    <div class="student-details">
-                        <h3>Sirajum Munira</h3>
-                        <p>Machine Learning</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="review-card">
-                <div class="quote-icon">"</div>
-                <p class="review-text">Beginner-friendly and engaging, the Introduction to Programming course builds strong fundamentals through clear explanations and practical exercises.</p>
-                <div class="rating">★★★★★</div>
-                <div class="student-info">
-                    <img src="../images/ryan.png" alt="Avatar" class="student-avatar">
-                    <div class="student-details">
-                        <h3>Oishi Sultana</h3>
-                        <p>Introduction to programming</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="review-card">
-                <div class="quote-icon">"</div>
-                <p class="review-text">Well-structured and practical, the Electrical Circuit course clearly explains fundamentals while strengthening analytical and problem-solving skills.</p>
-                <div class="rating">★★★★★</div>
-                <div class="student-info">
-                    <img src="../images/micah.png" alt="Avatar" class="student-avatar">
-                    <div class="student-details">
-                        <h3>Mousumi Bala</h3>
-                        <p>Electrical Circuits</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-            </div>
-
-            
         </div>
     </section>
 
     <section id="search" class="section-search">
-        <div class="container fade-in text-center"><center>
-            <h2>Ready to discover fair graders?</h2></center>
+        <div class="container fade-in text-center">
+            <center><h2>Ready to discover fair graders?</h2></center>
             <p class="cta-subtitle">Search your graders and grade them like how they did for you.</p>
             
-<form action="<?php echo $searchAction; ?>" method="GET" class="search-bar-wrapper" onsubmit="return validateSearch()">
-    <div class="search-bar">
-        <input type="text" id="mainSearchInput" name="q" placeholder="Search by name, course, or department...">
-        <button type="submit" class="btn-search">
-            <img src="../images/search_black.png" alt="Logo"> Search Now
-        </button>
-    </div>
-</form>
+            <form action="<?php echo $searchAction; ?>" method="GET" class="search-bar-wrapper" onsubmit="return validateSearch()">
+                <div class="search-bar">
+                    <input type="text" id="mainSearchInput" name="q" placeholder="Search by name, course, or department...">
+                    <button type="submit" class="btn-search">
+                        <img src="../images/search_black.png" alt="Logo"> Search Now
+                    </button>
+                </div>
+            </form>
             
             <div class="trust-indicators">
                 <div><img src="../images/verify.png" alt="Logo"> Verified Students</div>
@@ -352,7 +379,7 @@ if (isset($_SESSION['user_name'])) {
         </div>
     </section>
 
-     <footer>
+    <footer>
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
@@ -368,8 +395,8 @@ if (isset($_SESSION['user_name'])) {
                 <div class="footer-actions">
                     <h5>Apply</h5>
                     <div class="footer-buttons">
-                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
-                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
+                        <a href="javascript:void(0)" onclick="checkLoginAndApply()" class="footer-nav-link">Apply for Reviewer</a>
+                        <a href="javascript:void(0)" onclick="checkLoginAndApply()" class="footer-nav-link">Apply for University Representative</a>
                     </div>
                 </div>
 
@@ -395,29 +422,13 @@ if (isset($_SESSION['user_name'])) {
         </div>
     </footer>
 
-    <script src="../js/homepage.js"></script>
+    <div id="toast-container"></div>
 
     <script>
-        function goToSearch() {
-            // Scroll to the search section with ID 'search'
-            const searchSection = document.getElementById('search');
-            searchSection.scrollIntoView({ behavior: 'smooth' });
-            
-            // Focus on the input field so user can type immediately
-            setTimeout(() => {
-                document.getElementById('mainSearchInput').focus();
-            }, 500); // Small delay to allow scroll to finish
-        }
-
-        function validateSearch() {
-            const input = document.getElementById('mainSearchInput').value;
-            // Check if input is empty or just whitespace
-            if (!input || input.trim() === "") {
-                alert("Please enter a Professor name, University, or Course to search.");
-                return false; // Prevent form submission
-            }
-            return true; // Allow form submission
-        }
+        const isUserLoggedIn = <?php echo isset($_SESSION['user_name']) ? 'true' : 'false'; ?>;
     </script>
+
+    <script src="../js/homepage.js"></script>
+
 </body>
 </html>
