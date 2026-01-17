@@ -5,15 +5,40 @@ include '../../../Student/MVC/db/Config.php';
 $message = "";
 $messageType = "";
 
+// --- 1. FETCH CURRENT REVIEWER ID (RV_id) ---
+$reviewer_id = 0;
+if (isset($_SESSION['user_name'])) {
+    $safe_username = $conn->real_escape_string($_SESSION['user_name']);
+    
+    // Step A: Get s_id (User ID) from users table
+    $user_sql = "SELECT s_id FROM users WHERE Username = '$safe_username'";
+    $user_result = $conn->query($user_sql);
+    
+    if ($user_result && $user_result->num_rows > 0) {
+        $u_row = $user_result->fetch_assoc();
+        
+        // FIX: Changed ['id'] to ['s_id'] to match your database column
+        $s_id = $u_row['s_id']; 
+
+        // Step B: Get RV_id from reviwer table using s_id
+        // Note: Using table name 'reviwer' as per your database structure image
+        $rv_sql = "SELECT RV_id FROM reviwer WHERE s_id = '$s_id'";
+        $rv_result = $conn->query($rv_sql);
+        
+        if ($rv_result && $rv_result->num_rows > 0) {
+            $rv_row = $rv_result->fetch_assoc();
+            $reviewer_id = $rv_row['RV_id'];
+        }
+    }
+}
+
 // --- HANDLE FORM SUBMISSIONS ---
 
-// 1. APPROVE LOGIC
+// 2. APPROVE LOGIC
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'approve') {
-    // FIX: Use the unique ID (r_id)
     $target_id = intval($_POST['review_id']);
     
     // Fetch review text
-    // FIX: WHERE r_id = ...
     $fetch_sql = "SELECT Review FROM review WHERE r_id = $target_id";
     $fetch_result = $conn->query($fetch_sql);
     
@@ -22,13 +47,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $review_text = $conn->real_escape_string($row['Review']);
         
         // Insert into A_Review
-        // Note: We store the unique review ID ($target_id) in R_id column of A_Review
         $sql_insert = "INSERT INTO A_Review (R_id, Review, Report) VALUES ('$target_id', '$review_text', 0)";
         
         if ($conn->query($sql_insert) === TRUE) {
             
-            // FIX: UPDATE WHERE r_id (Unique ID)
-            $sql_update = "UPDATE review SET Reviewed = 1 WHERE r_id = $target_id";
+            // FIX: Update 'Reviewed' status AND assign 'Rv_id'
+            $sql_update = "UPDATE review SET Reviewed = 1, Rv_id = '$reviewer_id' WHERE r_id = $target_id";
             $conn->query($sql_update);
 
             $message = "Review #$target_id Approved Successfully!";
@@ -40,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     }
 }
 
-// 2. REJECT LOGIC
+// 3. REJECT LOGIC
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'reject') {
     $target_id = intval($_POST['review_id']);
     $cause = $conn->real_escape_string($_POST['rejection_reason']);
@@ -50,8 +74,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     
     if ($conn->query($sql_insert) === TRUE) {
 
-        // FIX: UPDATE WHERE r_id (Unique ID)
-        $sql_update = "UPDATE review SET Reviewed = 1 WHERE r_id = $target_id";
+        // FIX: Update 'Reviewed' status AND assign 'Rv_id'
+        $sql_update = "UPDATE review SET Reviewed = 1, Rv_id = '$reviewer_id' WHERE r_id = $target_id";
         $conn->query($sql_update);
 
         $message = "Review #$target_id Rejected.";
@@ -63,7 +87,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 }
 
 // --- FETCH PENDING REVIEWS ---
-// FIX: Ensure we select r_id (Unique) 
 $sql_pending = "SELECT r.*, p.Name as ProfName, c.`Course Name`
                 FROM review r
                 LEFT JOIN professors p ON r.P_id = p.P_id
@@ -85,7 +108,6 @@ $result = $conn->query($sql_pending);
 <body>
     <?php if (isset($_GET['login']) && $_GET['login'] == 'success'): ?>
     <script>
-        // This line cleans the URL so the alert doesn't appear if they refresh
         window.history.replaceState(null, null, window.location.pathname);
     </script>
 <?php endif; ?>
