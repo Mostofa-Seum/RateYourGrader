@@ -212,10 +212,6 @@ $stmt->close();
             <a href="SearchOutput.php">Search Graders</a>
             <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary-nav" style="background-color: #dc3545; color: white;">Logout</a>
         </div>
-        
-        <button class="mobile-menu-btn">
-            <img src="Figures/menu.png" alt="Menu" class="mobile-menu-icon">
-        </button>
     </div>
 </nav>
 
@@ -352,13 +348,13 @@ $stmt->close();
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
 
-                <div class="footer-actions">
-                    <h5>Apply</h5>
-                    <div class="footer-buttons">
-                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
-                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
-                    </div>
-                </div>
+<div class="footer-actions">
+    <h5>Apply</h5>
+    <div class="footer-buttons">
+        <a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for Reviewer</a>
+        <a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for University Representative</a>
+    </div>
+</div>
 
                 <div class="footer-socials">
                     <h5>Our Socials</h5>

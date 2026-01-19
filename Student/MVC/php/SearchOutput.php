@@ -15,7 +15,6 @@ $result = null;
 $count = 0;
 
 if (isset($_GET['q']) && !empty(trim($_GET['q']))) {
-    // SCENARIO A: User performed a search
     $search_performed = true;
     $search_term = $_GET['q'];
     $safe_search = $conn->real_escape_string($search_term);
@@ -24,7 +23,6 @@ if (isset($_GET['q']) && !empty(trim($_GET['q']))) {
     if (!$result) { die("Query Failed: " . $conn->error); }
     $count = $result->num_rows;
 } else {
-    // SCENARIO B: Default View (Show 3 random professors)
     $search_performed = true; 
     $sql = "SELECT * FROM professors ORDER BY RAND() LIMIT 3";
     $result = $conn->query($sql);
@@ -109,7 +107,6 @@ if (isset($_GET['q']) && !empty(trim($_GET['q']))) {
                     while($row = $result->fetch_assoc()) {
                         $current_p_id = $row['P_id'];
                         
-                        // 1. STATS QUERY (Existing logic)
                         $stat_sql = "SELECT COUNT(r.r_id) as total_reviews, AVG(r.`Overall Rating`) as avg_overall,
                          AVG(r.`Grading Fairness`) as avg_fairness, AVG(r.`Behavior and Communication`) as avg_behavior 
                          FROM review r INNER JOIN A_Review ar ON r.r_id = ar.R_id WHERE r.P_id = '$current_p_id'";
@@ -123,7 +120,6 @@ if (isset($_GET['q']) && !empty(trim($_GET['q']))) {
                         $fairness_width = ($fairness_score / 5) * 100;
                         $clarity_width  = ($clarity_score / 5) * 100;
 
-                        // 2. NEW FEATURE: FETCH LATEST REVIEW TEXT
                         $review_text_display = "No written reviews yet.";
                         $review_text_sql = "SELECT ar.Review FROM A_Review ar 
                                             INNER JOIN review r ON ar.r_id = r.r_id 
@@ -134,7 +130,6 @@ if (isset($_GET['q']) && !empty(trim($_GET['q']))) {
                         if ($review_text_result && $review_text_result->num_rows > 0) {
                             $r_row = $review_text_result->fetch_assoc();
                             $review_text_display = '"' . htmlspecialchars($r_row['Review']) . '"';
-                            // Truncate if too long
                             if (strlen($review_text_display) > 150) {
                                 $review_text_display = substr($review_text_display, 0, 150) . '..."';
                             }
@@ -230,8 +225,8 @@ if (isset($_GET['q']) && !empty(trim($_GET['q']))) {
                 <div class="footer-actions">
                     <h5>Apply</h5>
                     <div class="footer-buttons">
-                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
-                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
+                        <a href="javascript:void(0)" onclick="checkLoginAndApply()" class="footer-nav-link">Apply for Reviewer</a>
+                        <a href="javascript:void(0)" onclick="checkLoginAndApply()" class="footer-nav-link">Apply for University Representative</a>
                     </div>
                 </div>
 
@@ -257,6 +252,11 @@ if (isset($_GET['q']) && !empty(trim($_GET['q']))) {
         </div>
     </footer>
 
+    <div id="toast-container"></div>
+
+    <script>
+        const isUserLoggedIn = <?php echo isset($_SESSION['user_name']) ? 'true' : 'false'; ?>;
+    </script>
     <script src="../js/SearchOutput.js"></script>
 </body>
 </html>

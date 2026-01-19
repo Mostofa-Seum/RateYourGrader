@@ -362,3 +362,43 @@ footer {
 .review-card:nth-child(2) { animation-delay: 0.2s; }
 .review-card:nth-child(3) { animation-delay: 0.3s; }
 .review-card:nth-child(n+4) { animation-delay: 0.4s; }
+/* --- Add this to the very bottom of ProfessorProfile.css --- */
+
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    min-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-size: 14px;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.95;
+}
+
+.toast.error { background-color: #dc3545; }
+.toast.success { background-color: #28a745; }
+.toast.info { background-color: #17a2b8; }
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 20px; opacity: 0.95;}
+}
+@keyframes fadeout {
+    from {bottom: 20px; opacity: 0.95;}
+    to {bottom: 0; opacity: 0;}
+}

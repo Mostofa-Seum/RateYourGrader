@@ -19,6 +19,7 @@ if ($result_prof->num_rows > 0) {
     exit;
 }
 
+// ... (Your existing stats queries remain exactly the same) ...
 $sql_stats = "SELECT COUNT(r.Rv_id) as total_reviews, AVG(r.`Overall Rating`) as avg_overall, AVG(r.`Grading Fairness`) as avg_fairness, AVG(r.`Behavior and Communication`) as avg_behavior, SUM(CASE WHEN r.`Would You Take This Course Again?` = 'Yes' THEN 1 ELSE 0 END) as take_again_count FROM review r INNER JOIN A_Review ar ON r.r_id = ar.R_id WHERE r.P_id = $p_id";
 $result_stats = $conn->query($sql_stats);
 $stats = $result_stats->fetch_assoc();
@@ -33,12 +34,12 @@ $sql_reviews = "SELECT r.*, c.`Course Name` FROM review r INNER JOIN A_Review ar
 $result_reviews = $conn->query($sql_reviews);
 
 function renderStars($rating) {
+    // ... (Your existing star function) ...
     $output = '';
     $fullStars = floor($rating);
     $hasHalf = ($rating - $fullStars) >= 0.5;
     $emptyStars = 5 - $fullStars - ($hasHalf ? 1 : 0);
     $imgDir = '../images/';
-
     for ($i = 0; $i < $fullStars; $i++) { $output .= '<img src="'.$imgDir.'starFull.png" class="star-icon">'; }
     if ($hasHalf) { $output .= '<img src="'.$imgDir.'starHalf.jpg" class="star-icon">'; }
     for ($i = 0; $i < $emptyStars; $i++) { $output .= '<img src="'.$imgDir.'starEmpty.png" class="star-icon">'; }
@@ -73,12 +74,11 @@ function renderStars($rating) {
                     <a href="UserDashboard.php" style="color: var(--dark-navy); font-weight: 600;">
                         Hello, <?php echo htmlspecialchars($_SESSION['user_name']); ?>
                     </a>
-                    <a href="../../Common/MVC/php/Logout.php" class="btn btn-danger">Logout</a>
+                    <a href="../../../Common/MVC/php/Logout.php" class="btn btn-danger">Logout</a>
                 <?php else: ?>
                     <a href="../../../Common/MVC/php/Login.php" class="btn btn-primary">Sign Up Free</a>
                 <?php endif; ?>
             </div>
-        
         </div>
     </nav>
 
@@ -93,27 +93,26 @@ function renderStars($rating) {
                     <div class="prof-details">
                         <h1><?= htmlspecialchars($prof['Name']) ?></h1>
                         <p class="dept-text"><?= htmlspecialchars($prof['Department']) ?> at <strong><?= htmlspecialchars($prof['University']) ?></strong></p>
+                        
                         <div id="loginWarning" class="login-warning">
-    You Must <a href="../../../Common/MVC/php/Login.php" style="color: inherit; text-decoration: underline; font-weight: bold;">
-        Login / SignUp</a> / <a href="../../../Common/MVC/php/Login.php" style="color: inherit; text-decoration: underline; font-weight: bold;"></a> to rate a professor.
-</div>
-<div class="action-buttons">
-    <?php
-        // 1. CHECK IF USER IS LOGGED IN
-        if (isset($_SESSION['user_name'])) {
-            // IF LOGGED IN: Set the link to the Review Page
-            $rateLink = "ProfessorReview.php?P_id=$p_id&name=" . urlencode($prof['Name']) . "&dept=" . urlencode($prof['Department']) . "&uni=" . urlencode($prof['University']);
-            $onClickAttr = ""; // No JavaScript needed
-        } else {
-            // IF NOT LOGGED IN: Disable the link and add JavaScript
-            $rateLink = "javascript:void(0);"; // Prevents navigating to a new page
-            // Show the hidden error message div
-            $onClickAttr = "onclick=\"document.getElementById('loginWarning').style.display = 'block';\"";
-        }
-    ?>
-    
-    <a href="<?= $rateLink ?>" <?= $onClickAttr ?> class="btn btn-primary">Rate This Professor</a>
-</div>
+                            You Must <a href="../../../Common/MVC/php/Login.php" style="color: inherit; text-decoration: underline; font-weight: bold;">Login / Sign Up</a> to rate a professor.
+                        </div>
+
+                        <div class="action-buttons">
+                            <?php
+                                if (isset($_SESSION['user_name'])) {
+                                    // Logged In: Normal Link
+                                    $rateLink = "ProfessorReview.php?P_id=$p_id&name=" . urlencode($prof['Name']) . "&dept=" . urlencode($prof['Department']) . "&uni=" . urlencode($prof['University']);
+                                    $btnID = ""; 
+                                } else {
+                                    // Not Logged In: Dummy link + Special ID for JS
+                                    $rateLink = "javascript:void(0);"; 
+                                    $btnID = "id='rateBtnLoggedOut'";
+                                }
+                            ?>
+                            
+                            <a href="<?= $rateLink ?>" <?= $btnID ?> class="btn btn-primary">Rate This Professor</a>
+                        </div>
                     </div>
                 </div>
                 <div class="prof-stats-box">
@@ -183,32 +182,32 @@ function renderStars($rating) {
                 <div class="footer-actions">
                     <h5>Apply</h5>
                     <div class="footer-buttons">
-                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
-                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
+                        <a href="javascript:void(0)" onclick="checkLoginAndApply()" class="footer-nav-link">Apply for Reviewer</a>
+                        <a href="javascript:void(0)" onclick="checkLoginAndApply()" class="footer-nav-link">Apply for University Representative</a>
                     </div>
                 </div>
 
                 <div class="footer-socials">
                     <h5>Our Socials</h5>
                     <div class="social-icons">
-                        <a href="https://www.facebook.com" aria-label="Facebook">
-                            <img src="../images/facebook.png" alt="Facebook" class="social-icon">
-                        </a>
-                        <a href="https://www.instagram.com" aria-label="Instagram">
-                            <img src="../images/instagram.png" alt="Instagram" class="social-icon">
-                        </a>
-                        <a href="https://www.twitter.com" aria-label="Twitter">
-                            <img src="../images/twitter.png" alt="Twitter" class="social-icon">
-                        </a>
+                        <a href="https://www.facebook.com"><img src="../images/facebook.png" alt="Facebook" class="social-icon"></a>
+                        <a href="https://www.instagram.com"><img src="../images/instagram.png" alt="Instagram" class="social-icon"></a>
+                        <a href="https://www.twitter.com"><img src="../images/twitter.png" alt="Twitter" class="social-icon"></a>
                     </div>
                 </div>
             </div>
-            
             <div class="footer-bottom">
                 <p>&copy; 2026 Rate Your Grader. All rights reserved.</p>
             </div>
         </div>
     </footer>
+
+    <div id="toast-container"></div>
+
+    <script>
+        const isUserLoggedIn = <?php echo isset($_SESSION['user_name']) ? 'true' : 'false'; ?>;
+    </script>
+    <script src="../js/ProfessorProfile.js"></script>
 
 </body>
 </html>

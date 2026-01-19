@@ -3,7 +3,6 @@ session_start();
 include '../../../Student/MVC/db/Config.php';
 
 // --- 1. HANDLE AJAX REQUESTS (Profile Updates) ---
-// Copied from UserDashboard.php logic
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json'); 
     
@@ -79,12 +78,14 @@ if (!isset($_SESSION['s_id'])) {
 $current_user_id = $_SESSION['s_id'];
 
 // --- 3. GET USER INFO ---
-$sql_user = "SELECT Username, Email FROM users WHERE s_id = ?";
+// CHANGE: Added 'role' to the SELECT statement
+$sql_user = "SELECT Username, Email, role FROM users WHERE s_id = ?";
 $stmt = $conn->prepare($sql_user);
 $stmt->bind_param("i", $current_user_id);
 $stmt->execute();
 $user_result = $stmt->get_result();
 $user_data = $user_result->fetch_assoc();
+$user_role = $user_data['role']; // CHANGE: Store role in a variable
 $stmt->close();
 
 // --- 4. GET COUNTS (Reviewer Stats) ---
@@ -303,8 +304,21 @@ if ($res_rej) {
                 <div class="footer-actions">
                     <h5>Apply</h5>
                     <div class="footer-buttons">
-                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
-                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
+                        <?php 
+                        // Logic 1: Reviewer Option
+                        if ($user_role === 'Reviewer') {
+                            echo '<span class="footer-nav-link" style="cursor: default; color: #6c757d;">You are a Reviewer</span>';
+                        } else {
+                            echo '<a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for Reviewer</a>';
+                        }
+
+                        // Logic 2: University Rep Option
+                        if ($user_role === 'UniRep') {
+                            echo '<span class="footer-nav-link" style="cursor: default; color: #6c757d;">You are a University Representative</span>';
+                        } else {
+                            echo '<a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for University Representative</a>';
+                        }
+                        ?>
                     </div>
                 </div>
 

@@ -3,9 +3,27 @@ session_start();
 include '../../../Common/MVC/db/Config.php';
 
 // --- CONFIGURATION: DEFINE ROLE ---
-// Check if user is a reviewer
-$user_role = isset($_SESSION['role']) ? strtolower($_SESSION['role']) : ''; 
-$is_reviewer = ($user_role === 'reviewer'); 
+$user_role = ''; // Default to empty
+$is_reviewer = false;
+
+// Check if user is logged in to get the specific role from DB
+if (isset($_SESSION['s_id'])) {
+    $current_user_id = $_SESSION['s_id'];
+    $sql_role_check = "SELECT role FROM users WHERE s_id = ?";
+    $stmt_role = $conn->prepare($sql_role_check);
+    $stmt_role->bind_param("i", $current_user_id);
+    $stmt_role->execute();
+    $result_role = $stmt_role->get_result();
+    if ($row_role = $result_role->fetch_assoc()) {
+        $user_role = $row_role['role'];
+    }
+    $stmt_role->close();
+    
+    // Check for reviewer status for the header button logic
+    if ($user_role === 'Reviewer') {
+        $is_reviewer = true;
+    }
+}
 // ----------------------------------
 
 $p_id = isset($_GET['P_id']) ? intval($_GET['P_id']) : 0;
@@ -206,8 +224,21 @@ function renderStars($rating) {
                 <div class="footer-actions">
                     <h5>Apply</h5>
                     <div class="footer-buttons">
-                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
-                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
+                        <?php 
+                        // Logic 1: Reviewer Option
+                        if ($user_role === 'Reviewer') {
+                            echo '<span class="footer-nav-link" style="cursor: default; color: #6c757d;">You are a Reviewer</span>';
+                        } else {
+                            echo '<a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for Reviewer</a>';
+                        }
+
+                        // Logic 2: University Rep Option
+                        if ($user_role === 'UniRep') {
+                            echo '<span class="footer-nav-link" style="cursor: default; color: #6c757d;">You are a University Representative</span>';
+                        } else {
+                            echo '<a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for University Representative</a>';
+                        }
+                        ?>
                     </div>
                 </div>
 

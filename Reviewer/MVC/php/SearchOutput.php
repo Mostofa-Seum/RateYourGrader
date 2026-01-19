@@ -251,14 +251,14 @@ if (isset($_GET['q']) && !empty(trim($_GET['q']))) {
                             echo '<span style="color: #9ca3af; font-weight: 500;">You are a Reviewer</span>';
                         } else {
                             // Note: You need to ensure apply_role.php exists in this path or adjust the link
-                            echo '<a href="../../../Common/MVC/php/apply_role.php?role=Reviewer" class="footer-nav-link">Apply for Reviewer</a>';
+                            echo '<a href="../../../Common/MVC/php/ApplyRole.php?role=Reviewer" class="footer-nav-link">Apply for Reviewer</a>';
                         }
 
                         // Logic 2: University Rep Option
                         if ($is_rep) {
                             echo '<span style="color: #9ca3af; font-weight: 500;">You are a University Representative</span>';
                         } else {
-                            echo '<a href="../../../Common/MVC/php/apply_role.php?role=University Representative" class="footer-nav-link">Apply for University Representative</a>';
+                            echo '<a href="../../../Common/MVC/php/ApplyRole.php?role=University Representative" class="footer-nav-link">Apply for University Representative</a>';
                         }
                         ?>
                     </div>

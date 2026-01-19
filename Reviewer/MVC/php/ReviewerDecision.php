@@ -4,24 +4,25 @@ include '../../../Student/MVC/db/Config.php';
 
 $message = "";
 $messageType = "";
+$role = ""; // 1. Initialize role variable
 
-// --- 1. FETCH CURRENT REVIEWER ID (RV_id) ---
+// --- 1. FETCH CURRENT REVIEWER ID (RV_id) & ROLE ---
 $reviewer_id = 0;
 if (isset($_SESSION['user_name'])) {
     $safe_username = $conn->real_escape_string($_SESSION['user_name']);
     
-    // Step A: Get s_id (User ID) from users table
-    $user_sql = "SELECT s_id FROM users WHERE Username = '$safe_username'";
+    // Step A: Get s_id AND role from users table
+    // CHANGE: Added ', role' to the SELECT statement
+    $user_sql = "SELECT s_id, role FROM users WHERE Username = '$safe_username'";
     $user_result = $conn->query($user_sql);
     
     if ($user_result && $user_result->num_rows > 0) {
         $u_row = $user_result->fetch_assoc();
         
-        // FIX: Changed ['id'] to ['s_id'] to match your database column
         $s_id = $u_row['s_id']; 
+        $role = $u_row['role']; // CHANGE: Capture the role
 
         // Step B: Get RV_id from reviwer table using s_id
-        // Note: Using table name 'reviwer' as per your database structure image
         $rv_sql = "SELECT RV_id FROM reviwer WHERE s_id = '$s_id'";
         $rv_result = $conn->query($rv_sql);
         
@@ -51,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         
         if ($conn->query($sql_insert) === TRUE) {
             
-            // FIX: Update 'Reviewed' status AND assign 'Rv_id'
+            // Update 'Reviewed' status AND assign 'Rv_id'
             $sql_update = "UPDATE review SET Reviewed = 1, Rv_id = '$reviewer_id' WHERE r_id = $target_id";
             $conn->query($sql_update);
 
@@ -74,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     
     if ($conn->query($sql_insert) === TRUE) {
 
-        // FIX: Update 'Reviewed' status AND assign 'Rv_id'
+        // Update 'Reviewed' status AND assign 'Rv_id'
         $sql_update = "UPDATE review SET Reviewed = 1, Rv_id = '$reviewer_id' WHERE r_id = $target_id";
         $conn->query($sql_update);
 
@@ -87,13 +88,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 }
 
 // --- FETCH PENDING REVIEWS ---
-// --- FETCH PENDING REVIEWS ---
 $sql_pending = "SELECT r.*, p.Name as ProfName, c.`Course Name`
                 FROM review r
                 LEFT JOIN professors p ON r.P_id = p.P_id
                 LEFT JOIN courses c ON r.C_id = c.c_id
                 WHERE r.Reviewed = 0
-                GROUP BY r.r_id  -- <--- ADD THIS LINE
+                GROUP BY r.r_id
                 ORDER BY r.r_id ASC";
 
 $result = $conn->query($sql_pending);
@@ -218,11 +218,27 @@ $result = $conn->query($sql_pending);
                     </div>
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
+                
                 <div class="footer-actions">
                     <h5>Apply</h5>
                     <div class="footer-buttons">
-                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
-                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
+                        <?php 
+                        // Logic 1: Reviewer Option
+                        if ($role === 'Reviewer') {
+                            echo '<span class="footer-nav-link" style="cursor: default; color: #6c757d;">You are a Reviewer</span>';
+                        } else {
+                            // Direct link because user is logged in on dashboard
+                            echo '<a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for Reviewer</a>';
+                        }
+
+                        // Logic 2: University Rep Option
+                        if ($role === 'UniRep') {
+                            echo '<span class="footer-nav-link" style="cursor: default; color: #6c757d;">You are a University Representative</span>';
+                        } else {
+                            // Direct link because user is logged in on dashboard
+                            echo '<a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for University Representative</a>';
+                        }
+                        ?>
                     </div>
                 </div>
 
@@ -241,6 +257,7 @@ $result = $conn->query($sql_pending);
                     </div>
                 </div>
             </div>
+            
              <div class="footer-bottom">
                 <p>&copy; 2026 Rate Your Grader. All rights reserved. Made with ❤️ for students everywhere.</p>
             </div>

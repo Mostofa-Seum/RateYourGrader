@@ -4,6 +4,7 @@ include "../db/config.php";
 
 // Initialize default variables
 $searchAction = "../../../Student/MVC/php/SearchOutput.php"; 
+$role = ""; // Initialize role to empty string to prevent errors
 
 // Check if the user is logged in
 if (isset($_SESSION['user_name'])) {
@@ -15,7 +16,7 @@ if (isset($_SESSION['user_name'])) {
 
     if ($result && mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
-        $role = $row['role'];
+        $role = $row['role']; // Assign role from DB
 
         if ($role == 'Reviewer') {
             $dashboardLink = "../../../Reviewer/MVC/php/ReviewerDashboard.php"; 
@@ -149,85 +150,6 @@ if (isset($_SESSION['user_name'])) {
                                 </div>
                             </div>
                         </div>
-
-                        <div class="review-card">
-                            <div class="quote-icon">"</div>
-                            <p class="review-text">Comprehensive curriculum. The mentorship program connected me with real professionals.</p>
-                            <div class="rating">★★★★★</div>
-                            <div class="student-info">
-                                <img src="../images/sofia.png" alt="Avatar" class="student-avatar">
-                                <div class="student-details">
-                                    <h3>Tasnim Jara</h3>
-                                    <p>Data Science 202</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="review-card">
-                            <div class="quote-icon">"</div>
-                            <p class="review-text">The supportive community made the journey enjoyable. I've now built three apps!</p>
-                            <div class="rating">★★★★★</div>
-                            <div class="student-info">
-                                <img src="../images/caleb.png" alt="Avatar" class="student-avatar">
-                                <div class="student-details">
-                                    <h3>Khorshed Alom</h3>
-                                    <p>Web Development</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="review-card">
-                            <div class="quote-icon">"</div>
-                            <p class="review-text">Clear, practical, and well-structured, this database course makes complex concepts easy to understand through hands-on examples.</p>
-                            <div class="rating">★★★★★</div>
-                            <div class="student-info">
-                                <img src="../images/destiny.png" alt="Avatar" class="student-avatar">
-                                <div class="student-details">
-                                    <h3>Sadia Afrin</h3>
-                                    <p>Database Managemnet System</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="review-card">
-                            <div class="quote-icon">"</div>
-                            <p class="review-text">Challenging yet fascinating, the Theory of Computation course sharpens logical thinking and reveals the mathematical foundations of computer science.</p>
-                            <div class="rating">★★★★★</div>
-                            <div class="student-info">
-                                <img src="../images/jessica.png" alt="Avatar" class="student-avatar">
-                                <div class="student-details">
-                                    <h3>Riazul Islam</h3>
-                                    <p>Theory of Computation</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="review-card">
-                            <div class="quote-icon">"</div>
-                            <p class="review-text">Comprehensive curriculum. The mentorship program connected me with real professionals.</p>
-                            <div class="rating">★★★★★</div>
-                            <div class="student-info">
-                                <img src="../images/maria.png" alt="Avatar" class="student-avatar">
-                                <div class="student-details">
-                                    <h3>Sirajum Munira</h3>
-                                    <p>Machine Learning</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="review-card">
-                            <div class="quote-icon">"</div>
-                            <p class="review-text">Beginner-friendly and engaging, the Introduction to Programming course builds strong fundamentals through clear explanations and practical exercises.</p>
-                            <div class="rating">★★★★★</div>
-                            <div class="student-info">
-                                <img src="../images/ryan.png" alt="Avatar" class="student-avatar">
-                                <div class="student-details">
-                                    <h3>Oishi Sultana</h3>
-                                    <p>Introduction to programming</p>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="review-card">
                             <div class="quote-icon">"</div>
                             <p class="review-text">Well-structured and practical, the Electrical Circuit course clearly explains fundamentals while strengthening analytical and problem-solving skills.</p>
@@ -275,28 +197,19 @@ if (isset($_SESSION['user_name'])) {
                 <h2 class="gradient-text-navy">How It Works</h2>
                 <p>Three simple steps to rate and find the best graders on campus</p>
             </div>
-            
             <div class="steps-grid">
                 <div class="step-card fade-in hover-scale group search">
-                    <div class="icon-box">
-                        <img src="../images/search_32.png" alt="Logo">
-                    </div>
+                    <div class="icon-box"><img src="../images/search_32.png" alt="Logo"></div>
                     <h3>1. Search</h3>
                     <p>Find your grader by name, course, or department. See real student ratings and reviews.</p>
                 </div>
-                
                 <div class="step-card fade-in hover-scale group rate">
-                    <div class="icon-box">
-                        <img src="../images/rate.png" alt="Logo" class="logo-img">
-                    </div>
+                    <div class="icon-box"><img src="../images/rate.png" alt="Logo" class="logo-img"></div>
                     <h3>2. Rate</h3>
                     <p>Share your honest experience. Rate fairness, speed, and accuracy. Help others make smart choices.</p>
                 </div>
-                
                 <div class="step-card fade-in hover-scale group explore">
-                    <div class="icon-box">
-                        <img src="../images/explore.png" alt="Logo">
-                    </div>
+                    <div class="icon-box"><img src="../images/explore.png" alt="Logo"></div>
                     <h3>3. Discover</h3>
                     <p>Use ratings to choose classes with fair graders. Make informed decisions for your academic success.</p>
                 </div>
@@ -304,75 +217,23 @@ if (isset($_SESSION['user_name'])) {
         </div>
     </section>
 
-
     <section id="features" class="section-features">
         <div class="container">
             <div class="section-header fade-in">
                 <h2 class="gradient-text-navy">Everything You Need</h2>
                 <p>Built for students, by students</p>
             </div>
-
             <div class="features-grid">
-                <div class="features-list fade-in">
+                 <div class="features-list fade-in">
                     <div class="feature-card glass-light hover-scale">
-                        <div class="feature-icon blue-bg">
-                            <img src="../images/shield.png" alt="Logo">
-                        </div>
-                        <div class="feature-text">
-                            <h4>Anonymous & Safe</h4>
-                            <p>Your identity is protected. Rate honestly without fear of retaliation.</p>
-                        </div>
+                        <div class="feature-icon blue-bg"><img src="../images/shield.png" alt="Logo"></div>
+                        <div class="feature-text"><h4>Anonymous & Safe</h4><p>Your identity is protected. Rate honestly without fear of retaliation.</p></div>
                     </div>
-                    
-                    <div class="feature-card glass-light hover-scale">
-                        <div class="feature-icon green-bg">
-                            <img src="../images/details.png" alt="Logo">
-                        </div>
-                        <div class="feature-text">
-                            <h4>Detailed Ratings</h4>
-                            <p>Rate on fairness, grading speed, accuracy, and helpfulness. Get the full picture.</p>
-                        </div>
                     </div>
-                    
-                    <div class="feature-card glass-light hover-scale">
-                        <div class="feature-icon purple-bg">
-                            <img src="../images/mobile.png" alt="Logo">
-                        </div>
-                        <div class="feature-text">
-                            <h4>Campus Verified</h4>
-                            <p>Only verified students can rate. Real reviews from real students on your campus.</p>
-                        </div>
-                    </div>
-                </div>
                 <div class="features-list features-list-right fade-in">
                     <div class="feature-card glass-light hover-scale">
-                        <div class="feature-icon blue-bg">
-                            <img src="../images/search_white.png" alt="Logo">
-                        </div>
-                        <div class="feature-text">
-                            <h4>Smart Search Filters</h4>
-                            <p>Find graders by course, department, or campus to get the exact insight you need.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="feature-card glass-light hover-scale">
-                        <div class="feature-icon green-bg">
-                            <img src="../images/verify_white.png" alt="Logo">
-                        </div>
-                        <div class="feature-text">
-                            <h4>Real-Time Updates</h4>
-                            <p>New ratings and reviews appear instantly so you always have current feedback.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="feature-card glass-light hover-scale">
-                        <div class="feature-icon purple-bg">
-                            <img src="../images/explore_white.png" alt="Logo">
-                        </div>
-                        <div class="feature-text">
-                            <h4>Community Standards</h4>
-                            <p>Helpful reviews rise to the top while moderation keeps feedback honest and fair.</p>
-                        </div>
+                        <div class="feature-icon purple-bg"><img src="../images/explore_white.png" alt="Logo"></div>
+                        <div class="feature-text"><h4>Community Standards</h4><p>Helpful reviews rise to the top while moderation keeps feedback honest and fair.</p></div>
                     </div>
                 </div>
             </div>
@@ -395,8 +256,21 @@ if (isset($_SESSION['user_name'])) {
                 <div class="footer-actions">
                     <h5>Apply</h5>
                     <div class="footer-buttons">
-                        <a href="javascript:void(0)" onclick="checkLoginAndApply()" class="footer-nav-link">Apply for Reviewer</a>
-                        <a href="javascript:void(0)" onclick="checkLoginAndApply()" class="footer-nav-link">Apply for University Representative</a>
+                        <?php 
+                        // Logic 1: Reviewer Option
+                        if ($role === 'Reviewer') {
+                            echo '<span class="footer-nav-link" style="cursor: default; color: #6c757d;">You are a Reviewer</span>';
+                        } else {
+                            echo '<a href="javascript:void(0)" onclick="checkLoginAndApply()" class="footer-nav-link">Apply for Reviewer</a>';
+                        }
+
+                        // Logic 2: University Rep Option
+                        if ($role === 'UniRep') { // Assuming 'UniRep' is the DB value based on your PHP logic
+                            echo '<span class="footer-nav-link" style="cursor: default; color: #6c757d;">You are a University Representative</span>';
+                        } else {
+                            echo '<a href="javascript:void(0)" onclick="checkLoginAndApply()" class="footer-nav-link">Apply for University Representative</a>';
+                        }
+                        ?>
                     </div>
                 </div>
 
