@@ -1,4 +1,4 @@
-/* --- 1. Essential Variables --- */
+/*  1. Essential Variables  */
 :root {
     /* Navbar specific vars */
     --primary-navy: #1e40af;
@@ -45,7 +45,7 @@ body {
     line-height: 1.5;
 }
 
-/* --- Layout Utilities --- */
+/*  Layout Utilities  */
 .container {
     width: 100%;
     max-width: var(--container-width);
@@ -65,7 +65,7 @@ body {
     .md-mb-0 { margin-bottom: 0; }
 }
 
-/* --- NAVBAR STYLES --- */
+/*  NAVBAR STYLES  */
 .navbar {
     position: fixed;
     top: 0;
@@ -162,7 +162,7 @@ body {
     .mobile-menu-btn { display: none; }
 }
 
-/* --- Search Section --- */
+/*  Search Section  */
 .search-section {
     padding: 3rem 1rem;
     background-color: var(--white);
@@ -223,7 +223,7 @@ body {
     background-color: var(--blue-700);
 }
 
-/* --- Results Grid --- */
+/*  Results Grid  */
 .results-section {
     padding: 3rem 1rem;
 }
@@ -242,7 +242,7 @@ body {
     .results-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* --- Cards --- */
+/*  Cards  */
 .card {
     background-color: var(--white);
     border-radius: var(--radius-lg);

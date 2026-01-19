@@ -1,10 +1,10 @@
 <?php
-// Prevent whitespace issues
+// AddProfessor.php (Controller)
 ob_start();
 session_start();
 include '../db/Config.php';
 
-// --- HANDLE AJAX REQUESTS ---
+//HANDLE AJAX REQUESTS
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     ob_clean();
     header('Content-Type: application/json');
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     $action = $_POST['action'];
 
-    // --- 1. FETCH COURSE NAME ---
+    //FETCH COURSE NAME
     if ($action === 'get_course_name') {
         $c_id = trim($_POST['c_id']);
         
@@ -26,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             exit;
         }
 
-        // Fetch just the name. Use Backticks for column name.
         $stmt = $conn->prepare("SELECT `Course Name` FROM courses WHERE c_id = ? LIMIT 1");
         $stmt->bind_param("s", $c_id);
         $stmt->execute();
@@ -41,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         exit;
     }
 
-    // --- 2. ADD NEW PROFESSOR ---
+    //ADD NEW PROFESSOR
     if ($action === 'add_new_professor') {
         $name = trim($_POST['name']);
         $dept = trim($_POST['department']);
@@ -49,7 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $c_id = trim($_POST['c_id']); 
         $course_name = trim($_POST['course_name']);
 
-        // Validation
         if (empty($name) || empty($dept) || empty($uni) || empty($c_id) || empty($course_name)) {
             echo json_encode(['status' => 'error', 'message' => 'All fields are required.']);
             exit;
@@ -63,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $conn->begin_transaction();
 
         try {
-            // A. Check for Duplicate Professor
+            //Check for Duplicate Professor
             $check_stmt = $conn->prepare("SELECT P_id FROM professors WHERE Name = ? AND Department = ? AND University = ?");
             $check_stmt->bind_param("sss", $name, $dept, $uni);
             $check_stmt->execute();
@@ -72,20 +70,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
             $check_stmt->close();
 
-            // B. Insert Professor
+            //Insert Professor
             $stmt1 = $conn->prepare("INSERT INTO professors (Name, Department, University) VALUES (?, ?, ?)");
             $stmt1->bind_param("sss", $name, $dept, $uni);
             if (!$stmt1->execute()) throw new Exception("DB Error (Prof): " . $stmt1->error);
             $new_p_id = $conn->insert_id;
             $stmt1->close();
 
-            // C. Insert University Data
+            //Insert University Data
             $stmt2 = $conn->prepare("INSERT INTO university (p_id, uni_name) VALUES (?, ?)");
             $stmt2->bind_param("is", $new_p_id, $uni);
             if (!$stmt2->execute()) throw new Exception("DB Error (Uni): " . $stmt2->error);
             $stmt2->close();
 
-            // D. Assign Course (Insert new row in courses table linked to this prof)
+            //Assign Course
             $stmt3 = $conn->prepare("INSERT INTO courses (c_id, `Course Name`, P_id) VALUES (?, ?, ?)");
             $stmt3->bind_param("ssi", $c_id, $course_name, $new_p_id); 
             if (!$stmt3->execute()) {
@@ -103,131 +101,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         exit;
     }
 }
+
+//PAGE LOAD USER CHECK
+if (!isset($_SESSION['s_id'])) {
+    header("Location: Login.php");
+    exit();
+}
+
+//Fetch User Role for View
+$user_id = $_SESSION['s_id'];
+$stmt = $conn->prepare("SELECT role FROM users WHERE s_id = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$res = $stmt->get_result();
+$user_data = $res->fetch_assoc();
+$user_role = $user_data['role']; 
+$stmt->close();
+
+//CONNECT TO VIEW
+include '../html/AddProfessorView.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Professor - Rate Your Grader</title>
-    <link rel="stylesheet" href="../css/AddProfessor.css">
-</head>
-<body>
-
-<nav class="navbar">
-    <div class="container nav-container">
-        <div class="logo-wrapper">
-            <div class="logo-icon">
-                <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
-            </div>
-            <span class="logo-text">Rate Your Grader</span>
-        </div>
-        
-        <div class="nav-links">
-            <a href="../../../Common/MVC/php/HomePage.php">Home</a>
-            <a href="UniversityRepDashboard.php">Dashboard</a> 
-            <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
-        </div>
-    </div>
-</nav>
-
-<main class="page-container">
-    <div class="container">
-        
-        <a href="UniversityRepDashboard.php" class="back-link">← Back to Dashboard</a>
-
-        <div class="form-card">
-            <div class="form-header">
-                <h2>Add New Faculty</h2>
-                <p>Register a new professor and assign an existing course.</p>
-            </div>
-
-            <form id="addProfForm" onsubmit="return false;">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="name">Professor Name</label>
-                        <input type="text" id="name" name="name" placeholder="e.g. Dr. John Doe" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="department">Department</label>
-                        <input type="text" id="department" name="department" placeholder="e.g. CSE" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="university">University Name</label>
-                        <input type="text" id="university" name="university" placeholder="e.g. University of Dhaka" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="c_id">Course ID</label>
-                        <input type="text" id="c_id" name="c_id" placeholder="e.g. CSE101" oninput="fetchCourseName()" required>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="course_name">Course Name</label>
-                        <input type="text" id="course_name" name="course_name" placeholder="Waiting for valid Course ID..." disabled required>
-                    </div>
-                </div>
-
-                <div id="response-message" class="message-box"></div>
-
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="window.location.href='UniversityRepDashboard.php'">Cancel</button>
-                    <button type="submit" class="btn btn-primary" onclick="submitProfessor()">Add Professor</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</main>
-
-<div id="toast-box" class="toast-box"></div>
-
-<footer>
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-brand">
-                <div class="logo-wrapper mb-2">
-                    <div class="logo-icon small">
-                        <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
-                    </div>
-                    <span class="footer-logo-text">Rate Your Grader</span>
-                </div>
-                <p>Empowering students with transparent grading information since 2024.</p>
-            </div>
-
-            <div class="footer-actions">
-                <h5>Apply</h5>
-                <div class="footer-buttons">
-                    <a href="#" class="footer-nav-link">Apply for Reviewer</a>
-                    <a href="#" class="footer-nav-link">Apply for University Representative</a>
-                </div>
-            </div>
-
-            <div class="footer-socials">
-                <h5>Our Socials</h5>
-                <div class="social-icons">
-                    <a href="#" aria-label="Facebook">
-                        <img src="../images/facebook.png" alt="Facebook" class="social-icon">
-                    </a>
-                    <a href="#" aria-label="Instagram">
-                        <img src="../images/instagram.png" alt="Instagram" class="social-icon">
-                    </a>
-                    <a href="#" aria-label="Twitter">
-                        <img src="../images/twitter.png" alt="Twitter" class="social-icon">
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer-bottom">
-            <p>&copy; 2026 Rate Your Grader. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
-
-<script src="../js/AddProfessor.js"></script>
-
-</body>
-</html>

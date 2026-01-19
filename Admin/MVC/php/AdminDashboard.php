@@ -1,8 +1,9 @@
 <?php
+// AdminDashboard.php (Controller)
 session_start();
 include '../db/Config.php';
 
-// --- HANDLE AJAX REQUESTS ---
+//HANDLE AJAX REQUESTS
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
 
@@ -14,9 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $current_admin_id = $_SESSION['s_id'];
     $action = $_POST['action'] ?? '';
 
-    // --- 1. USER MANAGEMENT ---
+    //USER MANAGEMENT
     
-    // Get All Users
+    //Get All Users
     if ($action === 'get_users') {
         $sql = "SELECT s_id, Username, Email, Role FROM users WHERE Role = 'student' OR Role = 'User' OR ROLE = 'Reviewer'OR Role = 'UniRep'";
         $res = $conn->query($sql);
@@ -26,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // --- SEARCH USERS ---
+    //Search Users
     if ($action === 'search_users') {
         $query = $_POST['query'] ?? '';
         $searchTerm = "%" . $query . "%"; 
@@ -47,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Assign Role
+    //Assign Role
     if ($action === 'assign_role') {
         $s_id = intval($_POST['user_id']);
         $role = $_POST['role']; 
@@ -76,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Remove User
+    //Remove User
     if ($action === 'delete_user') {
         $s_id = intval($_POST['user_id']);
         $conn->query("DELETE FROM reviwer WHERE s_id = $s_id"); 
@@ -85,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // --- 2. REVIEWER & UNIREP MANAGEMENT ---
+    //REVIEWER & UNIREP MANAGEMENT
 
     if ($action === 'get_reviewers') {
         $res = $conn->query("SELECT s_id, Username, Email FROM users WHERE Role = 'Reviewer'");
@@ -111,9 +112,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // --- 3. PROFESSOR MANAGEMENT ---
+    //PROFESSOR MANAGEMENT
     
-    // Get All Professors (Grouped)
+    //Get All Professors (Grouped)
     if ($action === 'get_professors') {
         $sql = "SELECT * FROM professors GROUP BY Name, Department, University ORDER BY Name ASC";
         $res = $conn->query($sql);
@@ -166,14 +167,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // --- 4. REVIEW MANAGEMENT ---
+    //REVIEW MANAGEMENT
 
     if ($action === 'get_reviews') {
-        // UPDATED SQL:
-        // 1. Checks 'u_act' (User who performed the Action) first.
-        // 2. CASE statement: If that user has Role='Admin', display 'Admin'. Else display their Username.
-        // 3. Fallback to 'u_assign' (Original Reviewer) if no action logger exists.
-        
         $acc_sql = "SELECT ar.AR_id, ar.Review, r.r_id, r.`Overall Rating` as Overall_Rating, 'Approved' as status, 
                     CASE 
                         WHEN u_act.Role = 'Admin' THEN 'Admin'
@@ -183,10 +179,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     END as ReviewerName 
                     FROM a_review ar 
                     JOIN review r ON ar.r_id = r.r_id 
-                    -- Link 1: Action based (Who approved it?)
                     LEFT JOIN reviwer rv_act ON ar.AR_id = rv_act.AR_id 
                     LEFT JOIN users u_act ON rv_act.s_id = u_act.s_id
-                    -- Link 2: Assignment based (Who was assigned?)
                     LEFT JOIN reviwer rv_assign ON r.Rv_id = rv_assign.RV_id
                     LEFT JOIN users u_assign ON rv_assign.s_id = u_assign.s_id";
         
@@ -199,10 +193,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     END as ReviewerName
                     FROM r_review rr 
                     JOIN review r ON rr.r_id = r.r_id 
-                    -- Link 1: Action based (Who rejected it?)
                     LEFT JOIN reviwer rv_act ON rr.RR_id = rv_act.RR_id
                     LEFT JOIN users u_act ON rv_act.s_id = u_act.s_id
-                    -- Link 2: Assignment based (Who was assigned?)
                     LEFT JOIN reviwer rv_assign ON r.Rv_id = rv_assign.RV_id
                     LEFT JOIN users u_assign ON rv_assign.s_id = u_assign.s_id";
         
@@ -216,7 +208,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // --- MODIFIED SECTION STARTS HERE ---
     if ($action === 'toggle_review') {
         $r_id = intval($_POST['r_id']);
         $current_status = $_POST['current_status'];
@@ -236,8 +227,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bind_param("i", $r_id);
                 $stmt->execute();
                 
-                // DELETED: Logging Admin Action in reviwer table
-
                 $new_status = 'Rejected';
             } else {
                 $get_rr = $conn->query("SELECT RR_id FROM r_review WHERE r_id = $r_id");
@@ -256,8 +245,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bind_param("is", $r_id, $text);
                 $stmt->execute();
                 
-                // DELETED: Logging Admin Action in reviwer table
-                
                 $new_status = 'Approved';
             }
 
@@ -269,9 +256,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         exit;
     }
-    // --- MODIFIED SECTION ENDS HERE ---
 
-    // --- 5. REQUESTS ---
+    //REQUESTS
     if ($action === 'get_requests') {
         $check = $conn->query("SHOW TABLES LIKE 'role_requests'");
         if ($check && $check->num_rows > 0) {
@@ -319,8 +305,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// --- PAGE LOAD COUNTS ---
-// UPDATED SECURITY CHECK
+//PAGE LOAD COUNTS & SECURITY
+
 if (!isset($_SESSION['s_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') { 
     header("Location: ../../../Common/MVC/php/Login.php"); 
     exit(); 
@@ -330,160 +316,12 @@ $cnt_users = $conn->query("SELECT COUNT(*) as c FROM users WHERE Role = 'student
 $cnt_rev = $conn->query("SELECT COUNT(*) as c FROM users WHERE Role = 'Reviewer'")->fetch_assoc()['c'];
 $cnt_unirep = $conn->query("SELECT COUNT(*) as c FROM users WHERE Role = 'UniRep' OR Role = 'uni_rep'")->fetch_assoc()['c'];
 
-// UPDATED: Count UNIQUE Professors only
+// Count UNIQUE Professors only
 $cnt_prof = $conn->query("SELECT COUNT(DISTINCT Name, Department, University) as c FROM professors")->fetch_assoc()['c'];
 
 $check_req = $conn->query("SHOW TABLES LIKE 'role_requests'");
 $cnt_req = ($check_req && $check_req->num_rows > 0) ? $conn->query("SELECT COUNT(*) as c FROM role_requests WHERE status='Pending'")->fetch_assoc()['c'] : 0;
+
+//CONNECT TO VIEW
+include '../html/AdminDashboardView.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/AdminDashboard.css">
-</head>
-<body>
-
-<nav class="navbar">
-    <div class="container nav-container">
-        <div class="logo-wrapper">
-            <div class="logo-icon">
-                <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
-            </div>
-            <span class="logo-text">Admin Panel</span>
-        </div>
-        <div class="nav-links">
-            <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
-        </div>
-    </div>
-</nav>
-
-<main class="dashboard-page">
-    <div class="container">
-        <div class="header-section">
-            <h2 class="page-title">System Overview</h2>
-            <p class="subtitle">Manage users, faculty, and content moderation.</p>
-        </div>
-        
-        <div class="stats-grid">
-            <div class="stat-card" onclick="openSection('users')">
-                <div class="stat-icon" style="background: #e3f2fd; color: #1e88e5;">👥</div>
-                <div class="stat-number"><?php echo $cnt_users; ?></div>
-                <div class="stat-label">Manage Users</div>
-            </div>
-            <div class="stat-card" onclick="openSection('reviewers')">
-                <div class="stat-icon" style="background: #fff3e0; color: #fb8c00;">⚖️</div>
-                <div class="stat-number"><?php echo $cnt_rev; ?></div>
-                <div class="stat-label">Manage Reviewers</div>
-            </div>
-            <div class="stat-card" onclick="openSection('unireps')">
-                <div class="stat-icon" style="background: #e8f5e9; color: #43a047;">🎓</div>
-                <div class="stat-number"><?php echo $cnt_unirep; ?></div>
-                <div class="stat-label">Manage Uni Reps</div>
-            </div>
-            <div class="stat-card" onclick="openSection('professors')">
-                <div class="stat-icon" style="background: #f3e5f5; color: #8e24aa;">👨‍🏫</div>
-                <div class="stat-number"><?php echo $cnt_prof; ?></div>
-                <div class="stat-label">Manage Faculty</div>
-            </div>
-            <div class="stat-card" onclick="openSection('requests')">
-                <div class="stat-icon" style="background: #ffebee; color: #e53935;">📩</div>
-                <div class="stat-number"><?php echo $cnt_req; ?></div>
-                <div class="stat-label">Role Requests</div>
-            </div>
-            <div class="stat-card" onclick="openSection('reviews')">
-                <div class="stat-icon" style="background: #e0f7fa; color: #00acc1;">📝</div>
-                <div class="stat-number">All</div>
-                <div class="stat-label">Manage Reviews</div>
-            </div>
-        </div>
-
-        <div id="admin-content-area" class="content-area" style="display:none;">
-            <div class="section-header">
-                <h3 id="section-title">Manage Section</h3>
-                <button class="btn btn-secondary btn-sm" onclick="closeSection()">Close Panel</button>
-            </div>
-            <div id="dynamic-table-container">
-                <div class="loader">Loading...</div>
-            </div>
-        </div>
-    </div>
-</main>
-
-<div id="toast-box" class="toast-box"></div>
-
-<div class="modal" id="confirmModal">
-    <div class="modal-content confirmation-box">
-        <div class="confirmation-icon">⚠️</div>
-        <h3 id="confirm-title">Confirm Action</h3>
-        <p id="confirm-msg" style="color:#666; margin-bottom:1.5rem;">Are you sure?</p>
-        <div class="modal-actions confirmation-actions">
-            <button class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button>
-            <button class="btn btn-danger" id="confirm-btn-action">Confirm</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="editProfModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Edit Professor</h2>
-            <button class="close-modal" onclick="closeModal('editProfModal')">×</button>
-        </div>
-        <form id="editProfForm" onsubmit="return false;">
-            <input type="hidden" id="edit_p_id">
-            <div class="form-group">
-                <label>Name</label> <input type="text" id="edit_name">
-            </div>
-            <div class="form-group">
-                <label>Department</label> <input type="text" id="edit_dept">
-            </div>
-            <div class="form-group">
-                <label>University</label> <input type="text" id="edit_uni">
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-primary" onclick="submitProfUpdate()">Save Changes</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<footer>
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-brand">
-                <div class="logo-wrapper mb-2">
-                    <div class="logo-icon small">
-                        <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
-                    </div>
-                    <span class="footer-logo-text">Rate Your Grader</span>
-                </div>
-                <p>Empowering students with transparent grading information since 2024.</p>
-            </div>
-            <div class="footer-actions">
-                <h5>Apply</h5>
-                <div class="footer-buttons">
-                    <a href="#" class="footer-nav-link">Apply for Reviewer</a>
-                    <a href="#" class="footer-nav-link">Apply for University Representative</a>
-                </div>
-            </div>
-            <div class="footer-socials">
-                <h5>Our Socials</h5>
-                <div class="social-icons">
-                    <a href="#" aria-label="Facebook"><img src="../images/facebook.png" alt="Facebook" class="social-icon"></a>
-                    <a href="#" aria-label="Instagram"><img src="../images/instagram.png" alt="Instagram" class="social-icon"></a>
-                    <a href="#" aria-label="Twitter"><img src="../images/twitter.png" alt="Twitter" class="social-icon"></a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Rate Your Grader. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
-
-<script src="../js/AdminDashboard.js"></script>
-</body>
-</html>
