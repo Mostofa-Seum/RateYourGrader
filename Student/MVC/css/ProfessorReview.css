@@ -481,3 +481,25 @@ textarea:invalid {
 .error-text.show {
     display: block;
 }
+/* --- Extracted Internal Styles --- */
+.icon-img { 
+    width: 1.2em; 
+    height: 1.2em; 
+    vertical-align: middle; 
+    object-fit: contain; 
+}
+
+.professor-avatar img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    border-radius: 50%; 
+}
+
+#redirect-signal { 
+    display: none; 
+}
+
+.nav-links a span:hover { 
+    color: #1e40af; 
+}

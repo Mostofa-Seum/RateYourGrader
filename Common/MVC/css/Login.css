@@ -222,3 +222,32 @@
     color: #1a237e;         /* Changes to your main theme blue on hover */
     cursor: pointer;
 }
+/* --- Extracted Alert and Message Styles --- */
+.error-msg {
+    color: #721c24; 
+    background-color: #f8d7da; 
+    border: 1px solid #f5c6cb;
+    padding: 10px; 
+    border-radius: 5px; 
+    margin-bottom: 15px; 
+    font-size: 0.9rem;
+    text-align: center; 
+    width: 100%;
+}
+.success-msg {
+    color: #155724; 
+    background-color: #d4edda; 
+    border: 1px solid #c3e6cb;
+    padding: 10px; 
+    border-radius: 5px; 
+    margin-bottom: 15px; 
+    font-size: 0.9rem;
+    text-align: center; 
+    width: 100%;
+}
+.hello-msg {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-top: 50px;
+}

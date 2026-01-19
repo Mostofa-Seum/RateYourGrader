@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/SearchOutput.css">
+    <title>Find Your Grader</title>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
+                </div>
+                <span class="logo-text">Rate Your Grader</span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="../../../Common/MVC/php/HomePage.php">Home</a> 
+                <a href="SearchOutput.php">Search Graders</a>
+
+                <?php if (isset($_SESSION['user_name'])): ?>
+                    <a href="UserDashboard.php" style="text-decoration: none;">
+                        <span style="margin-right: 15px; font-weight: bold; color: inherit;">Hello, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                    </a>
+                    <a href="../../../Common/MVC/php/Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
+                <?php else: ?>
+                    <a href="../../../Common/MVC/php/Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </nav>
+    <div style="margin-top: 80px;"></div>
+
+    <section class="search-section">
+        <div class="search-container">
+            <div class="text-center" style="margin-bottom: 2rem;">
+                <h2 class="search-title">Find Your Grader</h2>
+                <p>Search for graders and read reviews from fellow students</p>
+            </div>
+            
+            <form action="" method="GET" class="search-wrapper" onsubmit="return validateSearch()">
+                <input type="text" id="searchBox" name="q" value="<?php echo htmlspecialchars($search_term); ?>" 
+                placeholder="Enter grader's name, dept, or university" class="search-input">
+                <button type="submit" class="search-btn">
+                    <img src="../images/SearchIcon.png" alt="Search Icon">
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <?php if ($search_performed): ?>
+    <main class="results-section">
+        <div class="container">
+            
+            <div id="login-warning-msg">
+                ⚠️ You must <a href="../../../Common/MVC/php/Login.php">Login / Sign Up</a> to rate a professor.
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.5rem; font-weight: 700;">
+                    <?php echo empty($search_term) ? "Suggested Professors" : "Search Results"; ?>
+                </h3>
+                
+                <?php if (!empty($search_term)): ?>
+                    <p>Found <span id="resultCount"><?php echo $count; ?></span> graders matching your search</p>
+                <?php endif; ?>
+            </div>
+
+            <div id="graderResults" class="results-grid">
+                <?php
+                if (!empty($professors_data)) {
+                    foreach($professors_data as $prof) {
+                        $info = $prof['info'];
+                        $stats = $prof['stats'];
+                ?>
+                
+                <div class="card">
+                    <div class="card-padding">
+                        <div class="flex items-center" style="margin-bottom: 1rem;">
+                            <div class="grader-avatar">
+                                <img src="../images/iconUser.png" alt="User" style="width: 4rem; height: 4rem; object-fit: contain;">
+                            </div>
+                            <div class="grader-info">
+                                <h4><?php echo htmlspecialchars($info['Name']); ?></h4>
+                                <p style="font-size: 0.9rem; color: #666;">
+                                    <?php echo htmlspecialchars($info['Department']); ?> <br>
+                                    <span style="font-size: 0.8rem; color: #888;">at <?php echo htmlspecialchars($info['University']); ?></span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <div class="rating-header">
+                                <span style="font-weight: 600;">Overall Rating</span>
+                                <span class="rating-score"><?php echo $stats['overall']; ?></span>
+                            </div>
+                            <div class="stars-row">
+                                <img src="../images/starFull.png" alt="Star" class="star-icon">
+                                <img src="../images/starFull.png" alt="Star" class="star-icon">
+                                <img src="../images/starFull.png" alt="Star" class="star-icon">
+                                <img src="../images/starFull.png" alt="Star" class="star-icon">
+                                <img src="../images/starHalf.jpg" alt="Half Star" class="star-icon">
+                                <span class="review-count">(<?php echo $stats['total']; ?> reviews)</span>
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <div class="rating-row">
+                                    <span class="rating-label">Fairness</span>
+                                    <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: <?php echo $stats['fairness_width']; ?>%"></div></div>
+                                    <span class="rating-val"><?php echo $stats['fairness_score']; ?></span>
+                                </div>
+                                <div class="rating-row">
+                                    <span class="rating-label">Clarity</span>
+                                    <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: <?php echo $stats['clarity_width']; ?>%"></div></div>
+                                    <span class="rating-val"><?php echo $stats['clarity_score']; ?></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background-color: #f9fafb; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; font-style: italic; color: #4b5563; font-size: 0.9rem;">
+                            <strong>Latest Review:</strong><br>
+                            <?php echo $prof['latest_review']; ?>
+                        </div>
+                        <div class="card-footer">
+                            <a href="ProfessorProfile.php?P_id=<?= $info['P_id'] ?>" class="view-profile-link" style="text-decoration: none;">
+                                View Profile &nbsp; <img src="../images/iconArrow.png" alt="Arrow" class="icon-small">
+                            </a>
+                            
+                            <?php if (isset($_SESSION['user_name'])): ?>
+                                <a href="ProfessorReview.php?P_id=<?= $info['P_id'] ?>&name=<?= urlencode($info['Name']) ?>&dept=<?= urlencode($info['Department']) ?>&uni=<?= urlencode($info['University']) ?>" 
+                                   class="rate-profile-btn" style="text-decoration: none;">
+                                    Rate Now &nbsp; <img src="../images/iconArrow.png" alt="Arrow" class="icon-small">
+                                </a>
+                            <?php else: ?>
+                                <a href="javascript:void(0);" 
+                                   onclick="showLoginMessage()"
+                                   class="rate-profile-btn" style="text-decoration: none;">
+                                    Rate Now &nbsp; <img src="../images/iconArrow.png" alt="Arrow" class="icon-small">
+                                </a>
+                            <?php endif; ?>
+                        </div>
+
+                    </div>
+                </div>
+                <?php 
+                    } 
+                } else {
+                    echo "<p>No results found for '" . htmlspecialchars($search_term) . "'</p>";
+                }
+                ?>
+            </div>
+        </div>
+    </main>
+    <?php endif; ?>
+
+     <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo-wrapper mb-2">
+                        <div class="logo-icon small">
+                            <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
+                        </div>
+                        <span class="footer-logo-text">Rate Your Grader</span>
+                    </div>
+                    <p>Empowering students with transparent grading information since 2024.</p>
+                </div>
+
+                <div class="footer-actions">
+                    <h5>Apply</h5>
+                    <div class="footer-buttons">
+                        <a href="javascript:void(0)" onclick="checkLoginAndApply()" class="footer-nav-link">Apply for Reviewer</a>
+                        <a href="javascript:void(0)" onclick="checkLoginAndApply()" class="footer-nav-link">Apply for University Representative</a>
+                    </div>
+                </div>
+
+                <div class="footer-socials">
+                    <h5>Our Socials</h5>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com">
+                            <img src="../images/facebook.png" alt="Facebook" class="social-icon">
+                        </a>
+                        <a href="https://www.instagram.com">
+                            <img src="../images/instagram.png" alt="Instagram" class="social-icon">
+                        </a>
+                        <a href="https://www.twitter.com">
+                            <img src="../images/twitter.png" alt="Twitter" class="social-icon">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 Rate Your Grader. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast-container"></div>
+
+    <script>
+        const isUserLoggedIn = <?php echo isset($_SESSION['user_name']) ? 'true' : 'false'; ?>;
+    </script>
+    <script src="../js/SearchOutput.js"></script>
+    <style>
+        /* Helper classes for icons in View */
+        .star-icon { width: 1.2em; height: 1.2em; vertical-align: middle; }
+        .icon-small { width: 1em; height: 1em; vertical-align: middle; }
+    </style>
+</body>
+</html>

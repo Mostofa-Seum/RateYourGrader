@@ -532,3 +532,8 @@ footer {
     background-color: #c0392b;
     box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
+.stat-card.pending {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
