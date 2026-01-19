@@ -53,6 +53,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $s_id = intval($_POST['user_id']);
         $role = $_POST['role']; 
         
+        // --- NEW LOGIC START: Check if user already has this role ---
+        $check_stmt = $conn->prepare("SELECT Role FROM users WHERE s_id = ?");
+        $check_stmt->bind_param("i", $s_id);
+        $check_stmt->execute();
+        $check_res = $check_stmt->get_result();
+        $current_data = $check_res->fetch_assoc();
+
+        if ($current_data && strtolower($current_data['Role']) === strtolower($role)) {
+            echo json_encode(['status' => 'error', 'message' => "Action Failed: User is already a $role"]);
+            exit;
+        }
+        // --- NEW LOGIC END ---
+
         $conn->begin_transaction();
         try {
             $stmt = $conn->prepare("UPDATE users SET Role = ? WHERE s_id = ?");
@@ -322,6 +335,6 @@ $cnt_prof = $conn->query("SELECT COUNT(DISTINCT Name, Department, University) as
 $check_req = $conn->query("SHOW TABLES LIKE 'role_requests'");
 $cnt_req = ($check_req && $check_req->num_rows > 0) ? $conn->query("SELECT COUNT(*) as c FROM role_requests WHERE status='Pending'")->fetch_assoc()['c'] : 0;
 
-//CONNECT TO VIEW
+//CONNECT TO VIEW (Make sure this path is correct for where you save the View file)
 include '../html/AdminDashboardView.php';
 ?>

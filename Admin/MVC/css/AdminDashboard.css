@@ -1,4 +1,4 @@
-/*GLOBAL*/
+/* --- GLOBAL --- */
 * {
   margin: 0;
   padding: 0;
@@ -30,7 +30,7 @@ body {
   line-height: 1.6;
 }
 
-/*NAVBAR*/
+/* --- NAVBAR --- */
 .navbar {
   position: fixed;
   top: 0;
@@ -94,7 +94,7 @@ body {
   cursor: pointer;
 }
 
-/*BUTTONS*/
+/* --- BUTTONS --- */
 .btn {
   padding: 0.5rem 1rem;
   border-radius: 8px;
@@ -132,7 +132,7 @@ body {
   color: white;
 }
 
-/*LAYOUT*/
+/* --- LAYOUT --- */
 .dashboard-page {
   padding-top: 6rem;
   min-height: 80vh;
@@ -156,7 +156,7 @@ body {
   color: var(--text-light);
 }
 
-/*STATS GRID*/
+/* --- STATS GRID --- */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -203,7 +203,7 @@ body {
   font-weight: 600;
 }
 
-/*CONTENT AREA (TABLES)*/
+/* --- CONTENT AREA (TABLES) --- */
 .content-area {
   background: white;
   padding: 2rem;
@@ -260,7 +260,7 @@ body {
   color: #888;
 }
 
-/*MODAL*/
+/* --- MODAL --- */
 .modal {
   display: none;
   position: fixed;
@@ -317,7 +317,7 @@ body {
   margin-top: 1.5rem;
 }
 
-/*TOAST & CONFIRMATION*/
+/* --- TOAST & CONFIRMATION --- */
 .toast-box {
   position: fixed;
   top: 90px;
@@ -364,7 +364,7 @@ body {
   display: flex;
 }
 
-/*FOOTER*/
+/* --- FOOTER --- */
 footer {
   background: var(--darkest-navy);
   color: white;

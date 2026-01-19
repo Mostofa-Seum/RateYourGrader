@@ -1,14 +1,14 @@
-//GLOBAL VARS
+// --- GLOBAL VARS ---
 let pendingAction = null;
 let searchTimeout = null;
 
-//VIEW SWITCHING
+// --- VIEW SWITCHING ---
 function openSection(type) {
   const container = document.getElementById("admin-content-area");
   const title = document.getElementById("section-title");
   const tableDiv = document.getElementById("dynamic-table-container");
 
-  //Clear previous search bars if any
+  // Clear previous search bars if any
   const existingSearch = document.getElementById("active-search-bar");
   if (existingSearch) existingSearch.remove();
 
@@ -48,7 +48,7 @@ function closeSection() {
   if (existingSearch) existingSearch.remove();
 }
 
-//SEARCH FUNCTIONS
+// --- SEARCH FUNCTIONS ---
 
 function injectSearchBar(placeholder, functionName) {
   const searchDiv = document.createElement("div");
@@ -84,7 +84,7 @@ function performFacultySearch() {
   }, 300);
 }
 
-//AJAX HELPERS
+// --- AJAX HELPERS ---
 function fetchData(action, callback, payload = {}) {
   const fd = new FormData();
   fd.append("action", action);
@@ -119,7 +119,7 @@ function sendAction(action, payload) {
     .catch((e) => showToast("Network Error", "error"));
 }
 
-//TOAST NOTIFICATIONS
+// --- TOAST NOTIFICATIONS ---
 function showToast(message, type) {
   const toast = document.getElementById("toast-box");
   toast.textContent = message;
@@ -129,7 +129,7 @@ function showToast(message, type) {
   }, 3000);
 }
 
-//CUSTOM CONFIRMATION
+// --- CUSTOM CONFIRMATION ---
 function openConfirm(msg, actionCallback) {
   const modal = document.getElementById("confirmModal");
   document.getElementById("confirm-msg").textContent = msg;
@@ -145,7 +145,7 @@ function closeConfirmModal() {
   document.getElementById("confirmModal").classList.remove("active");
 }
 
-//RENDERERS
+// --- RENDERERS ---
 
 function renderUserTable(data) {
   if (data.length === 0) return noData("No user found");
@@ -263,7 +263,8 @@ function noData(msg) {
         </div>`);
 }
 
-//ACTIONS
+// --- ACTIONS ---
+
 function assignRole(id, role) {
   openConfirm(`Promote user to ${role}?`, function () {
     sendAction("assign_role", { user_id: id, role: role });
@@ -293,7 +294,7 @@ function toggleReview(id, currentStatus) {
   });
 }
 
-//PROF EDIT MODAL
+// --- PROF EDIT MODAL ---
 function openEditProf(json) {
   const p = JSON.parse(decodeURIComponent(json));
   document.getElementById("edit_p_id").value = p.P_id;
