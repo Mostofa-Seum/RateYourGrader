@@ -141,16 +141,20 @@ if (!isset($_SESSION['s_id'])) {
 $current_user_id = $_SESSION['s_id'];
 
 // --- 3. GET USER INFO ---
-$sql = "SELECT Username, Email FROM $tableName WHERE s_id = ?";
+// UPDATE: Added 'role' to the SELECT statement
+$sql = "SELECT Username, Email, role FROM $tableName WHERE s_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $current_user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
+$user_role = ''; // Initialize variable
+
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $db_username = $row['Username'];
     $db_email = $row['Email'];
+    $user_role = $row['role']; // Store role
 } else {
     $db_username = "Unknown";
     $db_email = "Unknown";
@@ -219,17 +223,19 @@ $stmt->close();
     <div class="container">
         <div class="dashboard-grid">
             
-<div class="card profile-card">
-    <div class="profile-avatar"><img src="../images/aiden.png" alt="Profile Avatar"></div>
-    <div class="profile-name"><?php echo htmlspecialchars($db_username); ?></div>
-    <div class="profile-email"><?php echo htmlspecialchars($db_email); ?></div>
-    
-    <button class="edit-profile-btn" onclick="toggleEditProfileSection()">Edit Profile</button>
+            <div class="card profile-card">
+                <div class="profile-avatar"><img src="../images/aiden.png" alt="Profile Avatar"></div>
+                <div class="profile-name"><?php echo htmlspecialchars($db_username); ?></div>
+                <div class="profile-email"><?php echo htmlspecialchars($db_email); ?></div>
+                
+                <button class="edit-profile-btn" onclick="toggleEditProfileSection()">Edit Profile</button>
 
-    <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="window.location.href='../../../UniversityRepresentative/MVC/php/UniversityRepDashboard.php'">
-       <b> Switch to University Representative View </b>
-    </button>
-</div>
+                <?php if ($user_role === 'UniRep'): ?>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="window.location.href='../../../UniversityRepresentative/MVC/php/UniversityRepDashboard.php'">
+                       <b> Switch to University Representative View </b>
+                    </button>
+                <?php endif; ?>
+            </div>
 
             <div class="stats-section">
                 <h2>Your Reviews</h2>
@@ -348,13 +354,13 @@ $stmt->close();
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
 
-<div class="footer-actions">
-    <h5>Apply</h5>
-    <div class="footer-buttons">
-        <a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for Reviewer</a>
-        <a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for University Representative</a>
-    </div>
-</div>
+                <div class="footer-actions">
+                    <h5>Apply</h5>
+                    <div class="footer-buttons">
+                        <a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for Reviewer</a>
+                        <a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for University Representative</a>
+                    </div>
+                </div>
 
                 <div class="footer-socials">
                     <h5>Our Socials</h5>
