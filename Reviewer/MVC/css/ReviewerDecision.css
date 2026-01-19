@@ -1,16 +1,11 @@
-/* =========================================
-   1. SHARED GLOBAL STYLES (From Working File)
-   ========================================= */
+/*1. SHARED GLOBAL STYLES */
 :root {
-  /* Navbar specific vars */
   --primary-navy: #1e40af;
   --dark-navy: #1e3a8a;
   --darkest-navy: #1e1b4b;
   --text-gray: #4b5563;
   --border-color: rgba(229, 231, 235, 0.5);
   --transition-speed: 0.3s;
-
-  /* Common Colors */
   --gray-50: #f9fafb;
   --gray-200: #e5e7eb;
   --gray-300: #d1d5db;
@@ -18,8 +13,6 @@
   --gray-800: #1f2937;
   --white: #ffffff;
   --blue-600: #2563eb;
-
-  /* Reviewer Specific Colors */
   --green-600: #16a34a;
   --red-600: #dc2626;
 
@@ -65,9 +58,7 @@ body {
   margin-bottom: 1.5rem;
 }
 
-/* =========================================
-   2. NAVBAR STYLES (Exact copy from SearchOutput)
-   ========================================= */
+/*2. NAVBAR STYLES (Exact copy from SearchOutput)*/
 .navbar {
   position: fixed;
   top: 0;
@@ -126,7 +117,7 @@ body {
 
 /* Links & Buttons */
 .nav-links {
-  display: none; /* Hidden on mobile */
+  display: none; 
   align-items: center;
   gap: 2rem;
 }
@@ -161,36 +152,13 @@ body {
   background-color: var(--dark-navy);
   transform: translateY(-2px);
 }
-
-/* Mobile Menu */
-.mobile-menu-btn {
-  display: block;
-  background: none;
-  border: none;
-  color: var(--primary-navy);
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.mobile-menu-icon {
-  width: 24px;
-  height: 24px;
-  display: block;
-  object-fit: contain;
-}
-
 @media (min-width: 768px) {
   .nav-links {
     display: flex;
   }
-  .mobile-menu-btn {
-    display: none;
-  }
 }
 
-/* =========================================
-   3. REVIEWER SPECIFIC STYLES (Preserved)
-   ========================================= */
+/* 3. REVIEWER SPECIFIC STYLES (Preserved)*/
 .page-title {
   font-size: 2rem;
   margin-bottom: 2rem;
@@ -406,9 +374,7 @@ body {
   color: var(--gray-600);
 }
 
-/* =========================================
-   4. FOOTER STYLES (Exact copy from SearchOutput)
-   ========================================= */
+/* 4. FOOTER STYLES (Exact copy from SearchOutput)*/
 footer {
   background-color: var(--darkest-navy);
   color: white;

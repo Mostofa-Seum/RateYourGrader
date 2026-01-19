@@ -1,4 +1,4 @@
-/* --- 1. Essential Variables --- */
+/*  Essential Variables */
 :root {
   /* Navbar specific vars */
   --primary-navy: #1e40af;
@@ -51,7 +51,7 @@ body {
   line-height: 1.5;
 }
 
-/* --- Layout Utilities --- */
+/*  Layout Utilities  */
 .container {
   width: 100%;
   max-width: var(--container-width);
@@ -87,7 +87,7 @@ body {
   }
 }
 
-/* --- NAVBAR STYLES --- */
+/*  NAVBAR STYLES  */
 .navbar {
   position: fixed;
   top: 0;
@@ -163,32 +163,15 @@ body {
   transition: all 0.2s;
 }
 
-.mobile-menu-btn {
-  display: block;
-  background: none;
-  border: none;
-  color: var(--primary-navy);
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.mobile-menu-icon {
-  width: 24px;
-  height: 24px;
-  display: block;
-  object-fit: contain;
-}
 
 @media (min-width: 768px) {
   .nav-links {
     display: flex;
   }
-  .mobile-menu-btn {
-    display: none;
-  }
+
 }
 
-/* --- Search Section --- */
+/*  Search Section  */
 .search-section {
   padding: 3rem 1rem;
   background-color: var(--white);
@@ -249,7 +232,7 @@ body {
   background-color: var(--blue-700);
 }
 
-/* --- Results Grid --- */
+/*  Results Grid  */
 .results-section {
   padding: 3rem 1rem;
 }
@@ -272,7 +255,7 @@ body {
   }
 }
 
-/* --- Cards --- */
+/*  Cards  */
 .card {
   background-color: var(--white);
   border-radius: var(--radius-lg);
@@ -601,7 +584,7 @@ footer {
   color: #856404;
   text-decoration: underline;
 }
-/* --- New Reviewer Warning Message Style --- */
+/*  New Reviewer Warning Message Style  */
 #reviewer-warning-msg {
   display: none; /* Hidden by default */
   background-color: #f8d7da;

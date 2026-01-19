@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. Handle "Rate This Professor" Button ---
+    //   Handle "Rate This Professor" Button 
     const rateBtn = document.getElementById('rateBtnLoggedOut');
     const warningBox = document.getElementById('loginWarning');
 
@@ -19,9 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-// --- 2. Helper Functions (Outside DOMContentLoaded) ---
+//  Helper Functions
 
-// Custom Toast Function (Same as Homepage)
+// Custom Toast Function
 function showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -40,7 +40,7 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// Check Login for Apply Button (Footer)
+// Check Login for Apply Button 
 function checkLoginAndApply() {
     if (typeof isUserLoggedIn !== 'undefined' && isUserLoggedIn === true) {
         window.location.href = "../../../Common/MVC/php/ApplyRole.php";

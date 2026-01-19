@@ -1,8 +1,5 @@
-/* =========================================
-   1. GLOBAL VARIABLES (Matched to ForgotPassword)
-   ========================================= */
+/* 1. GLOBAL VARIABLES */
 :root {
-  /* Colors */
   --primary-navy: #1e40af;
   --dark-navy: #1e3a8a;
   --darkest-navy: #1e1b4b;
@@ -13,8 +10,6 @@
   --gray-600: #4b5563;
   --gray-800: #1f2937;
   --white: #ffffff;
-
-  /* Status Colors */
   --blue-600: #2563eb;
   --yellow-400: #fbbf24;
   --red-100: #fee2e2;
@@ -54,7 +49,7 @@ body {
   flex-direction: column;
 }
 
-/* --- Layout Utilities --- */
+/*  Layout Utilities  */
 .container {
   width: 100%;
   max-width: var(--container-width);
@@ -62,9 +57,7 @@ body {
   padding: 0 1rem;
 }
 
-/* =========================================
-   2. NAVBAR STYLES
-   ========================================= */
+/* 2. NAVBAR STYLES */
 .navbar {
   position: fixed;
   top: 0;
@@ -184,9 +177,7 @@ body {
   }
 }
 
-/* =========================================
-   3. PROFESSOR PROFILE SPECIFIC STYLES
-   ========================================= */
+/* 3. PROFESSOR PROFILE SPECIFIC STYLES*/
 
 .prof-header {
   background-color: var(--white);
@@ -251,7 +242,7 @@ body {
   margin-bottom: 1.5rem;
 }
 
-/* --- NEW: Login Warning Message Style --- */
+/*  NEW: Login Warning Message Style  */
 .login-warning {
   display: none; /* Hidden by default */
   background-color: var(--red-100);
@@ -329,7 +320,7 @@ body {
   color: var(--blue-600);
 }
 
-/* --- Reviews Section --- */
+/*  Reviews Section  */
 .reviews-section {
   padding: 3rem 0;
   flex: 1;
@@ -425,9 +416,7 @@ body {
   line-height: 1.6;
 }
 
-/* =========================================
-   4. FOOTER STYLES
-   ========================================= */
+/* 4. FOOTER STYLES*/
 footer {
   background-color: var(--darkest-navy);
   color: white;
@@ -550,7 +539,7 @@ footer {
 .review-card:nth-child(n + 4) {
   animation-delay: 0.4s;
 }
-/* --- Add this to the very bottom of ProfessorProfile.css --- */
+/*  Add this to the very bottom of ProfessorProfile.css  */
 
 #toast-container {
   position: fixed;

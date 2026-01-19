@@ -1,8 +1,5 @@
-// --- GLOBAL VARIABLES ---
 let reviewIdToDelete = null;
 let reviewTypeToDelete = null;
-
-// --- HELPER FUNCTIONS ---
 
 function toggleEditProfileSection() {
     const section = document.getElementById('edit-profile-section');
@@ -40,14 +37,12 @@ function showSuccessMessage(message) {
     successMessage.textContent = message;
     successMessage.classList.add('active');
     
-    // Note: We don't remove the class here automatically if we are reloading, 
-    // to ensure the user sees it until the reload happens.
     setTimeout(() => {
         successMessage.classList.remove('active');
     }, 3000);
 }
 
-// --- PROFILE UPDATES ---
+//  PROFILE UPDATES 
 
 function updateUsername() {
     const username = document.getElementById('username').value;
@@ -121,7 +116,7 @@ function resetPasswordForm() {
     document.getElementById('confirm-password').value = '';
 }
 
-// --- REVIEWS MODAL ---
+//  REVIEWS MODAL 
 
 function openReviewsModal(status) {
     const modal = document.getElementById('reviewsModal');
@@ -180,7 +175,7 @@ function closeReviewsModal() {
     document.getElementById('reviewsModal').classList.remove('active');
 }
 
-// --- DELETE LOGIC (PAGE RELOAD APPROACH) ---
+//  DELETE LOGIC  & PAGE RELOAD
 
 function initiateDelete(id, type) {
     reviewIdToDelete = id;
@@ -211,10 +206,10 @@ function confirmDelete() {
         closeDeleteModal(); 
 
         if (data.status === 'success') {
-            // 1. Show Success Message
+            //  Show Success Message
             showSuccessMessage('✔ Review deleted succesfully!');
             
-            // 2. Reload Page after a short delay so user sees the message
+            //  Reload Page after a short delay so user sees the message
             setTimeout(() => {
                 location.reload(); 
             }, 1000); 
@@ -230,7 +225,7 @@ function confirmDelete() {
     });
 }
 
-// --- INITIALIZATION ---
+//  INITIALIZATION 
 
 function renderRecentReviews() {
     const list = document.getElementById('recent-reviews-list');

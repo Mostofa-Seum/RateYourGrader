@@ -176,14 +176,14 @@
                     <h5>Apply</h5>
                     <div class="footer-buttons">
                         <?php 
-                        // Logic 1: Reviewer Option
+                        // Reviewer Option
                         if ($is_reviewer) {
                             echo '<span style="color: #9ca3af; font-weight: 500;">You are a Reviewer</span>';
                         } else {
                             echo '<a href="../../../Common/MVC/php/ApplyRole.php?role=Reviewer" class="footer-nav-link">Apply for Reviewer</a>';
                         }
 
-                        // Logic 2: University Rep Option
+                        // University Rep Option
                         if ($is_rep) {
                             echo '<span style="color: #9ca3af; font-weight: 500;">You are a University Representative</span>';
                         } else {

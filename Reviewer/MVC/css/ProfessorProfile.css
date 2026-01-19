@@ -1,6 +1,4 @@
-/* =========================================
-   1. GLOBAL VARIABLES (Matched to ForgotPassword)
-   ========================================= */
+/*1. GLOBAL VARIABLES */
 :root {
   /* Colors */
   --primary-navy: #1e40af;
@@ -54,7 +52,7 @@ body {
   flex-direction: column;
 }
 
-/* --- Layout Utilities --- */
+/* Layout Utilities*/
 .container {
   width: 100%;
   max-width: var(--container-width);
@@ -62,9 +60,7 @@ body {
   padding: 0 1rem;
 }
 
-/* =========================================
-   2. NAVBAR STYLES
-   ========================================= */
+/*2. NAVBAR STYLES*/
 .navbar {
   position: fixed;
   top: 0;
@@ -166,21 +162,11 @@ body {
   transform: translateY(-2px);
 }
 
-.mobile-menu-btn {
-  display: block;
-  background: none;
-  border: none;
-  color: var(--primary-navy);
-  font-size: 1.5rem;
-  cursor: pointer;
-}
+
 
 @media (min-width: 768px) {
   .nav-links {
     display: flex;
-  }
-  .mobile-menu-btn {
-    display: none;
   }
 }
 
@@ -550,7 +536,6 @@ footer {
 .review-card:nth-child(n + 4) {
   animation-delay: 0.4s;
 }
-/* Existing login-warning style (assuming you have this, if not, add it) */
 .login-warning {
   display: none;
   margin-top: 10px;

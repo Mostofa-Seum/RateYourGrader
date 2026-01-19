@@ -1,18 +1,17 @@
 <?php
 session_start();
-// Path relative to Reviewer/MVC/php/
 include '../../../Student/MVC/db/Config.php';
 
 $message = "";
 $messageType = "";
-$role = ""; // Initialize role variable
+$role = ""; 
 
-// --- 1. FETCH CURRENT REVIEWER ID (RV_id) & ROLE ---
+// FETCH CURRENT REVIEWER ID (RV_id) & ROLE 
 $reviewer_id = 0;
 if (isset($_SESSION['user_name'])) {
     $safe_username = $conn->real_escape_string($_SESSION['user_name']);
     
-    // Step A: Get s_id AND role from users table
+    // Get s_id AND role from users table
     $user_sql = "SELECT s_id, role FROM users WHERE Username = '$safe_username'";
     $user_result = $conn->query($user_sql);
     
@@ -22,7 +21,7 @@ if (isset($_SESSION['user_name'])) {
         $s_id = $u_row['s_id']; 
         $role = $u_row['role']; 
 
-        // Step B: Get RV_id from reviwer table using s_id
+        // Get RV_id from reviwer table using s_id
         $rv_sql = "SELECT RV_id FROM reviwer WHERE s_id = '$s_id'";
         $rv_result = $conn->query($rv_sql);
         
@@ -33,9 +32,9 @@ if (isset($_SESSION['user_name'])) {
     }
 }
 
-// --- HANDLE FORM SUBMISSIONS ---
+// HANDLE FORM SUBMISSIONS 
 
-// 2. APPROVE LOGIC
+// APPROVE LOGIC
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'approve') {
     $target_id = intval($_POST['review_id']);
     
@@ -87,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     }
 }
 
-// --- FETCH PENDING REVIEWS ---
+// FETCH PENDING REVIEWS
 $sql_pending = "SELECT r.*, p.Name as ProfName, c.`Course Name`
                 FROM review r
                 LEFT JOIN professors p ON r.P_id = p.P_id
@@ -97,8 +96,5 @@ $sql_pending = "SELECT r.*, p.Name as ProfName, c.`Course Name`
                 ORDER BY r.r_id ASC";
 
 $result = $conn->query($sql_pending);
-
-// Load the View (HTML)
-// Path relative to Reviewer/MVC/php/
 include '../html/ReviewerDecision.php';
 ?>

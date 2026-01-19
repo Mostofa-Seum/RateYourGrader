@@ -1,9 +1,8 @@
 <?php
 session_start();
-// Path relative to Student/MVC/php/
 include '../db/Config.php';
 
-// --- 1. HANDLE AJAX REQUESTS (Profile Updates & Deletion) ---
+// HANDLE AJAX REQUESTS 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json'); 
     
@@ -16,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $_SESSION['s_id'];
     $action = $_POST['action'] ?? '';
 
-    // --- DELETE REVIEW LOGIC ---
+    //  DELETE REVIEW LOGIC 
     if ($action === 'delete_review') {
         $r_id = $_POST['r_id'];
         $type = $_POST['type']; // accepted, rejected, or pending
@@ -30,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conn->begin_transaction();
 
         try {
-            // 1. Verify user owns the review
+            // Verify user owns the review
             $check_sql = "SELECT r_id FROM review WHERE r_id = ? AND s_id = ?";
             $check_stmt = $conn->prepare($check_sql);
             $check_stmt->bind_param("ii", $r_id, $user_id);
@@ -42,8 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $check_stmt->close();
 
-            // 2. Delete from specific tables based on type
-            // Note: We delete child records (a_review/r_review) first to avoid Foreign Key errors
+            // Delete from specific tables based on type
             if ($type === 'accepted') {
                 $del_a = $conn->prepare("DELETE FROM a_review WHERE r_id = ?");
                 $del_a->bind_param("i", $r_id);
@@ -57,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $del_r->close();
             }
 
-            // 3. Delete from main review table (for all types including pending)
+            //  Delete from main review table (for all types including pending)
             $del_main = $conn->prepare("DELETE FROM review WHERE r_id = ? AND s_id = ?");
             $del_main->bind_param("ii", $r_id, $user_id);
             
@@ -76,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // --- UPDATE USERNAME LOGIC ---
+    //  UPDATE USERNAME LOGIC 
     if ($action === 'update_username') {
         $new_username = trim($_POST['username']);
         if (empty($new_username)) {
@@ -96,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    // --- UPDATE PASSWORD LOGIC ---
+    //  UPDATE PASSWORD LOGIC 
     if ($action === 'update_password') {
         $current_pass = $_POST['current_password'];
         $new_pass = $_POST['new_password'];
@@ -128,10 +126,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    exit; // End POST request
+    exit; 
 }
 
-// --- 2. REGULAR PAGE LOAD (SESSION CHECK) ---
+//   REGULAR PAGE LOAD (SESSION CHECK) 
 $tableName = "users"; 
 
 if (!isset($_SESSION['s_id'])) {
@@ -142,7 +140,7 @@ if (!isset($_SESSION['s_id'])) {
 
 $current_user_id = $_SESSION['s_id'];
 
-// --- 3. GET USER INFO ---
+//   GET USER INFO 
 $sql = "SELECT Username, Email, role FROM $tableName WHERE s_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $current_user_id);
@@ -162,7 +160,7 @@ if ($result->num_rows > 0) {
 }
 $stmt->close();
 
-// --- 4. GET STATS COUNTS ---
+//   GET STATS COUNTS 
 
 // Accepted Count
 $accepted_sql = "SELECT COUNT(*) as count FROM a_review 
@@ -196,7 +194,7 @@ $rej_result = $stmt->get_result();
 $rejected_count = $rej_result->fetch_assoc()['count'];
 $stmt->close();
 
-// --- 5. PREPARE REVIEWS DATA FOR VIEW (Moved from bottom) ---
+//   PREPARE REVIEWS DATA FOR VIEW (Moved from bottom) 
 $reviewsData = [
     'accepted' => [],
     'pending' => [],
@@ -258,8 +256,5 @@ while ($row = $result->fetch_assoc()) {
     ];
 }
 $stmt->close();
-
-// Load the View
-// Path relative to Student/MVC/php/
 include '../html/UserDashboard.php';
 ?>

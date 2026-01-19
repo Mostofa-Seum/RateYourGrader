@@ -1,9 +1,9 @@
 <?php
 session_start(); 
-// Path relative to Student/MVC/php/
+
 include '../db/Config.php';
 
-// --- SEARCH LOGIC ---
+// SEARCH LOGIC
 $search_term = "";
 $search_performed = false;
 $professors_data = []; // Array to store prepared data for the view
@@ -23,13 +23,13 @@ $result = $conn->query($sql);
 if (!$result) { die("Query Failed: " . $conn->error); }
 $count = $result->num_rows;
 
-// --- PROCESS RESULTS ---
-// We fetch all data here so the View doesn't need to run queries
+//  PROCESS RESULTS
+// We fetch all data here 
 if ($count > 0) {
     while($row = $result->fetch_assoc()) {
         $current_p_id = $row['P_id'];
         
-        // 1. Fetch Stats
+        //  Fetch Stats
         $stat_sql = "SELECT COUNT(r.r_id) as total_reviews, AVG(r.`Overall Rating`) as avg_overall,
             AVG(r.`Grading Fairness`) as avg_fairness, AVG(r.`Behavior and Communication`) as avg_behavior 
             FROM review r INNER JOIN A_Review ar ON r.r_id = ar.R_id WHERE r.P_id = '$current_p_id'";
@@ -43,7 +43,7 @@ if ($count > 0) {
         $fairness_width = ($fairness_score / 5) * 100;
         $clarity_width  = ($clarity_score / 5) * 100;
 
-        // 2. Fetch Latest Review
+        //  Fetch Latest Review
         $review_text_display = "No written reviews yet.";
         $review_text_sql = "SELECT ar.Review FROM A_Review ar 
                             INNER JOIN review r ON ar.r_id = r.r_id 
@@ -75,7 +75,5 @@ if ($count > 0) {
     }
 }
 
-// Load the View (HTML)
-// Path relative to Student/MVC/php/
 include '../html/SearchOutput.php';
 ?>

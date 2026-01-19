@@ -154,9 +154,6 @@ body {
   .nav-links {
     display: flex;
   }
-  .mobile-menu-btn {
-    display: none;
-  }
 }
 
 /* LAYOUT */

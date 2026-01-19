@@ -1,22 +1,22 @@
 <?php
 session_start();
 
-// Authentication Check
+
 if (!isset($_SESSION['s_id'])) {
-    // Path relative to Student/MVC/php/
+
     header("Location: ../../../Common/MVC/php/Login.php");
     exit();
 }
 
 include '../db/Config.php';
 
-// 1. Initialize Variables
+// Initialize Variables
 $p_id = isset($_GET['P_id']) ? intval($_GET['P_id']) : 0;
 $prof_name = isset($_GET['name']) ? $_GET['name'] : "Unknown Professor";
 $prof_dept = isset($_GET['dept']) ? $_GET['dept'] : "Unknown Department";
 $prof_uni  = isset($_GET['uni'])  ? $_GET['uni']  : "Unknown University";
 
-// 2. Fetch Available Courses for Dropdown (ID and Name)
+//  Fetch Available Courses for Dropdown (ID and Name)
 $available_courses = [];
 if ($p_id > 0) {
     // We select both ID and Name. ID will be the value sent to the database.
@@ -24,7 +24,7 @@ if ($p_id > 0) {
     $course_result = $conn->query($course_sql);
     if ($course_result) {
         while($row = $course_result->fetch_assoc()) {
-            $available_courses[] = $row; // Stores ['c_id' => 101, 'Course Name' => 'Math']
+            $available_courses[] = $row; 
         }
     }
 }
@@ -33,7 +33,7 @@ $message = "";
 $messageType = "";
 $redirect = false;
 
-// 3. Handle Form Submission
+//  Handle Form Submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $p_id_posted = intval($_POST['p_id']);
     $overall = intval($_POST['overallRating']);
@@ -76,7 +76,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Load the View (HTML)
-// Path relative to Student/MVC/php/
 include '../html/ProfessorReview.php';
 ?>

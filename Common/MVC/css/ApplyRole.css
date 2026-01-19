@@ -1,6 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
-/* --- 1. GLOBAL VARIABLES & RESET --- */
+/*GLOBAL VARIABLES & RESET*/
 :root {
   --primary-navy: #1e40af;
   --dark-navy: #1e3a8a;
@@ -35,14 +34,14 @@ body {
   line-height: 1.6;
 }
 
-/* --- 2. LAYOUT UTILITIES (MATCHING HOMEPAGE) --- */
+/* LAYOUT UTILITIES (MATCHING HOMEPAGE)*/
 .container {
   max-width: var(--container-width);
   margin: 0 auto;
   padding: 0 1.5rem; /* Increased to match Homepage padding */
 }
 
-/* --- 3. NAVBAR STYLES (EXACT COPY FROM HOMEPAGE) --- */
+/*NAVBAR STYLES (EXACT COPY FROM HOMEPAGE)*/
 .navbar {
   position: fixed;
   top: 0;
@@ -136,7 +135,7 @@ body {
   background-color: #d5dbdb;
 }
 
-/* --- 4. PAGE CONTENT --- */
+/*PAGE CONTENT*/
 .page-container {
   padding-top: 8rem;
   min-height: 80vh;
@@ -250,7 +249,7 @@ body {
   border: 1px solid #f5c6cb;
 }
 
-/* --- 5. FOOTER --- */
+/*FOOTER*/
 footer {
   background-color: var(--darkest-navy);
   color: white;

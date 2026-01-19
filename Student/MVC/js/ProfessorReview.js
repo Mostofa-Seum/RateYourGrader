@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 0. REDIRECT LOGIC START ---
     console.log("JS Loaded. Checking for redirect signal...");
     
     const signalDiv = document.getElementById('redirect-signal');
@@ -8,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (signalDiv) {
         console.log("Redirecting in 2 seconds...");
         
-        // Optional: Change button text to show user something is happening
+        // Change button text to show user something is happening
         const submitBtn = document.querySelector('.btn-primary');
         if(submitBtn) {
             submitBtn.disabled = true;
@@ -16,17 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.style.backgroundColor = "#16a34a"; // Green
         }
 
-        // Wait 2 seconds then go
+        // Wait 3 seconds then go
         setTimeout(function() {
             window.location.href = "SearchOutput.php";
-        }, 2000);
+        }, 3000);
     } else {
         console.log("No redirect signal found. Staying on page.");
     }
-    // --- REDIRECT LOGIC END ---
+    //  REDIRECT LOGIC END 
 
 
-    // --- 1. STAR RATING LOGIC ---
+    //   STAR RATING LOGIC 
     const ratingContainers = document.querySelectorAll('.star-rating');
 
     ratingContainers.forEach(container => {
@@ -64,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- 2. RADIO BUTTON STYLING ---
+    //  RADIO BUTTON STYLING 
     const radioInputs = document.querySelectorAll('.choice-item input[type="radio"]');
     radioInputs.forEach(input => {
         input.addEventListener('change', function() {
@@ -75,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// --- 3. VALIDATION ---
+//   VALIDATION 
 function validateForm() {
     // If the redirect signal is present, do not validate (we are already done)
     if (document.getElementById('redirect-signal')) {

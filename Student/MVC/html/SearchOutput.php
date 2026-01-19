@@ -205,7 +205,6 @@
     </script>
     <script src="../js/SearchOutput.js"></script>
     <style>
-        /* Helper classes for icons in View */
         .star-icon { width: 1.2em; height: 1.2em; vertical-align: middle; }
         .icon-small { width: 1em; height: 1em; vertical-align: middle; }
     </style>

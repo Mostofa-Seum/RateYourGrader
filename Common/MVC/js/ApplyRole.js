@@ -2,15 +2,15 @@ function submitApplication() {
     // Get values
     const role = document.getElementById('role').value;
     const reasonField = document.getElementById('reason');
-    const reason = reasonField.value.trim(); // Trim removes leading/trailing spaces
+    const reason = reasonField.value.trim();
     
-    // 1. Validation: Check Role
+    //Validation: Check Role
     if (!role) {
         showMessage('⚠ Please select a role.', 'error');
         return;
     }
 
-    // 2. Validation: Check Reason (The requested change)
+    //Validation: Check Reason (The requested change)
     if (!reason) {
         showMessage('⚠ The reason field cannot be empty. Please explain why you want this role.', 'error');
         reasonField.focus(); // Move cursor to the text box
@@ -41,8 +41,6 @@ function submitApplication() {
             showMessage('✔ ' + data.message, 'success');
             // Clear form
             document.getElementById('applyForm').reset();
-            // Optional: Redirect after a few seconds
-            // setTimeout(() => window.location.href = 'HomePage.php', 2000);
         } else {
             showMessage('⚠ ' + data.message, 'error');
         }

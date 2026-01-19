@@ -60,19 +60,15 @@
                                 // LOGIC FOR BUTTON
                                 if (isset($_SESSION['user_name'])) {
                                     if ($is_reviewer) {
-                                        // 1. Logged in as REVIEWER -> Show JS Warning
+                                        //  Logged in as REVIEWER 
                                         $rateLink = "javascript:void(0);";
                                         $onClickAttr = "onclick=\"showReviewerWarning()\"";
                                     } else {
-                                        // 2. Logged in as STUDENT -> Allow Review
-                                        // Note: Assuming ProfessorReview.php is accessible here or we link back to student view
-                                        // If Reviewers don't have a local 'ProfessorReview.php', this might need to point to Student module
-                                        // For now, keeping it relative as per original file structure
                                         $rateLink = "ProfessorReview.php?P_id=$p_id&name=" . urlencode($prof['Name']) . "&dept=" . urlencode($prof['Department']) . "&uni=" . urlencode($prof['University']);
                                         $onClickAttr = ""; 
                                     }
                                 } else {
-                                    // 3. NOT Logged in -> Show JS Login Warning
+                                    //  NOT Logged in
                                     $rateLink = "javascript:void(0);"; 
                                     $onClickAttr = "onclick=\"showLoginWarning()\"";
                                 }
@@ -150,14 +146,14 @@
                     <h5>Apply</h5>
                     <div class="footer-buttons">
                         <?php 
-                        // Logic 1: Reviewer Option
+                        // Reviewer Option
                         if ($user_role === 'Reviewer') {
                             echo '<span class="footer-nav-link" style="cursor: default; color: #6c757d;">You are a Reviewer</span>';
                         } else {
                             echo '<a href="../../../Common/MVC/php/ApplyRole.php" class="footer-nav-link">Apply for Reviewer</a>';
                         }
 
-                        // Logic 2: University Rep Option
+                        // University Rep Option
                         if ($user_role === 'UniRep') {
                             echo '<span class="footer-nav-link" style="cursor: default; color: #6c757d;">You are a University Representative</span>';
                         } else {

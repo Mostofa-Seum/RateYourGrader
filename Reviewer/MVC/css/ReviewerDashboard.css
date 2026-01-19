@@ -1,4 +1,4 @@
-/* --- BASE STYLES (From UserDashboard.css) --- */
+/*BASE STYLES  */
 * {
   margin: 0;
   padding: 0;
@@ -35,7 +35,7 @@ body {
   padding-top: 5.5rem;
 }
 
-/* --- NAVBAR STYLES --- */
+/* NAVBAR STYLES  */
 .navbar {
   position: fixed;
   top: 0;
@@ -130,12 +130,10 @@ body {
   .nav-links {
     display: flex;
   }
-  .mobile-menu-btn {
-    display: none;
-  }
+
 }
 
-/* --- LAYOUT & CARDS --- */
+/*  LAYOUT & CARDS  */
 .container {
   max-width: 1200px;
   margin: 2rem auto;
@@ -161,7 +159,7 @@ body {
   box-shadow: 0 8px 24px rgba(0, 31, 63, 0.12);
 }
 
-/* --- PROFILE CARD --- */
+/*  PROFILE CARD  */
 .profile-card {
   text-align: center;
 }
@@ -199,7 +197,7 @@ body {
   box-shadow: 0 8px 16px rgba(0, 31, 63, 0.2);
 }
 
-/* --- STATS SECTION --- */
+/*  STATS SECTION  */
 .stats-section h2 {
   font-size: 1.5rem;
   color: var(--primary-color);
@@ -259,14 +257,13 @@ body {
   font-weight: 600;
 }
 
-/* --- REVIEWER SPECIFIC OVERRIDES --- */
 /* This specific part makes the Pending card look like a button to the decision page */
 .stat-card.pending {
   position: relative;
   overflow: hidden;
 }
 
-/* --- RECENT REVIEWS --- */
+/*  RECENT REVIEWS  */
 .section-header h3 {
   color: var(--primary-color);
   margin-bottom: 1.5rem;
@@ -321,7 +318,7 @@ body {
   color: var(--text-light);
 }
 
-/* --- FORMS --- */
+/*  FORMS  */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -371,7 +368,7 @@ body {
   flex: 1;
 }
 
-/* --- MODALS --- */
+/*  MODALS  */
 .modal {
   display: none;
   position: fixed;
@@ -500,7 +497,7 @@ body {
   margin-bottom: 1rem;
 }
 
-/* --- SUCCESS MESSAGE --- */
+/*  SUCCESS MESSAGE  */
 .success-message {
   display: none;
   position: fixed;
@@ -529,7 +526,7 @@ body {
   }
 }
 
-/* --- MESSAGE BOX STYLES --- */
+/*  MESSAGE BOX STYLES  */
 .message-box {
   margin-top: 1rem;
   padding: 0;
@@ -554,7 +551,7 @@ body {
   border: 1px solid #c3e6cb;
 }
 
-/* --- FOOTER --- */
+/*  FOOTER  */
 footer {
   background-color: var(--darkest-navy);
   color: white;
@@ -665,7 +662,7 @@ footer {
   }
 }
 
-/* --- DELETE CONFIRMATION STYLES (Kept for consistency) --- */
+/*  DELETE CONFIRMATION STYLES (Kept for consistency)  */
 .delete-icon-btn {
   cursor: pointer;
   font-size: 1.2rem;

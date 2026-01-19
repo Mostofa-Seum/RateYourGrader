@@ -1,6 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-
-/* --- CSS Variables & Reset --- */
+/*CSS Variables & Reset*/
 :root {
   --primary-navy: #1e40af;
   --dark-navy: #1e3a8a;
@@ -37,7 +35,7 @@ body {
   color: var(--text-dark);
 }
 
-/* --- Utilities --- */
+/*Utilities*/
 .container {
   max-width: var(--container-width);
   margin: 0 auto;
@@ -79,7 +77,7 @@ body {
   }
 }
 
-/* --- Navigation --- */
+/*Navigation*/
 .navbar {
   position: fixed;
   top: 0;
@@ -120,12 +118,6 @@ body {
   color: white;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
-
-/*.logo-img{
-      width: 18px;
-      height: 18px;
-      object-fit: contain;
-}*/
 
 .logo-text {
   font-size: 1.5rem;
@@ -171,22 +163,8 @@ body {
   transform: translateY(-2px);
 }
 
-.mobile-menu-btn {
-  display: block;
-  background: none;
-  border: none;
-  color: var(--primary-navy);
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-.mobile-menu-icon {
-  width: 24px;
-  height: 24px;
-  display: block;
-  object-fit: contain;
-}
 
-/* --- Hero Section --- */
+/*Hero Section*/
 .hero-section {
   padding-top: 8rem;
   padding-bottom: 8rem;
@@ -247,8 +225,9 @@ body {
   line-height: 1.6;
   max-width: 500px;
 }
-search-bar .highlight {
-  display: block;
+/* Fixed: .highlight is used in hero-subtitle, not inside search-bar */
+.highlight {
+  display: inline-block;
   font-weight: 600;
   color: white;
 }
@@ -265,82 +244,22 @@ search-bar .highlight {
   justify-content: center;
 }
 
-.hero-testimonials {
-  position: relative;
-}
-
-.testimonial-strip {
-  overflow: hidden;
-  border-radius: 1.5rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-  padding: 1.5rem 0;
-}
-
-.testimonial-track {
-  display: flex;
-  gap: 1rem;
-  width: max-content;
-  animation: marquee-left 22s linear infinite;
-}
-
-.testimonial-strip:hover .testimonial-track {
-  animation-play-state: paused;
-}
-
-.testimonial-card {
-  width: 260px;
-  min-height: 160px;
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
-  padding: 1rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  color: white;
-}
-
-.testimonial-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-}
-
-.testimonial-quote {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: #e5e7eb;
-}
-
-.testimonial-name {
-  font-size: 0.85rem;
-  color: #cbd5f5;
-}
-
 .slider-box {
-  /* 1. Define the Box Size */
+  /*Define the Box Size */
   width: 550px;
   max-width: 95%; /* Responsive for small screens */
   height: 420px;
 
-  /* 2. Visuals for the Box */
+  /*Visuals for the Box */
   background-color: transparent;
   border: 1px solid transparent;
   border-radius: 24px;
 
   backdrop-filter: blur(18px);
 
-  /* 3. CRITICAL: Hide anything moving outside this box */
+  /*Hide anything moving outside this box*/
   overflow: hidden;
   position: relative;
-
-  /* 4. Fade Effect on Box Edges 
-            mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-            -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);*/
 
   /* Center the track vertically inside the box */
   display: flex;
@@ -435,15 +354,6 @@ search-bar .highlight {
   } /* -50% because we duplicated the list */
 }
 
-@keyframes marquee-left {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 .btn-white {
   background: white;
   color: var(--dark-navy);
@@ -465,125 +375,7 @@ search-bar .highlight {
   transform: translateY(-4px);
 }
 
-.btn-outline {
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 1rem;
-  font-weight: 600;
-  font-size: 1.125rem;
-  backdrop-filter: blur(4px);
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.btn-outline:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-4px);
-}
-
-/* Hero Cards */
-.glass-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 1.5rem;
-  padding: 2rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.stat-box {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  text-align: center;
-}
-
-.stat-number {
-  font-size: 1.875rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-
-.stat-number.yellow {
-  color: var(--yellow-400);
-}
-.stat-number.green {
-  color: var(--emerald-400);
-}
-
-.stat-label {
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #e5e7eb;
-}
-
-.review-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.review-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.yellow-bg {
-  background: linear-gradient(to right, var(--yellow-400), var(--orange-400));
-}
-.green-bg {
-  background: linear-gradient(to right, var(--emerald-400), #14b8a6);
-}
-
-.review-info .name {
-  font-weight: 600;
-  color: white;
-}
-.review-info .dept {
-  font-size: 0.875rem;
-  color: #d1d5db;
-}
-
-.rating-display {
-  margin-left: auto;
-  text-align: right;
-}
-.rating-display .score {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-.rating-display .score.yellow {
-  color: var(--yellow-400);
-}
-.rating-display .score.green {
-  color: var(--emerald-400);
-}
-.rating-display .count {
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
-
-/* --- How It Works --- */
+/*How It Works*/
 .section-white {
   padding: 8rem 0;
   background-color: white;
@@ -658,7 +450,7 @@ search-bar .highlight {
   content: url("../images/explore_white.png");
 }
 
-/* --- Features --- */
+/*Features*/
 .section-features {
   padding: 8rem 0;
   background: linear-gradient(to bottom, var(--bg-gray), white);
@@ -726,30 +518,7 @@ search-bar .highlight {
   color: var(--text-gray);
 }
 
-.glass-preview-container {
-  background: linear-gradient(
-    to bottom right,
-    rgba(255, 255, 255, 0.5),
-    rgba(243, 244, 246, 0.5)
-  );
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 1.5rem;
-  padding: 3rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-.glass-preview-container img {
-  width: 100%;
-  height: 24rem;
-  object-fit: cover;
-  border-radius: 1rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  display: block;
-  margin: 0 auto;
-}
-
-/* --- Search CTA --- */
+/*Search CTA*/
 .section-search {
   padding: 8rem 0;
   background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 50%, #1e1b4b 100%);
@@ -847,7 +616,7 @@ search-bar .highlight {
   object-fit: contain;
 }
 
-/* --- Footer --- */
+/*Footer*/
 footer {
   background-color: var(--darkest-navy);
   color: white;
@@ -938,7 +707,7 @@ footer {
   font-size: 0.875rem;
 }
 
-/* --- Media Queries (Responsiveness) --- */
+/*Media Queries (Responsiveness)*/
 @media (min-width: 640px) {
   .hero-buttons {
     flex-direction: row;
@@ -954,9 +723,6 @@ footer {
 @media (min-width: 768px) {
   .nav-links {
     display: flex;
-  }
-  .mobile-menu-btn {
-    display: none;
   }
   .steps-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -992,7 +758,7 @@ footer {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-/* --- Extracted Toast Notification Styles --- */
+/*Extracted Toast Notification Styles*/
 #toast-container {
   position: fixed;
   bottom: 20px;

@@ -1,8 +1,3 @@
-// --- GLOBAL VARIABLES ---
-// window.reviewerData is set in the PHP file
-
-// --- HELPER FUNCTIONS (From UserDashboard) ---
-
 function toggleEditProfileSection() {
     const section = document.getElementById('edit-profile-section');
     if (!section) return;
@@ -32,7 +27,7 @@ function showMessage(elementId, message, type) {
     }, 5000);
 }
 
-// --- PROFILE UPDATES (From UserDashboard) ---
+// PROFILE UPDATES
 
 function updateUsername() {
     const username = document.getElementById('username').value;
@@ -107,7 +102,7 @@ function resetPasswordForm() {
     document.getElementById('confirm-password').value = '';
 }
 
-// --- REVIEWER SPECIFIC FUNCTIONS ---
+// REVIEWER SPECIFIC FUNCTIONS 
 
 function handleCardClick(type) {
     if (type === 'pending') {

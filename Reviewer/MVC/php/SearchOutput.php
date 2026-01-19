@@ -1,9 +1,7 @@
 <?php
 session_start(); 
-// Path relative to Reviewer/MVC/php/
 include '../../../Common/MVC/db/Config.php';
 
-// --- CONFIGURATION: DEFINE ROLE ---
 // Check if the user is a reviewer based on session data
 $user_role = isset($_SESSION['role']) ? strtolower($_SESSION['role']) : ''; 
 $is_reviewer = ($user_role === 'reviewer'); 
@@ -23,13 +21,13 @@ $professors_data = []; // Array to hold processed data for the view
 $count = 0;
 
 if (isset($_GET['q']) && !empty(trim($_GET['q']))) {
-    // SCENARIO A: User performed a search
+    //  User performed a search
     $search_performed = true;
     $search_term = $_GET['q'];
     $safe_search = $conn->real_escape_string($search_term);
     $sql = "SELECT * FROM professors WHERE Name LIKE '%$safe_search%' OR Department LIKE '%$safe_search%' OR University LIKE '%$safe_search%'";
 } else {
-    // SCENARIO B: Default View (Show 3 random professors)
+    // Default View (Show 3 random professors)
     $search_performed = true; 
     $sql = "SELECT * FROM professors ORDER BY RAND() LIMIT 3";
 }
@@ -38,12 +36,11 @@ $result = $conn->query($sql);
 if (!$result) { die("Query Failed: " . $conn->error); }
 $count = $result->num_rows;
 
-// Process the results in the Controller to keep the View clean
 if ($count > 0) {
     while($row = $result->fetch_assoc()) {
         $current_p_id = $row['P_id'];
         
-        // 1. STATS QUERY
+        //  STATS QUERY
         $stat_sql = "SELECT COUNT(r.r_id) as total_reviews, AVG(r.`Overall Rating`) as avg_overall,
             AVG(r.`Grading Fairness`) as avg_fairness, AVG(r.`Behavior and Communication`) as avg_behavior 
             FROM review r INNER JOIN A_Review ar ON r.r_id = ar.R_id WHERE r.P_id = '$current_p_id'";
@@ -57,7 +54,7 @@ if ($count > 0) {
         $fairness_width = ($fairness_score / 5) * 100;
         $clarity_width  = ($clarity_score / 5) * 100;
 
-        // 2. FETCH LATEST REVIEW TEXT
+        //  FETCH LATEST REVIEW TEXT
         $review_text_display = "No written reviews yet.";
         $review_text_sql = "SELECT ar.Review FROM A_Review ar 
                             INNER JOIN review r ON ar.r_id = r.r_id 
@@ -88,8 +85,5 @@ if ($count > 0) {
         ];
     }
 }
-
-// Load the View
-// Path relative to Reviewer/MVC/php/
 include '../html/SearchOutput.php';
 ?>

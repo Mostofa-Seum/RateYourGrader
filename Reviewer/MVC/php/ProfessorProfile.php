@@ -1,10 +1,10 @@
 <?php
 session_start();
-// Path relative to: Reviewer/MVC/php/
+
 include '../../../Common/MVC/db/Config.php';
 
-// --- CONFIGURATION: DEFINE ROLE ---
-$user_role = ''; // Default to empty
+
+$user_role = ''; 
 $is_reviewer = false;
 
 // Check if user is logged in to get the specific role from DB
@@ -69,7 +69,6 @@ function renderStars($rating) {
     $fullStars = floor($rating);
     $hasHalf = ($rating - $fullStars) >= 0.5;
     $emptyStars = 5 - $fullStars - ($hasHalf ? 1 : 0);
-    // Path relative to HTML/View file
     $imgDir = '../images/';
 
     for ($i = 0; $i < $fullStars; $i++) { $output .= '<img src="'.$imgDir.'starFull.png" class="star-icon">'; }
@@ -77,8 +76,5 @@ function renderStars($rating) {
     for ($i = 0; $i < $emptyStars; $i++) { $output .= '<img src="'.$imgDir.'starEmpty.png" class="star-icon">'; }
     return $output;
 }
-
-// Load the View
-// Points to Reviewer/MVC/html/ProfessorProfile.php
 include '../html/ProfessorProfile.php';
 ?>

@@ -1,9 +1,8 @@
 <?php
 session_start();
-// Path relative to Reviewer/MVC/php/
 include '../../../Student/MVC/db/Config.php';
 
-// --- 1. HANDLE AJAX REQUESTS (Profile Updates) ---
+// HANDLE AJAX REQUESTS (Profile Updates)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json'); 
     
@@ -15,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $_SESSION['s_id'];
     $action = $_POST['action'] ?? '';
 
-    // --- UPDATE USERNAME LOGIC ---
+    // UPDATE USERNAME LOGIC
     if ($action === 'update_username') {
         $new_username = trim($_POST['username']);
         if (empty($new_username)) {
@@ -35,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    // --- UPDATE PASSWORD LOGIC ---
+    // UPDATE PASSWORD LOGIC
     if ($action === 'update_password') {
         $current_pass = $_POST['current_password'];
         $new_pass = $_POST['new_password'];
@@ -70,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit; // End POST request
 }
 
-// --- 2. REGULAR PAGE LOAD (SESSION CHECK) ---
+//  2. REGULAR PAGE LOAD (SESSION CHECK) 
 if (!isset($_SESSION['s_id'])) {
     // Path relative to Reviewer/MVC/php/
     header("Location: ../../../Common/MVC/php/Login.php");
@@ -79,18 +78,17 @@ if (!isset($_SESSION['s_id'])) {
 
 $current_user_id = $_SESSION['s_id'];
 
-// --- 3. GET USER INFO ---
-// CHANGE: Added 'role' to the SELECT statement
+//  3. GET USER INFO 
 $sql_user = "SELECT Username, Email, role FROM users WHERE s_id = ?";
 $stmt = $conn->prepare($sql_user);
 $stmt->bind_param("i", $current_user_id);
 $stmt->execute();
 $user_result = $stmt->get_result();
 $user_data = $user_result->fetch_assoc();
-$user_role = $user_data['role']; // CHANGE: Store role in a variable
+$user_role = $user_data['role']; 
 $stmt->close();
 
-// --- 4. GET COUNTS (Reviewer Stats) ---
+//  4. GET COUNTS (Reviewer Stats) 
 
 // Count Pending
 $sql_pending_count = "SELECT COUNT(*) as count FROM review WHERE Reviewed = 0";
@@ -108,7 +106,7 @@ $res_rejected = $conn->query($sql_rejected_count);
 $rejected_count = $res_rejected->fetch_assoc()['count'];
 
 
-// --- 5. FETCH DATA FOR MODALS ---
+//  5. FETCH DATA FOR MODALS 
 
 $reviewsData = [
     'accepted' => [],
@@ -153,8 +151,5 @@ if ($res_rej) {
         ];
     }
 }
-
-// Load the View (HTML)
-// Path relative to Reviewer/MVC/php/
 include '../html/ReviewerDashboard.php';
 ?>

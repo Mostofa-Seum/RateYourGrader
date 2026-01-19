@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- Intersection Observer for fade-in animations ---
+    //Intersection Observer for fade-in animations
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
 
-    // --- Smooth scrolling for anchor links ---
+    //Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Navbar scroll effect ---
+    //Navbar scroll effect
     const nav = document.querySelector('.navbar');
     if (nav) {
         window.addEventListener('scroll', () => {
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- HELPER FUNCTIONS ---
+//HELPER FUNCTIONS
 
 // Custom Toast Function
 function showToast(message, type = 'info') {
@@ -87,7 +87,6 @@ function goToSearch() {
 function validateSearch() {
     const input = document.getElementById('mainSearchInput').value;
     if (!input || input.trim() === "") {
-        // Replaced alert with Toast
         showToast("Please enter a Professor name, University, or Course to search.", "info");
         return false; 
     }
@@ -98,7 +97,6 @@ function checkLoginAndApply() {
     if (typeof isUserLoggedIn !== 'undefined' && isUserLoggedIn === true) {
         window.location.href = "ApplyRole.php";
     } else {
-        // Replaced alert with Toast + Delayed Redirect
         showToast("You need to login first to apply for a role!", "error");
     }
 }
