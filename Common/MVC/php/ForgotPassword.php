@@ -1,16 +1,15 @@
 <?php
 session_start();
-// Path to DB Config
 include "../db/Config.php"; 
 
 $error_msg = "";
 $success_msg = "";
 $step = 1; // Default step: Verification
 
-// Handle Form Submissions
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // STEP 1: VERIFY USER
+    // VERIFY USER
     if (isset($_POST['action']) && $_POST['action'] == 'verify') {
         $username = $conn->real_escape_string($_POST['username']);
         $email = $conn->real_escape_string($_POST['email']);
@@ -20,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
-            // User found! Move to Step 2
+            // Move to Step 2
             $step = 2;
             $_SESSION['reset_email'] = $email; 
         } else {
@@ -28,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // STEP 2: RESET PASSWORD
+    // 2: RESET PASSWORD
     if (isset($_POST['action']) && $_POST['action'] == 'reset') {
         $pass = $_POST['password'];
         $confirm_pass = $_POST['confirm_password'];
@@ -59,6 +58,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Load the View (HTML)
 include '../html/ForgotPassword.php';
 ?>

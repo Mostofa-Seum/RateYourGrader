@@ -2,10 +2,10 @@
 session_start();
 include "../db/config.php";
 
-// Initialize default variables
+
 $searchAction = "../../../Student/MVC/php/SearchOutput.php"; 
-$role = ""; // Initialize role to empty string to prevent errors
-$dashboardLink = ""; // Initialize dashboard link
+$role = ""; 
+$dashboardLink = ""; 
 
 // Check if the user is logged in
 if (isset($_SESSION['user_name'])) {
@@ -32,6 +32,6 @@ if (isset($_SESSION['user_name'])) {
     }
 }
 
-// Load the View (HTML)
+
 include '../html/HomePage.php';
 ?>

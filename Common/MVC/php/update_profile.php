@@ -15,7 +15,7 @@ if (!isset($_SESSION['s_id'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $action = $_POST['action'];
 
-    // --- CASE 1: UPDATE USERNAME ---
+    //  UPDATE USERNAME
     if ($action == 'update_username') {
         $new_username = $_POST['username'];
 
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
     }
 
-    // --- CASE 2: UPDATE PASSWORD ---
+    // UPDATE PASSWORD
     elseif ($action == 'update_password') {
         $current_pass = $_POST['current_password'];
         $new_pass = $_POST['new_password'];

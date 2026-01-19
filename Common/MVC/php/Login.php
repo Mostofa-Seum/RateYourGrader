@@ -1,7 +1,7 @@
 <?php
-session_start(); // Start session to use $_SESSION variables
+session_start(); 
 
-// Path to DB Config: Step out of 'php', into 'db'
+
 include "../db/Config.php";
 
 // Initialize variables
@@ -20,9 +20,8 @@ if (isset($_GET['signup']) && $_GET['signup'] === 'success') {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // ==========================================
     // SIGNUP LOGIC
-    // ==========================================
+
     if (isset($_POST['action']) && $_POST['action'] == 'signup') {
         
         // Sanitize and Escape inputs for Database Safety
@@ -71,32 +70,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // ==========================================
+
     // LOGIN LOGIC
-    // ==========================================
+
     if (isset($_POST['action']) && $_POST['action'] == 'login') {
         
         $login_email = $conn->real_escape_string($_POST['login_email']);
         $login_pass  = $_POST['login_password'];
 
-        // ---------------------------------------------------------
-        // 1. HARDCODED ADMIN CHECK (FIXED)
-        // ---------------------------------------------------------
+
+        // ADMIN CHECK
+
         if ($login_email === 'admin' && $login_pass === 'admin') {
             $_SESSION['user_name'] = "System Admin";
             $_SESSION['role'] = "Admin"; 
-            
-            // CRITICAL FIX: The dashboard checks if 's_id' is set. 
-            // We must give the hardcoded admin a dummy ID (e.g., 0).
             $_SESSION['s_id'] = 0; 
             
             // Redirect to Admin Dashboard
             header("Location: ../../../Admin/MVC/php/AdminDashboard.php");
             exit();
         } else {
-            // -----------------------------------------------------
+
             // 2. DATABASE USER CHECK
-            // -----------------------------------------------------
+
             $sql = "SELECT * FROM users WHERE Email = '$login_email'";
             $result = $conn->query($sql);
 
@@ -111,7 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $_SESSION['s_id'] = $row['s_id']; 
                     $_SESSION['role'] = $row['role']; 
 
-                    // --- ROLE BASED REDIRECT ---
+                    //  ROLE BASED REDIRECT 
                     $user_role = $row['role']; // Ensure database role is capitalized like 'Admin'
 
                     if ($user_role === 'Student') {
@@ -143,6 +139,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Load the View (HTML)
 include '../html/Login.php';
 ?>

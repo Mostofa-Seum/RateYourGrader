@@ -2,7 +2,7 @@
 session_start();
 include '../db/Config.php';
 
-// --- 1. DEFINE DASHBOARD LINK LOGIC (From Homepage) ---
+// DEFINE DASHBOARD LINK LOGIC (From Homepage)
 $dashboardLink = "HomePage.php"; // Default fallback
 if (isset($_SESSION['user_name'])) {
     $username = $_SESSION['user_name'];
@@ -26,7 +26,7 @@ if (isset($_SESSION['user_name'])) {
     $safe_username->close();
 }
 
-// --- HANDLE FORM SUBMISSION ---
+//  HANDLE FORM SUBMISSION 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'submit_application') {
     header('Content-Type: application/json');
 
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $role = $_POST['role']; 
     $reason = isset($_POST['reason']) ? trim($_POST['reason']) : ''; 
 
-    // --- VALIDATION ---
+    //  VALIDATION 
     if (empty($reason)) {
         echo json_encode(['status' => 'error', 'message' => 'Please explain why you want this role. The reason field cannot be empty.']);
         exit;
@@ -100,7 +100,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     exit;
 }
 
-// Load the View (HTML)
-// We point to the html folder. We use .php extension so the variables above work in the view.
 include '../html/ApplyRole.php';
 ?>
