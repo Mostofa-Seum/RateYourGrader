@@ -97,14 +97,6 @@
                     <p>Empowering students with transparent grading information since 2024.</p>
                 </div>
 
-                <div class="footer-actions">
-                    <h5>Apply</h5>
-                    <div class="footer-buttons">
-                        <a href="#" class="footer-nav-link">Apply for Reviewer</a>
-                        <a href="#" class="footer-nav-link">Apply for University Representative</a>
-                    </div>
-                </div>
-
                 <div class="footer-socials">
                     <h5>Our Socials</h5>
                     <div class="social-icons">
