@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $s_id = intval($_POST['user_id']);
         $role = $_POST['role']; 
         
-        // --- NEW LOGIC START: Check if user already has this role ---
+        // Check if user already has this role
         $check_stmt = $conn->prepare("SELECT Role FROM users WHERE s_id = ?");
         $check_stmt->bind_param("i", $s_id);
         $check_stmt->execute();
@@ -64,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['status' => 'error', 'message' => "Action Failed: User is already a $role"]);
             exit;
         }
-        // --- NEW LOGIC END ---
 
         $conn->begin_transaction();
         try {
@@ -270,14 +269,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    //REQUESTS
+    //REQUESTS MANAGEMENT (UPDATED TO MATCH 'applications' TABLE)
     if ($action === 'get_requests') {
-        $check = $conn->query("SHOW TABLES LIKE 'role_requests'");
+        // Changed table check from 'role_requests' to 'applications'
+        $check = $conn->query("SHOW TABLES LIKE 'applications'");
         if ($check && $check->num_rows > 0) {
-            $res = $conn->query("SELECT rq.id, u.Username, rq.requested_role 
-                                 FROM role_requests rq 
-                                 JOIN users u ON rq.s_id = u.s_id 
-                                 WHERE rq.status = 'Pending'");
+            // Note: We alias 'App_id' as 'id' and 'Applied Role' as 'requested_role' 
+            // so the frontend JS doesn't need to change.
+            $sql = "SELECT a.App_id as id, u.Username, a.`Applied Role` as requested_role 
+                    FROM applications a 
+                    JOIN users u ON a.S_id = u.s_id";
+            
+            $res = $conn->query($sql);
             $reqs = [];
             if($res) while ($row = $res->fetch_assoc()) $reqs[] = $row;
             echo json_encode(['status' => 'success', 'data' => $reqs]);
@@ -288,28 +291,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'handle_request') {
-        $req_id = intval($_POST['req_id']);
+        $req_id = intval($_POST['req_id']); // This is actually App_id
         $decision = $_POST['decision'];
         
-        $check = $conn->query("SHOW TABLES LIKE 'role_requests'");
+        $check = $conn->query("SHOW TABLES LIKE 'applications'");
         if ($check && $check->num_rows > 0) {
             if ($decision === 'approve') {
-                $q = $conn->query("SELECT s_id, requested_role FROM role_requests WHERE id = $req_id");
+                $q = $conn->query("SELECT S_id, `Applied Role` FROM applications WHERE App_id = $req_id");
                 $req = $q->fetch_assoc();
                 
                 if ($req) {
-                    $u_id = $req['s_id'];
-                    $role = $req['requested_role'];
-                    $conn->query("UPDATE users SET Role = '$role' WHERE s_id = $u_id");
-                    $conn->query("UPDATE role_requests SET status = 'Approved' WHERE id = $req_id");
+                    $u_id = $req['S_id'];
+                    $role = $req['Applied Role'];
                     
+                    // Update User Role
+                    $conn->query("UPDATE users SET Role = '$role' WHERE s_id = $u_id");
+                    
+                    // Add to reviewer table if applicable
                     if ($role === 'Reviewer') {
-                        $conn->query("INSERT INTO reviwer (s_id) VALUES ($u_id)");
+                         // Prevent duplicates
+                        $chk = $conn->query("SELECT RV_id FROM reviwer WHERE s_id = $u_id");
+                        if ($chk->num_rows == 0) {
+                            $conn->query("INSERT INTO reviwer (s_id) VALUES ($u_id)");
+                        }
                     }
+                    
+                    // DELETE from applications to remove it from the list
+                    $conn->query("DELETE FROM applications WHERE App_id = $req_id");
+
                     echo json_encode(['status' => 'success', 'message' => 'Request Approved']);
                 }
             } else {
-                $conn->query("UPDATE role_requests SET status = 'Rejected' WHERE id = $req_id");
+                // If rejected, just delete from applications table so it disappears
+                $conn->query("DELETE FROM applications WHERE App_id = $req_id");
                 echo json_encode(['status' => 'success', 'message' => 'Request Rejected']);
             }
         }
@@ -332,9 +346,9 @@ $cnt_unirep = $conn->query("SELECT COUNT(*) as c FROM users WHERE Role = 'UniRep
 // Count UNIQUE Professors only
 $cnt_prof = $conn->query("SELECT COUNT(DISTINCT Name, Department, University) as c FROM professors")->fetch_assoc()['c'];
 
-$check_req = $conn->query("SHOW TABLES LIKE 'role_requests'");
-$cnt_req = ($check_req && $check_req->num_rows > 0) ? $conn->query("SELECT COUNT(*) as c FROM role_requests WHERE status='Pending'")->fetch_assoc()['c'] : 0;
+// Check applications table for pending count
+$check_req = $conn->query("SHOW TABLES LIKE 'applications'");
+$cnt_req = ($check_req && $check_req->num_rows > 0) ? $conn->query("SELECT COUNT(*) as c FROM applications")->fetch_assoc()['c'] : 0;
 
-//CONNECT TO VIEW (Make sure this path is correct for where you save the View file)
 include '../html/AdminDashboardView.php';
 ?>
