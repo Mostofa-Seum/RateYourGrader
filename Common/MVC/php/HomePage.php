@@ -114,7 +114,7 @@ if (isset($_SESSION['user_name'])) {
         </div>
     </nav>
 
-    <section class="hero-section">
+       <section class="hero-section">
         <div class="float-shape shape-1"></div>
         <div class="float-shape shape-2 floating"></div>
 
@@ -132,42 +132,126 @@ if (isset($_SESSION['user_name'])) {
                     <button class="btn btn-white" onclick="goToSearch()">
                         <img src="../images/search_blue.png" alt="Logo"> Search Graders
                     </button>
-                </div>       
+
+                </div>
+                                
             </div>
 
             <div class="hero-slider fade-in">
-                <div class="slider-box">
-                    <div class="slider-track">
-                        <div class="review-card">
-                            <div class="quote-icon">"</div>
-                            <p class="review-text">Challenging but rewarding, this physics course builds strong problem-solving skills while making complex concepts feel surprisingly intuitive.</p>
-                            <div class="rating">★★★★★</div>
-                            <div class="student-info">
-                                <img src="../images/caleb.png" alt="Avatar" class="student-avatar">
-                                <div class="student-details">
-                                    <h3>Khaled Mahamud</h3>
-                                    <p>Physics 101</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="review-card">
-                            <div class="quote-icon">"</div>
-                            <p class="review-text">Well-structured and practical, the Electrical Circuit course clearly explains fundamentals while strengthening analytical and problem-solving skills.</p>
-                            <div class="rating">★★★★★</div>
-                            <div class="student-info">
-                                <img src="../images/micah.png" alt="Avatar" class="student-avatar">
-                                <div class="student-details">
-                                    <h3>Mousumi Bala</h3>
-                                    <p>Electrical Circuits</p>
-                                </div>
-                            </div>
-                        </div>
+<div class="slider-box">
+        <div class="slider-track">
+            
+            <div class="review-card">
+                <div class="quote-icon">"</div>
+                <p class="review-text">Challenging but rewarding, this physics course builds strong problem-solving skills while making complex concepts feel surprisingly intuitive.</p>
+                <div class="rating">★★★★★</div>
+                <div class="student-info">
+                    <img src="../images/caleb.png" alt="Avatar" class="student-avatar">
+                    <div class="student-details">
+                        <h3>Khaled Mahamud</h3>
+                        <p>Physics 101</p>
                     </div>
                 </div>
             </div>
+
+            <div class="review-card">
+                <div class="quote-icon">"</div>
+                <p class="review-text">Comprehensive curriculum. The mentorship program connected me with real professionals.</p>
+                <div class="rating">★★★★★</div>
+                <div class="student-info">
+                    <img src="../images/sofia.png" alt="Avatar" class="student-avatar">
+                    <div class="student-details">
+                        <h3>Tasnim Jara</h3>
+                        <p>Data Science 202</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="quote-icon">"</div>
+                <p class="review-text">The supportive community made the journey enjoyable. I've now built three apps!</p>
+                <div class="rating">★★★★★</div>
+                <div class="student-info">
+                    <img src="../images/caleb.png" alt="Avatar" class="student-avatar">
+                    <div class="student-details">
+                        <h3>Khorshed Alom</h3>
+                        <p>Web Development</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="quote-icon">"</div>
+                <p class="review-text">Clear, practical, and well-structured, this database course makes complex concepts easy to understand through hands-on examples.</p>
+                <div class="rating">★★★★★</div>
+                <div class="student-info">
+                    <img src="../images/destiny.png" alt="Avatar" class="student-avatar">
+                    <div class="student-details">
+                        <h3>Sadia Afrin</h3>
+                        <p>Database Managemnet System</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="quote-icon">"</div>
+                <p class="review-text">Challenging yet fascinating, the Theory of Computation course sharpens logical thinking and reveals the mathematical foundations of computer science.</p>
+                <div class="rating">★★★★★</div>
+                <div class="student-info">
+                    <img src="../images/jessica.png" alt="Avatar" class="student-avatar">
+                    <div class="student-details">
+                        <h3>Riazul Islam</h3>
+                        <p>Theory of Computation</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="quote-icon">"</div>
+                <p class="review-text">Comprehensive curriculum. The mentorship program connected me with real professionals.</p>
+                <div class="rating">★★★★★</div>
+                <div class="student-info">
+                    <img src="../images/maria.png" alt="Avatar" class="student-avatar">
+                    <div class="student-details">
+                        <h3>Sirajum Munira</h3>
+                        <p>Machine Learning</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="quote-icon">"</div>
+                <p class="review-text">Beginner-friendly and engaging, the Introduction to Programming course builds strong fundamentals through clear explanations and practical exercises.</p>
+                <div class="rating">★★★★★</div>
+                <div class="student-info">
+                    <img src="../images/ryan.png" alt="Avatar" class="student-avatar">
+                    <div class="student-details">
+                        <h3>Oishi Sultana</h3>
+                        <p>Introduction to programming</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="quote-icon">"</div>
+                <p class="review-text">Well-structured and practical, the Electrical Circuit course clearly explains fundamentals while strengthening analytical and problem-solving skills.</p>
+                <div class="rating">★★★★★</div>
+                <div class="student-info">
+                    <img src="../images/micah.png" alt="Avatar" class="student-avatar">
+                    <div class="student-details">
+                        <h3>Mousumi Bala</h3>
+                        <p>Electrical Circuits</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+            </div>
+
+            
         </div>
     </section>
-
     <section id="search" class="section-search">
         <div class="container fade-in text-center">
             <center><h2>Ready to discover fair graders?</h2></center>
@@ -217,23 +301,74 @@ if (isset($_SESSION['user_name'])) {
         </div>
     </section>
 
-    <section id="features" class="section-features">
+<section id="features" class="section-features">
         <div class="container">
             <div class="section-header fade-in">
                 <h2 class="gradient-text-navy">Everything You Need</h2>
                 <p>Built for students, by students</p>
             </div>
+
             <div class="features-grid">
-                 <div class="features-list fade-in">
+                <div class="features-list fade-in">
                     <div class="feature-card glass-light hover-scale">
-                        <div class="feature-icon blue-bg"><img src="../images/shield.png" alt="Logo"></div>
-                        <div class="feature-text"><h4>Anonymous & Safe</h4><p>Your identity is protected. Rate honestly without fear of retaliation.</p></div>
+                        <div class="feature-icon blue-bg">
+                            <img src="../images/shield.png" alt="Logo">
+                        </div>
+                        <div class="feature-text">
+                            <h4>Anonymous & Safe</h4>
+                            <p>Your identity is protected. Rate honestly without fear of retaliation.</p>
+                        </div>
                     </div>
+                    
+                    <div class="feature-card glass-light hover-scale">
+                        <div class="feature-icon green-bg">
+                            <img src="../images/details.png" alt="Logo">
+                        </div>
+                        <div class="feature-text">
+                            <h4>Detailed Ratings</h4>
+                            <p>Rate on fairness, grading speed, accuracy, and helpfulness. Get the full picture.</p>
+                        </div>
                     </div>
+                    
+                    <div class="feature-card glass-light hover-scale">
+                        <div class="feature-icon purple-bg">
+                            <img src="../images/mobile.png" alt="Logo">
+                        </div>
+                        <div class="feature-text">
+                            <h4>Campus Verified</h4>
+                            <p>Only verified students can rate. Real reviews from real students on your campus.</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="features-list features-list-right fade-in">
                     <div class="feature-card glass-light hover-scale">
-                        <div class="feature-icon purple-bg"><img src="../images/explore_white.png" alt="Logo"></div>
-                        <div class="feature-text"><h4>Community Standards</h4><p>Helpful reviews rise to the top while moderation keeps feedback honest and fair.</p></div>
+                        <div class="feature-icon blue-bg">
+                            <img src="../images/search_white.png" alt="Logo">
+                        </div>
+                        <div class="feature-text">
+                            <h4>Smart Search Filters</h4>
+                            <p>Find graders by course, department, or campus to get the exact insight you need.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card glass-light hover-scale">
+                        <div class="feature-icon green-bg">
+                            <img src="../images/verify_white.png" alt="Logo">
+                        </div>
+                        <div class="feature-text">
+                            <h4>Real-Time Updates</h4>
+                            <p>New ratings and reviews appear instantly so you always have current feedback.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card glass-light hover-scale">
+                        <div class="feature-icon purple-bg">
+                            <img src="../images/explore_white.png" alt="Logo">
+                        </div>
+                        <div class="feature-text">
+                            <h4>Community Standards</h4>
+                            <p>Helpful reviews rise to the top while moderation keeps feedback honest and fair.</p>
+                        </div>
                     </div>
                 </div>
             </div>
