@@ -2,6 +2,30 @@
 session_start();
 include '../db/Config.php';
 
+// --- 1. DEFINE DASHBOARD LINK LOGIC (From Homepage) ---
+$dashboardLink = "HomePage.php"; // Default fallback
+if (isset($_SESSION['user_name'])) {
+    $username = $_SESSION['user_name'];
+    $safe_username = $conn->prepare("SELECT role FROM users WHERE Username = ?");
+    $safe_username->bind_param("s", $username);
+    $safe_username->execute();
+    $result = $safe_username->get_result();
+
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $role = $row['role']; 
+
+        if ($role == 'Reviewer') {
+            $dashboardLink = "../../../Reviewer/MVC/php/ReviewerDashboard.php"; 
+        } elseif ($role == 'Student') {
+            $dashboardLink = "../../../Student/MVC/php/UserDashboard.php";
+        } elseif ($role == 'UniRep') {
+            $dashboardLink = "../../../UniversityRepresentative/MVC/php/UniversityRepDashboard.php"; 
+        }
+    }
+    $safe_username->close();
+}
+
 // --- HANDLE FORM SUBMISSION ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'submit_application') {
     header('Content-Type: application/json');
@@ -14,26 +38,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     $s_id = $_SESSION['s_id'];
     $role = $_POST['role']; 
-    // Trim removes whitespace from the beginning and end
     $reason = isset($_POST['reason']) ? trim($_POST['reason']) : ''; 
 
-    // --- VALIDATION: Check if Reason is Empty ---
+    // --- VALIDATION ---
     if (empty($reason)) {
         echo json_encode(['status' => 'error', 'message' => 'Please explain why you want this role. The reason field cannot be empty.']);
         exit;
     }
 
-    // Validate Input Role
     $valid_roles = ['Reviewer', 'UniRep'];
     if (!in_array($role, $valid_roles)) {
         echo json_encode(['status' => 'error', 'message' => 'Invalid role selected.']);
         exit;
     }
 
-    // =========================================================
-    // 2. NEW CHECK: Is the user ALREADY a Reviewer or UniRep?
-    // =========================================================
-    
+    // 2. CHECK EXISTING ROLE
     $user_check = $conn->prepare("SELECT role FROM users WHERE s_id = ?");
     $user_check->bind_param("i", $s_id);
     $user_check->execute();
@@ -43,7 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $user_row = $user_result->fetch_assoc();
         $current_user_role = $user_row['role']; 
 
-        // If the user already holds a restricted role, stop them.
         if ($current_user_role === 'Reviewer' || $current_user_role === 'UniRep') {
             echo json_encode([
                 'status' => 'error', 
@@ -54,9 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
     $user_check->close();
 
-    // =========================================================
-    // 3. CHECK PENDING: Did they already apply?
-    // =========================================================
+    // 3. CHECK PENDING APPLICATIONS
     $check_stmt = $conn->prepare("SELECT `Applied Role` FROM `applications` WHERE S_id = ?");
     $check_stmt->bind_param("i", $s_id);
     $check_stmt->execute();
@@ -65,17 +81,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $existing_role = $row['Applied Role'];
-        
         $msg = "You Already Applied For \"" . $existing_role . "\" \nWait for the Response";
-
         echo json_encode(['status' => 'error', 'message' => $msg]);
         exit;
     }
     $check_stmt->close();
 
-    // =========================================================
     // 4. INSERT APPLICATION
-    // =========================================================
     $stmt = $conn->prepare("INSERT INTO `applications` (`S_id`, `Applied Role`, `Reason`) VALUES (?, ?, ?)");
     $stmt->bind_param("iss", $s_id, $role, $reason);
 
@@ -96,24 +108,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apply for Role - Rate Your Grader</title>
     <link rel="stylesheet" href="../css/ApplyRole.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<nav class="navbar">
-    <div class="container nav-container">
-        <div class="logo-wrapper">
-            <div class="logo-icon">
-                <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <img src="../images/scolar_cap.png" alt="Logo" class="logo-img">
+                </div>
+                <span class="logo-text">Rate Your Grader</span>
             </div>
-            <span class="logo-text">Rate Your Grader</span>
+            
+            <div class="nav-links">
+                <a href="HomePage.php">Home</a>
+
+                <?php if (isset($_SESSION['user_name'])): ?>
+                    <a href="<?php echo $dashboardLink; ?>" style="text-decoration:none;">
+                        <span style="margin-right: 15px; font-weight: bold; color: inherit;">Hello, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                    </a>
+                    <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
+                <?php else: ?>
+                    <a href="Login.php" class="btn btn-primary" style="color: white;">Sign Up Free</a>
+                <?php endif; ?>
+            </div>
         </div>
-        
-        <div class="nav-links">
-            <a href="HomePage.php">Home</a>
-            <a href="Logout.php" class="btn btn-primary" style="background-color: #dc3545; color: white;">Logout</a>
-        </div>
-    </div>
-</nav>
+    </nav>
 
 <main class="page-container">
     <div class="container">
