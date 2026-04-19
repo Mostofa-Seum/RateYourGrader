@@ -1,0 +1,482 @@
+/*1. SHARED GLOBAL STYLES */
+:root {
+  --primary-navy: #1e40af;
+  --dark-navy: #1e3a8a;
+  --darkest-navy: #1e1b4b;
+  --text-gray: #4b5563;
+  --border-color: rgba(229, 231, 235, 0.5);
+  --transition-speed: 0.3s;
+  --gray-50: #f9fafb;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-600: #4b5563;
+  --gray-800: #1f2937;
+  --white: #ffffff;
+  --blue-600: #2563eb;
+  --green-600: #16a34a;
+  --red-600: #dc2626;
+
+  /* Spacing & Sizing */
+  --container-width: 1200px;
+  --radius-lg: 0.5rem;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  background-color: var(--gray-50);
+  color: var(--gray-800);
+  line-height: 1.5;
+}
+
+/* Layout Utilities */
+.container {
+  width: 100%;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.text-center {
+  text-align: center;
+}
+.flex {
+  display: flex;
+}
+.mb-2 {
+  margin-bottom: 1.5rem;
+}
+
+/*2. NAVBAR STYLES (Exact copy from SearchOutput)*/
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  transition: box-shadow var(--transition-speed);
+}
+
+.navbar.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* Logo Styling */
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(to right, var(--primary-navy), var(--dark-navy));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(to right, var(--dark-navy), var(--darkest-navy));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-img {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+}
+
+/* Links & Buttons */
+.nav-links {
+  display: none; 
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-gray);
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: var(--primary-navy);
+}
+
+.btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: var(--primary-navy);
+  color: var(--white);
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: var(--dark-navy);
+  transform: translateY(-2px);
+}
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+  }
+}
+
+/* 3. REVIEWER SPECIFIC STYLES (Preserved)*/
+.page-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--darkest-navy);
+  font-weight: 800;
+}
+
+/* Review Grid */
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Admin Card */
+.admin-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  border-bottom: 1px dashed var(--gray-200);
+  padding-bottom: 0.5rem;
+}
+
+.review-id {
+  font-family: monospace;
+  font-weight: 700;
+}
+
+.card-body {
+  margin-bottom: 1.5rem;
+}
+
+.meta-tags {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+.tag {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.review-text {
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--gray-800);
+}
+
+/* Action Buttons */
+.card-actions {
+  display: flex;
+  gap: 1rem;
+  border-top: 1px solid var(--gray-200);
+  padding-top: 1rem;
+}
+
+.card-actions form {
+  flex: 1;
+}
+
+.btn-action {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s;
+  font-size: 1rem;
+}
+
+.btn-approve {
+  background-color: var(--green-600);
+  color: white;
+}
+.btn-approve:hover {
+  background-color: #15803d;
+}
+
+.btn-reject {
+  background-color: var(--white);
+  border: 1px solid var(--red-600);
+  color: var(--red-600);
+  flex: 1;
+}
+.btn-reject:hover {
+  background-color: #fef2f2;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: var(--white);
+  padding: 2rem;
+  border-radius: 1rem;
+  width: 500px;
+  max-width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.close-btn {
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--gray-600);
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 0.5rem;
+  margin-top: 0.5rem;
+  font-family: inherit;
+}
+
+.modal-footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn-cancel {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--gray-600);
+}
+
+.btn-confirm-reject {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--red-600);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Messages */
+.alert {
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+.alert.success {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+.alert.error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem;
+  background: var(--white);
+  border-radius: 1rem;
+  border: 2px dashed var(--gray-200);
+  color: var(--gray-600);
+}
+
+/* 4. FOOTER STYLES (Exact copy from SearchOutput)*/
+footer {
+  background-color: var(--darkest-navy);
+  color: white;
+  padding: 4rem 0;
+  margin-top: 4rem; /* Kept margin-top for spacing */
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+.logo-icon.small {
+  width: 3rem;
+  height: 3rem;
+}
+
+.footer-brand p {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.footer-actions h5 {
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}
+
+.footer-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.footer-nav-link {
+  text-decoration: none;
+  color: #9ca3af;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.footer-nav-link:hover {
+  color: white;
+}
+
+.footer-socials {
+  justify-self: end;
+  text-align: left;
+}
+
+.footer-socials .social-icons {
+  justify-content: flex-end;
+}
+
+.footer-socials h5 {
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}
+
+.social-icons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.social-icons a {
+  width: 3rem;
+  height: 3rem;
+  background-color: transparent;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.social-icons a:hover {
+  transform: translateY(-4px);
+}
+
+.social-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.footer-bottom {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid #1f2937;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

@@ -1,0 +1,252 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #5c87b4 0%, #07386e 100%);
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-container {
+  position: relative;
+  width: 900px;
+  max-width: 90vw;
+  height: 600px;
+  max-height: 90vh;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Changed from 50% to 100% to allow the clip-path to slide across the whole area */
+  width: 100%;
+  height: 100%;
+  background: #174886;
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 10;
+  clip-path: polygon(0 0, 55% 0, 35% 100%, 0 100%);
+}
+
+.slider.active {
+  clip-path: polygon(65% 0, 100% 0, 100% 100%, 45% 100%);
+}
+
+.slider-content {
+  position: absolute;
+  top: 50%;
+  left: 25%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  width: 40%;
+  transition: left 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slider.active .slider-content {
+  left: 75%;
+}
+
+.slider h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 300;
+}
+
+.slider p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.slider-btn {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.slider-btn:hover {
+  background: white;
+  color: #1a237e;
+  transform: translateY(-2px);
+}
+
+.form-container {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.login-form {
+  right: 0;
+  z-index: 1;
+}
+
+.signup-form {
+  left: 0;
+  opacity: 0;
+  transform: translateX(-20%);
+  z-index: 1;
+}
+
+.auth-container.signup-mode .login-form {
+  opacity: 0;
+  transform: translateX(20%);
+}
+
+.auth-container.signup-mode .signup-form {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.form {
+  width: 80%;
+  max-width: 350px;
+}
+
+.form h2 {
+  color: #333;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 300;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 0;
+  font-size: 1rem;
+  color: #333;
+  border: none;
+  border-bottom: 2px solid #ddd;
+  background: transparent;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+  border-bottom-color: #1a237e;
+}
+
+.input-group label {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  font-size: 1rem;
+  color: #999;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus ~ label,
+.input-group input:valid ~ label {
+  top: -10px;
+  font-size: 0.8rem;
+  color: #1a237e;
+}
+
+.submit-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #0a3c71 0%, #5c87b4 100%);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 1rem;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+/* Container to handle position and spacing */
+.forgot-pass-container {
+  text-align: right; /* Moves link to the right side */
+  margin-top: -10px; /* Pulls it slightly closer to the password line */
+  margin-bottom: 20px; /* Adds breathing room before the Sign In button */
+}
+
+/* The actual link styling */
+.forgot-pass-link {
+  color: #888; /* Soft grey to match your input labels */
+  font-size: 0.85rem; /* Slightly smaller than input text */
+  text-decoration: none; /* Removes the default underline */
+  font-weight: 500; /* Makes it slightly bolder */
+  transition: all 0.3s ease;
+  padding: 5px; /* Increases clickable area slightly */
+}
+
+/* Hover effect */
+.forgot-pass-link:hover {
+  color: #1a237e; /* Changes to your main theme blue on hover */
+  cursor: pointer;
+}
+/* --- Extracted Alert and Message Styles --- */
+.error-msg {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  text-align: center;
+  width: 100%;
+}
+.success-msg {
+  color: #155724;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  text-align: center;
+  width: 100%;
+}
+.hello-msg {
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  margin-top: 50px;
+}
